@@ -119,6 +119,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rsync sshpass
 
+      - name: Prepare remote directories
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
+            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/public_html' &&
+            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app' &&
+            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/public_html'
+          "
+
       - name: Deploy laravel_app to Hostinger (erp.octabit.tech)
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
@@ -175,9 +189,10 @@ jobs:
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
           HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
           HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
-            cd domains/octabit.tech/laravel_app &&
+            cd $HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app &&
             php artisan migrate --force --no-interaction || true &&
             php artisan package:discover --ansi || true &&
             php artisan optimize:clear || true &&
@@ -188,12 +203,14 @@ jobs:
       - name: Smoke test endpoint
         run: |
           sleep 3
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/login" -k)
-          echo "HTTP Response: $HTTP_CODE"
-          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then
-            echo "✓ Endpoint responding"
+          ERP_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.octabit.tech/login" -k)
+          LANDING_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/" -k)
+          echo "ERP HTTP Response: $ERP_HTTP_CODE"
+          echo "Landing HTTP Response: $LANDING_HTTP_CODE"
+          if { [ "$ERP_HTTP_CODE" = "200" ] || [ "$ERP_HTTP_CODE" = "302" ]; } && { [ "$LANDING_HTTP_CODE" = "200" ] || [ "$LANDING_HTTP_CODE" = "301" ] || [ "$LANDING_HTTP_CODE" = "302" ]; }; then
+            echo "✓ ERP and landing endpoints responding"
           else
-            echo "⚠ Got HTTP $HTTP_CODE"
+            echo "⚠ Unexpected status codes"
           fi
 
       - name: Deployment Summary
