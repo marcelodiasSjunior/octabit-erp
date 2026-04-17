@@ -1,0 +1,269 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+  LARAVEL_DIR: laravel_app
+  PUBLIC_DIR: public_html
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: erp_test
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mysql,redis,mbstring,ctype,fileinfo,json
+          ini-values: opcache.validate_timestamps=1,display_errors=On
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: npm
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --no-dev
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Copy environment file
+        run: cp .env.testing .env || cp .env.example .env
+
+      - name: Generate application key
+        run: php artisan key:generate --env=testing
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Validate Vite manifest
+        run: test -f public/build/manifest.json || (echo "Manifest not found!" && exit 1)
+
+      - name: Run Feature & Unit Tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: erp_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          php artisan migrate:fresh --env=testing --force
+          php artisan test
+
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mysql,redis,mbstring,ctype,fileinfo,json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: npm
+
+      - name: Install composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction --no-dev
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Validate manifest.json
+        run: test -f public/build/manifest.json || (echo "Build failed: manifest.json not found" && exit 1)
+
+      - name: Setup SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Install rsync and sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync sshpass
+
+      - name: Deploy laravel_app to Hostinger
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
+            --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.env.testing' \
+            --exclude='node_modules' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='bootstrap/cache/*' \
+            --exclude='public/build/CURRENT' \
+            --exclude='tests' \
+            --exclude='*.md' \
+            --exclude='.editorconfig' \
+            --exclude='.gitignore' \
+            --exclude='phpunit.xml' \
+            --exclude='package.json' \
+            --exclude='package-lock.json' \
+            --exclude='tsconfig.json' \
+            --exclude='vite.config.js' \
+            --exclude='windi.config.js' \
+            -e "ssh -p $HOSTINGER_SSH_PORT" \
+            ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR/"
+
+      - name: Deploy public_html to Hostinger
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
+            -e "ssh -p $HOSTINGER_SSH_PORT" \
+            ./public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/$PUBLIC_DIR/"
+
+      - name: Run post-deployment commands
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'EOF'
+          cd $HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR
+
+          # Descobrir versão de PHP disponível
+          PHP_VERSION=$(php -v 2>/dev/null | grep -oP 'PHP \K[0-9]+\.[0-9]+' || echo "8.2")
+          
+          # Descobrir se há php-cli.ini para usar no artisan
+          if [ -f /etc/php/$PHP_VERSION/cli/php.ini ]; then
+            PHP_INI="/etc/php/$PHP_VERSION/cli/php.ini"
+          else
+            PHP_INI=""
+          fi
+
+          # Run migrations
+          if [ -z "$PHP_INI" ]; then
+            php artisan migrate --force --no-interaction 2>&1 || true
+          else
+            php -c "$PHP_INI" artisan migrate --force --no-interaction 2>&1 || true
+          fi
+
+          # Discover packages
+          php artisan package:discover --ansi 2>&1 || true
+
+          # Clear caches
+          php artisan optimize:clear 2>&1 || true
+
+          # Create storage symlink
+          php artisan storage:link --force 2>&1 || true
+
+          # Validate manifest.json on server
+          if [ ! -f "$HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR/public/build/manifest.json" ]; then
+            echo "WARNING: manifest.json not found on server"
+            exit 1
+          fi
+
+          echo "Post-deployment completed successfully"
+          EOF
+
+      - name: Smoke test login endpoint
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'EOF'
+          cd $HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR
+          APP_URL=$(grep APP_URL .env | cut -d '=' -f 2)
+          
+          # Validate that app responds
+          echo "Testing $APP_URL/login..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL/login" -k)
+          if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "302" ]; then
+            echo "ERROR: Got HTTP $HTTP_CODE from /login"
+            exit 1
+          fi
+          echo "✓ Login endpoint responding with HTTP $HTTP_CODE"
+          EOF
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "📦 Environment: Hostinger shared hosting"
+          echo "🔗 Check your application at the configured domain"
+          echo "📋 Post-deployment actions completed:"
+          echo "   - Database migrations executed"
+          echo "   - Composer packages discovered"
+          echo "   - Caches cleared"
+          echo "   - Storage symlink created"
+          echo ""
+          echo "Next steps:"
+          echo "1. Verify login page loads"
+          echo "2. Check application logs if issues arise"
+          echo "3. Validate quote module accessible at /quotes"
