@@ -128,12 +128,12 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
-            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/public_html' &&
-            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app' &&
-            mkdir -p '$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/public_html'
+            mkdir -p $HOSTINGER_REMOTE_BASE_DIR/public_html &&
+            mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/storage/logs &&
+            mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/bootstrap/cache
           "
 
-      - name: Deploy laravel_app to Hostinger (erp.octabit.tech)
+      - name: Deploy Laravel app
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -147,29 +147,15 @@ jobs:
             --exclude='.github' \
             --exclude='node_modules' \
             --exclude='storage/logs/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/cache/data/*' \
             --exclude='tests' \
             --exclude='public_html' \
+            --exclude='.env' \
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
-            ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app/"
+            ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/laravel_app/"
 
-      - name: Deploy public_html to Hostinger subdomain (erp.octabit.tech)
-        env:
-          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
-          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
-          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
-          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
-          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
-        run: |
-          mkdir -p /tmp/erp_public_html
-          cat > /tmp/erp_public_html/index.php << 'ENDPOINT'
-          <?php
-          require_once dirname(__DIR__) . '/laravel_app/public/index.php';
-          ENDPOINT
-          sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
-            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
-            /tmp/erp_public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/public_html/"
-
-      - name: Deploy landing page to main domain (octabit.tech)
+      - name: Deploy landing page
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -178,12 +164,12 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
-            --exclude='laravel_app' \
             --exclude='.git' \
+            --exclude='erp' \
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/"
 
-      - name: Run post-deployment commands on server
+      - name: Create ERP symlink and run post-deploy
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -192,7 +178,8 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
-            cd $HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app &&
+            ln -sfn $HOSTINGER_REMOTE_BASE_DIR/laravel_app/public $HOSTINGER_REMOTE_BASE_DIR/public_html/erp &&
+            cd $HOSTINGER_REMOTE_BASE_DIR/laravel_app &&
             php artisan migrate --force --no-interaction || true &&
             php artisan package:discover --ansi || true &&
             php artisan optimize:clear || true &&
@@ -203,14 +190,19 @@ jobs:
       - name: Smoke test endpoint
         run: |
           sleep 3
-          ERP_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.octabit.tech/login" -k || echo "000")
+          ERP_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/erp/login" -k || echo "000")
           LANDING_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/" -k || echo "000")
           echo "ERP HTTP Response: $ERP_HTTP_CODE"
           echo "Landing HTTP Response: $LANDING_HTTP_CODE"
-          if { [ "$ERP_HTTP_CODE" = "200" ] || [ "$ERP_HTTP_CODE" = "302" ]; } && { [ "$LANDING_HTTP_CODE" = "200" ] || [ "$LANDING_HTTP_CODE" = "301" ] || [ "$LANDING_HTTP_CODE" = "302" ]; }; then
-            echo "✓ ERP and landing endpoints responding"
+          if [ "$LANDING_HTTP_CODE" = "200" ] || [ "$LANDING_HTTP_CODE" = "301" ] || [ "$LANDING_HTTP_CODE" = "302" ]; then
+            echo "✓ Landing page responding"
           else
-            echo "⚠ Smoke test warning: endpoint still unavailable or DNS not propagated yet"
+            echo "⚠ Landing page: HTTP $LANDING_HTTP_CODE"
+          fi
+          if [ "$ERP_HTTP_CODE" = "200" ] || [ "$ERP_HTTP_CODE" = "302" ]; then
+            echo "✓ ERP responding"
+          else
+            echo "⚠ ERP: HTTP $ERP_HTTP_CODE"
           fi
 
       - name: Deployment Summary

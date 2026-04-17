@@ -1,11 +1,16 @@
+DirectoryIndex index.php index.html
+
 RewriteEngine On
 
-# Force HTTPS (uncomment in production if needed)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Skip existing files and directories
-RewriteCond %{REQUEST_FILENAME} -f [OR]
+# Skip existing files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Allow /erp/ subdirectory to handle its own requests
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
