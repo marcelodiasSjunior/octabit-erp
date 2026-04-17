@@ -31,7 +31,7 @@ enum UserRole: string
                 'financial.view', 'financial.create', 'financial.edit',
             ], true),
             self::Operator => in_array($permission, [
-                'clients.view', 'clients.create',
+                'clients.view', 'clients.create', 'clients.edit',
                 'financial.view',
                 'contracts.view',
             ], true),
