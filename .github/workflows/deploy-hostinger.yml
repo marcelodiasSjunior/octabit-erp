@@ -191,43 +191,28 @@ jobs:
           HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
-          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'EOF'
-          cd $HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR
-
-          # Descobrir versão de PHP disponível
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" << 'EOFSCRIPT'
+          cd "$HOSTINGER_REMOTE_BASE_DIR/laravel_app"
           PHP_VERSION=$(php -v 2>/dev/null | grep -oP 'PHP \K[0-9]+\.[0-9]+' || echo "8.2")
-          
-          # Descobrir se há php-cli.ini para usar no artisan
           if [ -f /etc/php/$PHP_VERSION/cli/php.ini ]; then
             PHP_INI="/etc/php/$PHP_VERSION/cli/php.ini"
           else
             PHP_INI=""
           fi
-
-          # Run migrations
           if [ -z "$PHP_INI" ]; then
             php artisan migrate --force --no-interaction 2>&1 || true
           else
             php -c "$PHP_INI" artisan migrate --force --no-interaction 2>&1 || true
           fi
-
-          # Discover packages
           php artisan package:discover --ansi 2>&1 || true
-
-          # Clear caches
           php artisan optimize:clear 2>&1 || true
-
-          # Create storage symlink
           php artisan storage:link --force 2>&1 || true
-
-          # Validate manifest.json on server
-          if [ ! -f "$HOSTINGER_REMOTE_BASE_DIR/$LARAVEL_DIR/public/build/manifest.json" ]; then
+          if [ ! -f "public/build/manifest.json" ]; then
             echo "WARNING: manifest.json not found on server"
             exit 1
           fi
-
           echo "Post-deployment completed successfully"
-          EOF
+          EOFSCRIPT
 
       - name: Smoke test login endpoint
         env:
