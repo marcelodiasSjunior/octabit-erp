@@ -1,0 +1,14 @@
+# Instrução para imagem de compartilhamento
+
+Para corrigir a ausência de imagem ao compartilhar o site no WhatsApp e redes sociais, crie uma imagem chamada `logo-og.png` com as seguintes características:
+
+- Tamanho recomendado: 1200x630px
+- Formato: PNG
+- Local: `img/logo-og.png`
+- Conteúdo: logomarca OctaBit, fundo limpo, visual profissional
+
+Após criar a imagem, o site já estará configurado para exibir corretamente o preview nas redes sociais.
+
+---
+
+Se precisar de um template, use o arquivo `img/logo.svg` como base para gerar a imagem.
