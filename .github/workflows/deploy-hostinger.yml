@@ -134,7 +134,7 @@ jobs:
             --exclude='node_modules' \
             --exclude='storage/logs/*' \
             --exclude='tests' \
-            -e "ssh -p $HOSTINGER_SSH_PORT" \
+            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/laravel_app/"
 
       - name: Deploy public_html to Hostinger
@@ -146,7 +146,7 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
-            -e "ssh -p $HOSTINGER_SSH_PORT" \
+            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/"
 
       - name: Run post-deployment commands on server
@@ -156,7 +156,7 @@ jobs:
           HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
           HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
         run: |
-          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
             cd domains/octabit.tech/laravel_app &&
             php artisan migrate --force --no-interaction || true &&
             php artisan package:discover --ansi || true &&
