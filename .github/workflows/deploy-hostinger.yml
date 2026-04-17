@@ -119,7 +119,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rsync sshpass
 
-      - name: Deploy laravel_app to Hostinger
+      - name: Deploy laravel_app to Hostinger (erp.octabit.tech)
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -134,10 +134,28 @@ jobs:
             --exclude='node_modules' \
             --exclude='storage/logs/*' \
             --exclude='tests' \
+            --exclude='public_html' \
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
-            ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/laravel_app/"
+            ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/laravel_app/"
 
-      - name: Deploy public_html to Hostinger
+      - name: Deploy public_html to Hostinger subdomain (erp.octabit.tech)
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          mkdir -p /tmp/erp_public_html
+          cat > /tmp/erp_public_html/index.php << 'ENDPOINT'
+          <?php
+          require_once dirname(__DIR__) . '/laravel_app/public/index.php';
+          ENDPOINT
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
+            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
+            /tmp/erp_public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/erp.octabit.tech/public_html/"
+
+      - name: Deploy landing page to main domain (octabit.tech)
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -146,6 +164,8 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz \
+            --exclude='laravel_app' \
+            --exclude='.git' \
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/"
 
