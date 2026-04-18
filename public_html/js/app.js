@@ -66,6 +66,13 @@
         });
 
         els.forEach(function (el) { observer.observe(el); });
+
+        // Fallback: reveal any remaining elements after 2.5s
+        setTimeout(function () {
+            document.querySelectorAll(".reveal:not(.visible)").forEach(function (el) {
+                el.classList.add("visible");
+            });
+        }, 2500);
     }
 
     // ===== SMOOTH SCROLL =====
