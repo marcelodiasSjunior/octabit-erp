@@ -130,6 +130,7 @@ jobs:
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/public_html &&
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/storage/logs &&
+            mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/storage/app/private/contracts &&
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/bootstrap/cache
           "
 
@@ -149,6 +150,7 @@ jobs:
             --exclude='storage/logs/*' \
             --exclude='storage/framework/sessions/*' \
             --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/app/*' \
             --exclude='tests' \
             --exclude='public_html' \
             --exclude='.env' \
