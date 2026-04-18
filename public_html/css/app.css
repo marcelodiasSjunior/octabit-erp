@@ -164,6 +164,7 @@ p:last-child{margin-bottom:0}
 .proof-bar__item{display:flex;align-items:center;gap:var(--sp-4)}
 .proof-bar__number{font-family:var(--font-display);font-size:var(--text-3xl);font-weight:600;color:var(--zinc-950);line-height:1;letter-spacing:-.03em}
 .proof-bar__label{font-size:var(--text-sm);color:var(--zinc-500);line-height:1.4}
+.proof-bar__label strong{color:var(--zinc-700);font-weight:500}
 
 /* --- Feature Bento Grid --- */
 .bento{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}
@@ -393,6 +394,7 @@ textarea.form__input{height:120px;padding-top:var(--sp-3);resize:vertical}
   .header__toggle{display:flex}
   .bento{grid-template-columns:1fr}
   .bento__card--lg{grid-column:span 1}
+  .grid--2,.grid--3,.grid--4{grid-template-columns:1fr}
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
   .proof-bar__grid{grid-template-columns:1fr;gap:var(--sp-4)}
   .timeline{grid-template-columns:1fr;gap:var(--sp-6)}

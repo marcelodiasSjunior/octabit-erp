@@ -96,17 +96,17 @@ $config = [
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => 'Top 3',  'label' => 'KS Oficina',            'desc' => 'Da página 10 ao Top 3 em buscas locais com SEO e presença digital.'],
-            ['number' => '-70%',   'label' => 'Sabor à Domicílio',     'desc' => 'Redução de retrabalho com automações via WhatsApp e painel operacional.'],
-            ['number' => '+35%',   'label' => 'Crescimento em 3 meses','desc' => 'Estrutura digital organizada aumentou faturamento de cliente recorrente.'],
+            ['number' => 'Top 3',  'label' => 'Cliente KS Oficina',      'desc' => 'Da página 10 ao Top 3 em buscas locais com SEO e presença digital.'],
+            ['number' => '-70%',   'label' => 'Cliente Sabor à Domicílio','desc' => 'Redução de retrabalho com automações via WhatsApp e painel operacional.'],
+            ['number' => '+35%',   'label' => 'Crescimento em 3 meses',  'desc' => 'Estrutura digital organizada aumentou faturamento de cliente recorrente.'],
         ],
     ],
 
     'portfolio' => [
-        'title' => 'Casos reais',
+        'title' => 'Nossos clientes',
         'items' => [
-            ['name' => 'KS Oficina',        'desc' => 'Ganho rápido de presença orgânica e posicionamento local com base digital bem executada e SEO básico.', 'tag' => 'Presença Digital'],
-            ['name' => 'Sabor à Domicílio',  'desc' => 'Integração entre operação, automação via WhatsApp e painel administrativo completo.', 'tag' => 'Automação + Operação'],
+            ['name' => 'KS Oficina',        'desc' => 'Oficina mecânica que saiu da invisibilidade digital para o Top 3 do Google local com site profissional e SEO.', 'tag' => 'Cliente · Presença Digital'],
+            ['name' => 'Sabor à Domicílio',  'desc' => 'Delivery que reduziu 70% do retrabalho com automação de pedidos via WhatsApp e painel administrativo.', 'tag' => 'Cliente · Automação'],
             ['name' => 'OctaPonto',          'desc' => 'Produto próprio de controle de jornada, demonstrando capacidade técnica de construir soluções robustas.', 'tag' => 'Produto Próprio'],
         ],
     ],
