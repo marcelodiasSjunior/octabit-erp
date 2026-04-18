@@ -26,6 +26,15 @@ $current_page     = $current_page     ?? 'home';
     <meta property="og:image" content="<?= e($config['brand']['url']) ?>/img/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="<?= e($config['brand']['name']) ?>">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= e($page_title) ?>">
+    <meta name="twitter:description" content="<?= e($page_description) ?>">
+    <meta name="twitter:image" content="<?= e($config['brand']['url']) ?>/img/og-image.jpg">
+
+    <link rel="canonical" href="<?= e($config['brand']['url'] . ($_SERVER['REQUEST_URI'] === '/' ? '' : rtrim($_SERVER['REQUEST_URI'], '/'))) ?>">
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96x96.png">
@@ -46,8 +55,37 @@ $current_page     = $current_page     ?? 'home';
     <link rel="stylesheet" href="/css/app.css?v=<?= filemtime(__DIR__ . '/../css/app.css') ?>">
 
     <meta name="apps-script-url" content="<?= e($config['integrations']['google_apps_script']) ?>">
+
+    <?php if (!empty($config['integrations']['ga4_id'])): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($config['integrations']['ga4_id']) ?>"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= e($config['integrations']['ga4_id']) ?>');</script>
+    <?php endif; ?>
+
+    <?php if (!empty($config['integrations']['meta_pixel_id'])): ?>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','<?= e($config['integrations']['meta_pixel_id']) ?>');fbq('track','PageView');</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?= e($config['integrations']['meta_pixel_id']) ?>&ev=PageView&noscript=1"/></noscript>
+    <?php endif; ?>
 </head>
 <body>
 <?php include __DIR__ . '/whatsapp-float.php'; ?>
 <?php include __DIR__ . '/header.php'; ?>
 <main>
+
+<?php if ($current_page === 'home'): ?>
+<script type="application/ld+json">
+<?= json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'ProfessionalService',
+    'name' => $config['brand']['name'],
+    'url' => $config['brand']['url'],
+    'logo' => $config['brand']['url'] . $config['brand']['logo'],
+    'description' => $page_description,
+    'telephone' => '+55' . $config['contact']['whatsapp_number'],
+    'email' => $config['contact']['email'],
+    'areaServed' => 'BR',
+    'serviceType' => ['Estruturação Digital', 'Desenvolvimento Web', 'Automação de Processos', 'Business Intelligence'],
+    'priceRange' => 'R$ 497 - R$ 1.997/mês',
+    'sameAs' => [$config['brand']['instagram']],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>
+</script>
+<?php endif; ?>

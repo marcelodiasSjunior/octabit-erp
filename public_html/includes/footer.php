@@ -34,6 +34,9 @@
 
         <div class="footer__bottom">
             <p><?= e($config['footer']['copyright']) ?></p>
+            <?php if (!empty($config['footer']['cnpj'])): ?>
+            <p>CNPJ: <?= e($config['footer']['cnpj']) ?></p>
+            <?php endif; ?>
         </div>
     </div>
 </footer>

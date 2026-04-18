@@ -104,6 +104,8 @@
     function handleFormSubmit(form) {
         var origin = form.getAttribute("data-origin");
         var messageEl = form.querySelector(".form__success");
+        var submitBtn = form.querySelector('button[type="submit"]');
+        var btnOriginalText = submitBtn ? submitBtn.textContent : "";
         var data = new FormData(form);
         var payload = {
             nome: data.get("nome") || "",
@@ -112,6 +114,13 @@
             mensagem: data.get("mensagem") || "",
             origem: origin
         };
+
+        // Loading state
+        if (submitBtn) {
+            submitBtn.classList.add("btn--loading");
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Enviando...";
+        }
 
         if (messageEl) {
             messageEl.className = "form__success";
@@ -130,6 +139,11 @@
         if (meta) scriptUrl = meta.getAttribute("content");
 
         if (!scriptUrl) {
+            if (submitBtn) {
+                submitBtn.classList.remove("btn--loading");
+                submitBtn.disabled = false;
+                submitBtn.textContent = btnOriginalText;
+            }
             if (messageEl) {
                 messageEl.className = "form__success";
                 messageEl.style.display = "block";
@@ -147,6 +161,11 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         }).then(function () {
+            if (submitBtn) {
+                submitBtn.classList.remove("btn--loading");
+                submitBtn.disabled = false;
+                submitBtn.textContent = btnOriginalText;
+            }
             if (messageEl) {
                 messageEl.className = "form__success";
                 messageEl.style.display = "block";
@@ -154,6 +173,11 @@
             }
             form.reset();
         }).catch(function () {
+            if (submitBtn) {
+                submitBtn.classList.remove("btn--loading");
+                submitBtn.disabled = false;
+                submitBtn.textContent = btnOriginalText;
+            }
             if (messageEl) {
                 messageEl.className = "form__success";
                 messageEl.style.display = "block";

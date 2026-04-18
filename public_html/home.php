@@ -14,7 +14,7 @@ include __DIR__ . '/includes/head.php';
         <h1 class="hero__title"><span class="gradient-text"><?= e($config['hero']['title']) ?></span></h1>
         <p class="hero__subtitle"><?= e($config['hero']['subtitle']) ?></p>
         <div class="hero__actions">
-            <a href="/contato" class="btn btn--primary btn--lg"><?= e($config['hero']['cta_primary']) ?> →</a>
+            <a href="#cta-form" class="btn btn--primary btn--lg"><?= e($config['hero']['cta_primary']) ?> →</a>
             <a href="#como-funciona" class="btn btn--ghost btn--lg"><?= e($config['hero']['cta_secondary']) ?></a>
         </div>
     </div>
@@ -115,6 +115,12 @@ include __DIR__ . '/includes/head.php';
                 <div class="case-card__tag"><?= e($case['tag']) ?></div>
                 <h3><?= e($case['name']) ?></h3>
                 <p><?= e($case['desc']) ?></p>
+                <?php if (!empty($case['quote'])): ?>
+                <blockquote class="case-card__quote">
+                    <p>“<?= e($case['quote']) ?>”</p>
+                    <cite>— <?= e($case['author']) ?>, <?= e($case['name']) ?></cite>
+                </blockquote>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
         </div>
@@ -133,6 +139,9 @@ include __DIR__ . '/includes/head.php';
         <div class="plans">
             <?php foreach ($config['plans']['list'] as $i => $plan): ?>
             <div class="plan<?= $plan['featured'] ? ' plan--featured' : '' ?> reveal reveal-delay-<?= $i + 1 ?>">
+                <?php if (!empty($plan['badge'])): ?>
+                <div class="plan__badge"><?= e($plan['badge']) ?></div>
+                <?php endif; ?>
                 <div class="plan__name"><?= e($plan['name']) ?></div>
                 <div class="plan__price">
                     <strong><?= formatBRL($plan['monthly']) ?></strong>
@@ -145,7 +154,7 @@ include __DIR__ . '/includes/head.php';
                     <li><?= e($b) ?></li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?= e(whatsappURL("Olá! Tenho interesse no plano {$plan['name']}.")) ?>"
+                <a href="<?= e(whatsappURL("Olá! Tenho interesse no plano {$plan['name']}.", 'planos')) ?>"
                    class="btn <?= $plan['featured'] ? 'btn--primary' : 'btn--outline' ?> btn--full"
                    target="_blank" rel="noopener">
                     Escolher <?= e($plan['name']) ?> →
@@ -153,6 +162,12 @@ include __DIR__ . '/includes/head.php';
             </div>
             <?php endforeach; ?>
         </div>
+
+        <?php if (!empty($config['plans']['guarantee'])): ?>
+        <div class="text-center mt-8 reveal">
+            <p class="plan__guarantee">🔒 <?= e($config['plans']['guarantee']) ?></p>
+        </div>
+        <?php endif; ?>
 
         <div class="text-center mt-8 reveal">
             <a href="/planos" class="btn btn--outline">Ver detalhes completos →</a>
@@ -184,7 +199,7 @@ include __DIR__ . '/includes/head.php';
 </section>
 
 <!-- ====== CTA COM FORMULÁRIO INLINE ====== -->
-<section class="cta-section cta-section--dark">
+<section class="cta-section cta-section--dark" id="cta-form">
     <div class="container">
         <h2>Sua empresa pronta para o próximo nível</h2>
         <p>Preencha seus dados e receba um diagnóstico gratuito da sua maturidade digital.</p>
@@ -196,7 +211,7 @@ include __DIR__ . '/includes/head.php';
             <div class="form__success"></div>
         </form>
         <div class="hero__actions" style="margin-top:var(--sp-4)">
-            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar pelo WhatsApp?</a>
+            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.', 'cta-home')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar pelo WhatsApp?</a>
         </div>
     </div>
 </section>

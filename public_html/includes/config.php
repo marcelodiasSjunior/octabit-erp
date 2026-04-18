@@ -37,8 +37,8 @@ $config = [
     'hero' => [
         'badge'    => 'Estruturação Digital Estratégica',
         'title'    => 'Chega de improvisar. Estruture seu negócio com tecnologia que funciona',
-        'subtitle' => 'Presença profissional online, processos automáticos e dashboards para tomar decisões — sem precisar de equipe de TI.',
-        'cta_primary'   => 'Quero organizar minha empresa',
+        'subtitle' => 'Em 30 dias, seu negócio com site profissional, processos automatizados e dashboard de resultados — sem precisar de equipe de TI.',
+        'cta_primary'   => 'Receber diagnóstico gratuito',
         'cta_secondary' => 'Ver como funciona',
     ],
 
@@ -96,17 +96,17 @@ $config = [
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => 'Top 3',  'label' => 'Cliente KS Oficina',      'desc' => 'Da página 10 ao Top 3 em buscas locais com SEO e presença digital.'],
-            ['number' => '-70%',   'label' => 'Cliente Sabor à Domicílio','desc' => 'Redução de retrabalho com automações via WhatsApp e painel operacional.'],
-            ['number' => '+35%',   'label' => 'Crescimento em 3 meses',  'desc' => 'Estrutura digital organizada aumentou faturamento de cliente recorrente.'],
+            ['number' => '12+',   'label' => 'Empresas estruturadas',  'desc' => 'Pequenas empresas com presença digital e processos organizados.'],
+            ['number' => '-70%',  'label' => 'Menos retrabalho',       'desc' => 'Redução média de trabalho manual com automações e integrações.'],
+            ['number' => 'Top 3', 'label' => 'Google Local',           'desc' => 'Posição alcançada por cliente com SEO e presença digital.'],
         ],
     ],
 
     'portfolio' => [
         'title' => 'Nossos clientes',
         'items' => [
-            ['name' => 'KS Oficina',        'desc' => 'Oficina mecânica que saiu da invisibilidade digital para o Top 3 do Google local com site profissional e SEO.', 'tag' => 'Cliente · Presença Digital'],
-            ['name' => 'Sabor à Domicílio',  'desc' => 'Delivery que reduziu 70% do retrabalho com automação de pedidos via WhatsApp e painel administrativo.', 'tag' => 'Cliente · Automação'],
+            ['name' => 'KS Oficina',        'desc' => 'Oficina mecânica que saiu da invisibilidade digital para o Top 3 do Google local com site profissional e SEO.', 'tag' => 'Cliente · Presença Digital', 'quote' => 'Saímos do zero no digital para o Top 3 do Google em menos de 3 meses.', 'author' => 'Proprietário'],
+            ['name' => 'Sabor à Domicílio',  'desc' => 'Delivery que reduziu 70% do retrabalho com automação de pedidos via WhatsApp e painel administrativo.', 'tag' => 'Cliente · Automação', 'quote' => 'Antes era tudo no papel e no WhatsApp. Hoje o sistema faz 70% do trabalho sozinho.', 'author' => 'Fundadora'],
             ['name' => 'OctaPonto',          'desc' => 'Produto próprio de controle de jornada, demonstrando capacidade técnica de construir soluções robustas.', 'tag' => 'Produto Próprio'],
         ],
     ],
@@ -151,9 +151,10 @@ $config = [
     ],
 
     'plans' => [
-        'title'    => 'Escolha o nível de transformação da sua empresa',
-        'subtitle' => 'Cada plano representa um estágio de maturidade digital',
-        'list'     => [
+        'title'     => 'Escolha o nível de transformação da sua empresa',
+        'subtitle'  => 'Cada plano representa um estágio de maturidade digital',
+        'guarantee' => 'Sem fidelidade após 3 meses · Diagnóstico gratuito sem compromisso',
+        'list'      => [
             [
                 'id'       => 'essencial',
                 'name'     => 'Essencial',
@@ -226,12 +227,16 @@ $config = [
             ['q' => 'Posso cancelar quando quiser?',                    'a' => 'Sim. Após os 3 primeiros meses de implantação, você pode cancelar a qualquer momento sem multa.'],
             ['q' => 'Qual a diferença entre planos e soluções avulsas?','a' => 'Os planos incluem acompanhamento contínuo e evolução mensal. Soluções avulsas são projetos pontuais com entrega definida.'],
             ['q' => 'Funciona para qualquer tipo de empresa?',          'a' => 'Nosso foco são pequenas empresas com 2 a 20 funcionários que querem sair do improviso e crescer com estrutura.'],
+            ['q' => 'E se eu não gostar do resultado?',                 'a' => 'Trabalhamos com ciclos de entrega e validação. Se o resultado não atender, ajustamos até ficar certo. Após os 3 primeiros meses, você pode cancelar sem multa.'],
+            ['q' => 'Qual o prazo de entrega?',                         'a' => 'O site fica pronto em 7 a 15 dias úteis. Automações e dashboards são implantados em paralelo, com entregas semanais.'],
+            ['q' => 'Como funciona o pagamento?',                       'a' => 'Implantação é paga à vista ou em até 3x. A mensalidade começa após a entrega e é cobrada via boleto ou Pix.'],
         ],
     ],
 
     'footer' => [
         'copyright' => '© 2026 OctaBit. Todos os direitos reservados.',
         'text'      => 'Estruturação digital estratégica para pequenas empresas.',
+        'cnpj'      => '', // Preencher com CNPJ real
     ],
 ];
 
@@ -240,11 +245,12 @@ function formatBRL($value) {
     return 'R$ ' . number_format($value, 0, ',', '.');
 }
 
-// Helper: WhatsApp URL with message
-function whatsappURL($message = '') {
+// Helper: WhatsApp URL with message and source tracking
+function whatsappURL($message = '', $source = '') {
     global $config;
     $url = $config['contact']['whatsapp_url'];
     if ($message) {
+        if ($source) $message .= " [via: {$source}]";
         $url .= '?text=' . urlencode($message);
     }
     return $url;
