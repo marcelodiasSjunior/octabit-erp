@@ -34,6 +34,24 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
+<!-- ====== PARA QUEM É ====== -->
+<section class="section section--subtle">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Para quem é</span>
+            <h2><?= e($config['target_audience']['title']) ?></h2>
+        </div>
+        <div class="audience-grid reveal">
+            <?php foreach ($config['target_audience']['items'] as $item): ?>
+            <div class="audience-item">
+                <svg viewBox="0 0 24 24"><use href="#icon-<?= e($item['icon']) ?>"/></svg>
+                <span><?= e($item['text']) ?></span>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
 <!-- ====== FEATURE BENTO GRID ====== -->
 <section class="section" id="servicos-preview">
     <div class="container">
@@ -138,7 +156,7 @@ include __DIR__ . '/includes/head.php';
                 <p class="plan__desc"><?= e($plan['goal']) ?></p>
                 <div class="plan__setup">Implantação a partir de <?= formatBRL($plan['setup']) ?></div>
                 <ul class="plan__features">
-                    <?php foreach (array_slice($plan['benefits'], 0, 3) as $b): ?>
+                    <?php foreach ($plan['benefits'] as $b): ?>
                     <li><?= e($b) ?></li>
                     <?php endforeach; ?>
                 </ul>
@@ -157,7 +175,45 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== CTA ====== -->
-<?php include __DIR__ . '/includes/cta-section.php'; ?>
+<!-- ====== FAQ ====== -->
+<section class="section section--subtle">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">FAQ</span>
+            <h2><?= e($config['faq']['title']) ?></h2>
+        </div>
+        <div class="faq reveal">
+            <?php foreach ($config['faq']['items'] as $faq): ?>
+            <div class="faq__item">
+                <button class="faq__question" type="button" aria-expanded="false">
+                    <span><?= e($faq['q']) ?></span>
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq__answer">
+                    <p><?= e($faq['a']) ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CTA COM FORMULÁRIO INLINE ====== -->
+<section class="cta-section cta-section--dark">
+    <div class="container">
+        <h2>Sua empresa pronta para o próximo nível</h2>
+        <p>Preencha seus dados e receba um diagnóstico gratuito da sua maturidade digital.</p>
+        <form class="cta-inline-form" data-origin="cta-home">
+            <input type="text" name="nome" class="form__input" placeholder="Seu nome" required>
+            <input type="email" name="email" class="form__input" placeholder="Seu e-mail" required>
+            <input type="tel" name="telefone" class="form__input" placeholder="WhatsApp" style="grid-column:span 2">
+            <button type="submit" class="btn btn--primary btn--lg">Quero meu diagnóstico gratuito →</button>
+            <div class="form__success"></div>
+        </form>
+        <div class="hero__actions" style="margin-top:var(--sp-4)">
+            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar pelo WhatsApp?</a>
+        </div>
+    </div>
+</section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

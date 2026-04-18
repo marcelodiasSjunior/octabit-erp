@@ -28,7 +28,7 @@ $config = [
     'nav' => [
         ['text' => 'Início',    'href' => '/'],
         ['text' => 'Serviços',  'href' => '/servicos'],
-        ['text' => 'Soluções',  'href' => '/solucoes'],
+        ['text' => 'Catálogo',  'href' => '/solucoes'],
         ['text' => 'Planos',    'href' => '/planos'],
         ['text' => 'Sobre',     'href' => '/sobre'],
         ['text' => 'Contato',   'href' => '/contato'],
@@ -36,10 +36,10 @@ $config = [
 
     'hero' => [
         'badge'    => 'Estruturação Digital Estratégica',
-        'title'    => 'Transforme sua empresa com tecnologia estratégica',
-        'subtitle' => 'A OctaBit estrutura, moderniza e impulsiona pequenas empresas através do método PTE-I — com presença profissional, automações úteis e dados claros para decisão.',
-        'cta_primary'   => 'Agendar diagnóstico gratuito',
-        'cta_secondary' => 'Ver planos',
+        'title'    => 'Chega de improvisar. Estruture seu negócio com tecnologia que funciona',
+        'subtitle' => 'Presença profissional online, processos automáticos e dashboards para tomar decisões — sem precisar de equipe de TI.',
+        'cta_primary'   => 'Quero organizar minha empresa',
+        'cta_secondary' => 'Ver como funciona',
     ],
 
     'problem' => [
@@ -96,9 +96,9 @@ $config = [
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => 'Top 3',  'label' => 'Posicionamento Local',   'desc' => 'Cliente saiu da página 10 para as primeiras posições em buscas locais.'],
-            ['number' => '-70%',   'label' => 'Redução de Retrabalho',  'desc' => 'Automações liberaram tempo para foco em vendas e atendimento.'],
-            ['number' => '+35%',   'label' => 'Crescimento em 3 meses', 'desc' => 'Com estrutura digital organizada, cliente aumentou faturamento.'],
+            ['number' => 'Top 3',  'label' => 'KS Oficina',            'desc' => 'Da página 10 ao Top 3 em buscas locais com SEO e presença digital.'],
+            ['number' => '-70%',   'label' => 'Sabor à Domicílio',     'desc' => 'Redução de retrabalho com automações via WhatsApp e painel operacional.'],
+            ['number' => '+35%',   'label' => 'Crescimento em 3 meses','desc' => 'Estrutura digital organizada aumentou faturamento de cliente recorrente.'],
         ],
     ],
 
@@ -216,6 +216,17 @@ $config = [
         'title'    => 'Diagnóstico de Maturidade Digital',
         'subtitle' => 'Descubra em 5 minutos o nível de maturidade digital da sua empresa e receba um relatório personalizado com recomendações práticas.',
         'button'   => 'Quero meu diagnóstico gratuito',
+    ],
+
+    'faq' => [
+        'title' => 'Dúvidas frequentes',
+        'items' => [
+            ['q' => 'Preciso ter equipe de TI?',                       'a' => 'Não. A OctaBit cuida da implementação e manutenção. Seu único papel é aprovar e usar.'],
+            ['q' => 'Quanto tempo leva para ver resultados?',           'a' => 'Os primeiros ganhos aparecem nas primeiras semanas. Resultados consistentes se consolidam em 2 a 3 meses.'],
+            ['q' => 'Posso cancelar quando quiser?',                    'a' => 'Sim. Após os 3 primeiros meses de implantação, você pode cancelar a qualquer momento sem multa.'],
+            ['q' => 'Qual a diferença entre planos e soluções avulsas?','a' => 'Os planos incluem acompanhamento contínuo e evolução mensal. Soluções avulsas são projetos pontuais com entrega definida.'],
+            ['q' => 'Funciona para qualquer tipo de empresa?',          'a' => 'Nosso foco são pequenas empresas com 2 a 20 funcionários que querem sair do improviso e crescer com estrutura.'],
+        ],
     ],
 
     'footer' => [
