@@ -38,6 +38,6 @@
     </div>
 </footer>
 
-<script defer src="/js/app.js"></script>
+<script defer src="/js/app.js?v=<?= filemtime(__DIR__ . '/../js/app.js') ?>"></script>
 </body>
 </html>
