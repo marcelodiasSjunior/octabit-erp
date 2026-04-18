@@ -69,6 +69,13 @@ include __DIR__ . '/includes/head.php';
                 </div>
                 <h3><?= e($srv['title']) ?></h3>
                 <p><?= e($srv['desc']) ?></p>
+                <?php if (!empty($srv['deliverables'])): ?>
+                <ul class="card__list">
+                    <?php foreach ($srv['deliverables'] as $d): ?>
+                    <li><?= e($d) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
         </div>
