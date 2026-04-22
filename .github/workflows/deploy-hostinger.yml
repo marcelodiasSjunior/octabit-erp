@@ -129,6 +129,7 @@ jobs:
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/public_html &&
+            mkdir -p $HOSTINGER_REMOTE_BASE_DIR/public_html/erp &&
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/storage/logs &&
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/storage/app/private/contracts &&
             mkdir -p $HOSTINGER_REMOTE_BASE_DIR/laravel_app/bootstrap/cache
@@ -178,10 +179,9 @@ jobs:
           HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
-          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
-            cp -r $HOSTINGER_REMOTE_BASE_DIR/laravel_app/public/build $HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build 2>/dev/null || true &&
-            echo 'Vite assets copied to /erp/build/'
-          "
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
+            ./public/build/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build/"
 
       - name: Run post-deployment commands
         env:
@@ -204,8 +204,10 @@ jobs:
         run: |
           sleep 3
           ERP_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/erp/login" -k || echo "000")
+          ERP_ASSET_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/erp/build/manifest.json" -k || echo "000")
           LANDING_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/" -k || echo "000")
           echo "ERP HTTP Response: $ERP_HTTP_CODE"
+          echo "ERP Asset HTTP Response: $ERP_ASSET_HTTP_CODE"
           echo "Landing HTTP Response: $LANDING_HTTP_CODE"
           if [ "$LANDING_HTTP_CODE" = "200" ] || [ "$LANDING_HTTP_CODE" = "301" ] || [ "$LANDING_HTTP_CODE" = "302" ]; then
             echo "✓ Landing page responding"
@@ -216,6 +218,11 @@ jobs:
             echo "✓ ERP responding"
           else
             echo "⚠ ERP: HTTP $ERP_HTTP_CODE"
+          fi
+          if [ "$ERP_ASSET_HTTP_CODE" = "200" ]; then
+            echo "✓ ERP assets responding"
+          else
+            echo "⚠ ERP assets: HTTP $ERP_ASSET_HTTP_CODE"
           fi
 
       - name: Deployment Summary
