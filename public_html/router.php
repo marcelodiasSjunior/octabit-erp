@@ -8,11 +8,15 @@ $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 $routes = [
     ''          => 'home.php',
+    'produtos'  => 'produtos.php',
     'servicos'  => 'servicos.php',
     'solucoes'  => 'solucoes.php',
     'planos'    => 'planos.php',
     'sobre'     => 'sobre.php',
     'contato'   => 'contato.php',
+    'produtos/octaponto'  => 'produto-octaponto.php',
+    'produtos/octavendas' => 'produto-octavendas.php',
+    'produtos/octacrm'    => 'produto-octacrm.php',
 ];
 
 if (array_key_exists($uri, $routes)) {

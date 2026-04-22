@@ -27,6 +27,7 @@ $config = [
 
     'nav' => [
         ['text' => 'Início',    'href' => '/'],
+        ['text' => 'Produtos',  'href' => '/produtos'],
         ['text' => 'Serviços',  'href' => '/servicos'],
         ['text' => 'Catálogo',  'href' => '/solucoes'],
         ['text' => 'Planos',    'href' => '/planos'],
@@ -39,7 +40,7 @@ $config = [
         'title'    => 'Chega de improvisar. Estruture seu negócio com tecnologia que funciona',
         'subtitle' => 'Em 30 dias, seu negócio com site profissional, processos automatizados e dashboard de resultados — sem precisar de equipe de TI.',
         'cta_primary'   => 'Receber diagnóstico gratuito',
-        'cta_secondary' => 'Ver como funciona',
+        'cta_secondary' => 'Ver os produtos',
     ],
 
     'problem' => [
@@ -136,9 +137,9 @@ $config = [
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => '12+',   'label' => 'Empresas estruturadas',  'desc' => 'Pequenas empresas com presença digital e processos organizados.'],
-            ['number' => '-70%',  'label' => 'Menos retrabalho',       'desc' => 'Redução média de trabalho manual com automações e integrações.'],
-            ['number' => 'Top 3', 'label' => 'Google Local',           'desc' => 'Posição alcançada por cliente com SEO e presença digital.'],
+            ['number' => '10+',  'label' => 'Clientes satisfeitos',     'desc' => 'Negócios que estruturaram operação com a OctaBit.'],
+            ['number' => '70%',  'label' => 'Menos trabalho manual',    'desc' => 'Redução média com automações e integrações.' ],
+            ['number' => '30',   'label' => 'Dias para 1º resultado',   'desc' => 'Do diagnóstico à operação funcionando.' ],
         ],
     ],
 
@@ -262,24 +263,27 @@ $config = [
                 'desc'  => 'Controle de jornada e ponto eletrônico. Registro de entrada e saída pelo celular, relatórios automáticos e gestão de equipes.',
                 'tag'   => 'Gestão de Pessoas',
                 'icon'  => 'activity',
+                'image' => '/img/produtos/octaponto/dashboard.jpg',
                 'cta'   => 'Conhecer o OctaPonto',
-                'url'   => '#',
+                'url'   => '/produtos/octaponto',
             ],
             [
                 'name'  => 'OctaVendas',
                 'desc'  => 'Gestão comercial pelo WhatsApp. Controle de pedidos, acompanhamento de vendas e CRM simplificado para quem vende todo dia.',
                 'tag'   => 'Vendas e CRM',
                 'icon'  => 'zap',
+                'image' => '/img/produtos/octavendas/dashboard.jpg',
                 'cta'   => 'Conhecer o OctaVendas',
-                'url'   => '#',
+                'url'   => '/produtos/octavendas',
             ],
             [
-                'name'  => 'OctaSite',
-                'desc'  => 'Sites institucionais prontos. Escolha um modelo, personalize com sua marca e publique em minutos. Domínio e hospedagem inclusos.',
-                'tag'   => 'Presença Digital',
-                'icon'  => 'globe',
-                'cta'   => 'Conhecer o OctaSite',
-                'url'   => '#',
+                'name'  => 'OctaCRM',
+                'desc'  => 'CRM para prestadores de serviço. Clientes, orçamentos, cobranças, contratos e histórico em um só lugar.',
+                'tag'   => 'Gestão de Clientes',
+                'icon'  => 'briefcase',
+                'image' => '/img/produtos/octacrm/dashboard.jpg',
+                'cta'   => 'Conhecer o OctaCRM',
+                'url'   => '/produtos/octacrm',
             ],
         ],
     ],

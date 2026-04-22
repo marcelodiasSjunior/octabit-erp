@@ -15,7 +15,7 @@ include __DIR__ . '/includes/head.php';
         <p class="hero__subtitle"><?= e($config['hero']['subtitle']) ?></p>
         <div class="hero__actions">
             <a href="#cta-form" class="btn btn--primary btn--lg"><?= e($config['hero']['cta_primary']) ?> →</a>
-            <a href="#como-funciona" class="btn btn--ghost btn--lg"><?= e($config['hero']['cta_secondary']) ?></a>
+            <a href="#produtos" class="btn btn--ghost btn--lg"><?= e($config['hero']['cta_secondary']) ?></a>
         </div>
     </div>
 </section>
@@ -135,7 +135,7 @@ include __DIR__ . '/includes/head.php';
 </section>
 
 <!-- ====== PRODUTOS (SaaS) ====== -->
-<section class="section">
+<section class="section" id="produtos">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Produtos</span>
@@ -147,6 +147,11 @@ include __DIR__ . '/includes/head.php';
             <?php foreach ($config['products']['items'] as $i => $product): ?>
             <div class="product-card reveal reveal-delay-<?= $i + 1 ?>">
                 <div class="product-card__tag"><?= e($product['tag']) ?></div>
+                <?php if (!empty($product['image'])): ?>
+                <div class="product-card__media">
+                    <img src="<?= e($product['image']) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
+                </div>
+                <?php endif; ?>
                 <div class="product-card__icon">
                     <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
                 </div>
