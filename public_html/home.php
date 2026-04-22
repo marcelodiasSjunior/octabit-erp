@@ -134,33 +134,8 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== PRODUTOS (SaaS) ====== -->
-<section class="section">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow">Produtos</span>
-            <h2><?= e($config['products']['title']) ?></h2>
-            <p class="section__desc"><?= e($config['products']['subtitle']) ?></p>
-        </div>
-
-        <div class="grid grid--3">
-            <?php foreach ($config['products']['items'] as $i => $product): ?>
-            <div class="product-card reveal reveal-delay-<?= $i + 1 ?>">
-                <div class="product-card__tag"><?= e($product['tag']) ?></div>
-                <div class="product-card__icon">
-                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
-                </div>
-                <h3><?= e($product['name']) ?></h3>
-                <p><?= e($product['desc']) ?></p>
-                <a href="<?= e($product['url']) ?>" class="btn btn--outline btn--sm"><?= e($product['cta']) ?> →</a>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
 <!-- ====== PRICING PREVIEW ====== -->
-<section class="section section--subtle">
+<section class="section">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Planos</span>
