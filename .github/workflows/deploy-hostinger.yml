@@ -202,6 +202,23 @@ jobs:
         if: steps.landing_changes.outputs.landing_changed != 'true'
         run: echo "Landing deploy skipped (no changes in public_html/)"
 
+      - name: Clear landing cache and stale index
+        if: steps.landing_changes.outputs.landing_changed == 'true'
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
+            set -e
+            rm -f $HOSTINGER_REMOTE_BASE_DIR/public_html/index.html || true
+            rm -rf $HOSTINGER_REMOTE_BASE_DIR/public_html/.lscache/* || true
+            touch $HOSTINGER_REMOTE_BASE_DIR/public_html/.htaccess || true
+            echo 'Landing cache cleanup completed'
+          "
+
       - name: Copy Vite assets to ERP public path
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
