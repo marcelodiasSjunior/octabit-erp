@@ -119,6 +119,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rsync sshpass
 
+      - name: Detect landing changes
+        id: landing_changes
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "landing_changed=true" >> $GITHUB_OUTPUT
+            echo "Manual dispatch: landing deploy enabled"
+            exit 0
+          fi
+
+          BEFORE_SHA="${{ github.event.before }}"
+          CURRENT_SHA="${{ github.sha }}"
+
+          if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "landing_changed=true" >> $GITHUB_OUTPUT
+            echo "No previous SHA available; keeping landing deploy enabled for safety"
+            exit 0
+          fi
+
+          if git diff --name-only "$BEFORE_SHA" "$CURRENT_SHA" | grep -q '^public_html/'; then
+            echo "landing_changed=true" >> $GITHUB_OUTPUT
+            echo "Landing files changed in this push"
+          else
+            echo "landing_changed=false" >> $GITHUB_OUTPUT
+            echo "No landing changes detected; landing deploy will be skipped"
+          fi
+
       - name: Prepare remote directories
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
@@ -159,6 +185,7 @@ jobs:
             ./ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/laravel_app/"
 
       - name: Deploy landing page + ERP entry point
+        if: steps.landing_changes.outputs.landing_changed == 'true'
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
           HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
@@ -170,6 +197,10 @@ jobs:
             --exclude='.git' \
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./public_html/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/"
+
+      - name: Landing deploy skipped
+        if: steps.landing_changes.outputs.landing_changed != 'true'
+        run: echo "Landing deploy skipped (no changes in public_html/)"
 
       - name: Copy Vite assets to ERP public path
         env:
