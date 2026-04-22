@@ -183,6 +183,22 @@ jobs:
             -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $HOSTINGER_SSH_PORT" \
             ./public/build/ "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST:$HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build/"
 
+      - name: Verify assets on remote host
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          HOSTINGER_SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          HOSTINGER_SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          HOSTINGER_SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
+        run: |
+          sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
+            set -e
+            test -f $HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build/manifest.json
+            ls -1 $HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build/assets/*.css >/dev/null
+            ls -1 $HOSTINGER_REMOTE_BASE_DIR/public_html/erp/build/assets/*.js >/dev/null
+            echo 'Remote asset verification passed'
+          "
+
       - name: Run post-deployment commands
         env:
           HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
@@ -202,28 +218,42 @@ jobs:
 
       - name: Smoke test endpoint
         run: |
+          set -e
           sleep 3
+          ERP_LOGIN_URL="https://octabit.tech/erp/login"
+          ERP_MANIFEST_URL="https://octabit.tech/erp/build/manifest.json"
           ERP_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/erp/login" -k || echo "000")
-          ERP_ASSET_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/erp/build/manifest.json" -k || echo "000")
+          ERP_ASSET_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$ERP_MANIFEST_URL" -k || echo "000")
           LANDING_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech/" -k || echo "000")
+          LOGIN_HTML=$(curl -sL "$ERP_LOGIN_URL" -k || true)
+          CSS_ASSET_PATH=$(echo "$LOGIN_HTML" | grep -Eo '/erp/build/assets/[^"[:space:]]+\.css' | head -n 1 || true)
           echo "ERP HTTP Response: $ERP_HTTP_CODE"
           echo "ERP Asset HTTP Response: $ERP_ASSET_HTTP_CODE"
           echo "Landing HTTP Response: $LANDING_HTTP_CODE"
-          if [ "$LANDING_HTTP_CODE" = "200" ] || [ "$LANDING_HTTP_CODE" = "301" ] || [ "$LANDING_HTTP_CODE" = "302" ]; then
-            echo "✓ Landing page responding"
-          else
-            echo "⚠ Landing page: HTTP $LANDING_HTTP_CODE"
+          if [ "$LANDING_HTTP_CODE" != "200" ] && [ "$LANDING_HTTP_CODE" != "301" ] && [ "$LANDING_HTTP_CODE" != "302" ]; then
+            echo "❌ Landing page failed: HTTP $LANDING_HTTP_CODE"
+            exit 1
           fi
-          if [ "$ERP_HTTP_CODE" = "200" ] || [ "$ERP_HTTP_CODE" = "302" ]; then
-            echo "✓ ERP responding"
-          else
-            echo "⚠ ERP: HTTP $ERP_HTTP_CODE"
+          if [ "$ERP_HTTP_CODE" != "200" ] && [ "$ERP_HTTP_CODE" != "302" ]; then
+            echo "❌ ERP login failed: HTTP $ERP_HTTP_CODE"
+            exit 1
           fi
-          if [ "$ERP_ASSET_HTTP_CODE" = "200" ]; then
-            echo "✓ ERP assets responding"
-          else
-            echo "⚠ ERP assets: HTTP $ERP_ASSET_HTTP_CODE"
+          if [ "$ERP_ASSET_HTTP_CODE" != "200" ]; then
+            echo "❌ ERP manifest failed: HTTP $ERP_ASSET_HTTP_CODE"
+            exit 1
           fi
+          if [ -z "$CSS_ASSET_PATH" ]; then
+            echo "❌ CSS asset path not found in ERP login HTML"
+            exit 1
+          fi
+          CSS_ASSET_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://octabit.tech$CSS_ASSET_PATH" -k || echo "000")
+          echo "ERP CSS Asset URL: https://octabit.tech$CSS_ASSET_PATH"
+          echo "ERP CSS Asset HTTP Response: $CSS_ASSET_HTTP_CODE"
+          if [ "$CSS_ASSET_HTTP_CODE" != "200" ]; then
+            echo "❌ ERP CSS asset failed: HTTP $CSS_ASSET_HTTP_CODE"
+            exit 1
+          fi
+          echo "✅ Smoke checks passed (landing, ERP login, manifest, CSS asset)"
 
       - name: Deployment Summary
         if: success()
