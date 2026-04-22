@@ -208,12 +208,16 @@ jobs:
           HOSTINGER_REMOTE_BASE_DIR: ${{ secrets.HOSTINGER_REMOTE_BASE_DIR }}
         run: |
           sshpass -p "$HOSTINGER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$HOSTINGER_SSH_PORT" "$HOSTINGER_SSH_USER@$HOSTINGER_SSH_HOST" "
+            set -e
             cd $HOSTINGER_REMOTE_BASE_DIR/laravel_app &&
-            php artisan migrate --force --no-interaction || true &&
-            php artisan package:discover --ansi || true &&
-            php artisan optimize:clear || true &&
+            php artisan migrate --force --no-interaction &&
+            php artisan db:seed --class=PipelineSeeder --force --no-interaction &&
+            php artisan db:seed --class=FollowupSLASeeder --force --no-interaction &&
+            php artisan db:seed --class=FollowupRuleSeeder --force --no-interaction &&
+            php artisan package:discover --ansi &&
+            php artisan optimize:clear &&
             php artisan storage:link --force || true &&
-            echo 'Post-deployment completed'
+            echo 'Post-deployment completed (migrations + pipeline seeders applied)'
           "
 
       - name: Smoke test endpoint
