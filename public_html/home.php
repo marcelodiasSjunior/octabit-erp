@@ -6,6 +6,7 @@ $header_dark      = true;
 require_once __DIR__ . '/includes/config.php';
 include __DIR__ . '/includes/head.php';
 ?>
+<!-- landing redeploy marker: 2026-04-22 -->
 
 <!-- ====== 1. HERO ====== -->
 <section class="hero hero--dark">
