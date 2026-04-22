@@ -1,14 +1,13 @@
 ﻿<?php
-$page_title       = 'OctaBit | Sistemas para Pequenas Empresas — Ponto, Vendas e CRM';
-$page_description = 'Sistemas prontos para organizar sua operação: controle de ponto, gestão de vendas e CRM. Para lojas, oficinas, deliveries e empresas com equipe.';
+$page_title       = 'OctaBit | Estruturação Digital para Pequenas Empresas';
+$page_description = 'Estruturação digital e arquitetura operacional para pequenas empresas. Sites, automação, dashboards e acompanhamento estratégico.';
 $current_page     = 'home';
 $header_dark      = true;
 require_once __DIR__ . '/includes/config.php';
 include __DIR__ . '/includes/head.php';
 ?>
-<!-- landing redeploy marker: 2026-04-22 -->
 
-<!-- ====== 1. HERO ====== -->
+<!-- ====== HERO (Dark, Linear-style) ====== -->
 <section class="hero hero--dark">
     <div class="container">
         <span class="hero__badge"><?= e($config['hero']['badge']) ?></span>
@@ -16,119 +15,45 @@ include __DIR__ . '/includes/head.php';
         <p class="hero__subtitle"><?= e($config['hero']['subtitle']) ?></p>
         <div class="hero__actions">
             <a href="#cta-form" class="btn btn--primary btn--lg"><?= e($config['hero']['cta_primary']) ?> →</a>
-            <a href="#produtos" class="btn btn--ghost btn--lg"><?= e($config['hero']['cta_secondary']) ?></a>
+            <a href="#como-funciona" class="btn btn--ghost btn--lg"><?= e($config['hero']['cta_secondary']) ?></a>
         </div>
-        <div class="hero__stats">
+    </div>
+</section>
+
+<!-- ====== PROOF BAR ====== -->
+<section class="proof-bar">
+    <div class="container">
+        <div class="proof-bar__grid">
             <?php foreach ($config['authority']['items'] as $stat): ?>
-            <div class="hero__stat">
-                <span class="hero__stat-number"><?= e($stat['number']) ?></span>
-                <span class="hero__stat-label"><?= e($stat['label']) ?></span>
+            <div class="proof-bar__item reveal">
+                <span class="proof-bar__number"><?= e($stat['number']) ?></span>
+                <span class="proof-bar__label"><strong><?= e($stat['label']) ?></strong><br><?= e($stat['desc']) ?></span>
             </div>
             <?php endforeach; ?>
         </div>
     </div>
 </section>
 
-<!-- ====== 2. PROBLEMA ====== -->
-<section class="section section--sm" id="problema">
+<!-- ====== PARA QUEM É ====== -->
+<section class="section section--subtle">
     <div class="container">
         <div class="section__header reveal">
-            <h2><?= e($config['problem']['title']) ?></h2>
-        </div>
-        <div class="problem-grid reveal">
-            <?php foreach ($config['problem']['items'] as $i => $item): ?>
-            <div class="problem-item reveal reveal-delay-<?= $i + 1 ?>">
-                <span class="problem-item__icon">✕</span>
-                <span class="problem-item__text"><?= e($item) ?></span>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- ====== 3. PRODUTOS (eixo central) ====== -->
-<section class="section section--subtle section--sm" id="produtos">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow">Nossos Produtos</span>
-            <h2><?= e($config['solution']['title']) ?></h2>
-        </div>
-
-        <div class="grid grid--3">
-            <?php foreach ($config['products']['items'] as $i => $product): ?>
-            <div class="card reveal reveal-delay-<?= $i + 1 ?>">
-                <div class="card__tag"><?= e($product['tag']) ?></div>
-                <div class="card__icon">
-                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
-                </div>
-                <h3><?= e($product['name']) ?></h3>
-                <p><?= e($product['desc']) ?></p>
-                <a href="<?= e($product['url']) ?>" class="btn btn--outline btn--full" style="margin-top:auto">
-                    <?= e($product['cta']) ?> →
-                </a>
-            </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="text-center mt-8 reveal">
-            <a href="#cta-form" class="btn btn--primary btn--lg">Testar grátis por 14 dias →</a>
-        </div>
-    </div>
-</section>
-
-<!-- ====== 4. PARA QUEM ====== -->
-<section class="section section--sm" id="para-quem">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow">Para quem</span>
+            <span class="section__eyebrow">Para quem é</span>
             <h2><?= e($config['target_audience']['title']) ?></h2>
         </div>
-
-        <div class="grid grid--2">
-            <?php foreach ($config['target_audience']['items'] as $i => $item): ?>
-            <div class="problem-item problem-item--positive reveal reveal-delay-<?= $i + 1 ?>">
-                <span class="problem-item__icon">
-                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($item['icon']) ?>"/></svg>
-                </span>
-                <span class="problem-item__text"><?= e($item['text']) ?></span>
+        <div class="grid grid--2 reveal">
+            <?php foreach ($config['target_audience']['items'] as $item): ?>
+            <div class="audience-item">
+                <svg viewBox="0 0 24 24"><use href="#icon-<?= e($item['icon']) ?>"/></svg>
+                <span><?= e($item['text']) ?></span>
             </div>
             <?php endforeach; ?>
         </div>
     </div>
 </section>
 
-<!-- ====== 5. PROVA SOCIAL ====== -->
-<section class="section section--dark section--sm" id="casos">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow section__eyebrow--light"><?= e($config['portfolio']['title']) ?></span>
-            <h2>Veja como outras empresas resolveram</h2>
-        </div>
-
-        <div class="grid grid--2">
-            <?php foreach ($config['portfolio']['items'] as $i => $case): ?>
-            <div class="case-card reveal reveal-delay-<?= $i + 1 ?>">
-                <div class="case-card__tag"><?= e($case['tag']) ?></div>
-                <h3><?= e($case['name']) ?></h3>
-                <p><?= e($case['desc']) ?></p>
-                <?php if (!empty($case['quote'])): ?>
-                <blockquote class="case-card__quote">
-                    <p>"<?= e($case['quote']) ?>"</p>
-                    <cite>— <?= e($case['author']) ?>, <?= e($case['name']) ?></cite>
-                </blockquote>
-                <?php endif; ?>
-            </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="text-center mt-8 reveal">
-            <a href="#cta-form" class="btn btn--primary btn--lg">Quero resultados assim →</a>
-        </div>
-    </div>
-</section>
-
-<!-- ====== 6. SERVIÇOS EXTRAS ====== -->
-<section class="section section--sm" id="servicos-preview">
+<!-- ====== FEATURE BENTO GRID ====== -->
+<section class="section" id="servicos-preview">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Serviços</span>
@@ -138,12 +63,19 @@ include __DIR__ . '/includes/head.php';
 
         <div class="grid grid--2">
             <?php foreach ($config['services']['items'] as $i => $srv): ?>
-            <div class="card card--compact reveal reveal-delay-<?= $i + 1 ?>">
+            <div class="card reveal reveal-delay-<?= $i + 1 ?>">
                 <div class="card__icon">
                     <svg viewBox="0 0 24 24"><use href="#icon-<?= e($srv['icon']) ?>"/></svg>
                 </div>
                 <h3><?= e($srv['title']) ?></h3>
                 <p><?= e($srv['desc']) ?></p>
+                <?php if (!empty($srv['deliverables'])): ?>
+                <ul class="card__list">
+                    <?php foreach ($srv['deliverables'] as $d): ?>
+                    <li><?= e($d) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
         </div>
@@ -154,8 +86,81 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== 7. PLANOS ====== -->
-<section class="section section--subtle section--sm" id="planos">
+<!-- ====== HOW IT WORKS (Timeline) ====== -->
+<section class="section section--subtle" id="como-funciona">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Como funciona</span>
+            <h2>Do diagnóstico ao resultado</h2>
+            <p class="section__desc">Um processo claro e transparente em três etapas</p>
+        </div>
+
+        <div class="timeline">
+            <?php foreach ($config['solution']['steps'] as $i => $step): ?>
+            <div class="timeline__step reveal reveal-delay-<?= $i + 1 ?>">
+                <div class="timeline__num"><?= $i + 1 ?></div>
+                <h4><?= e($step['title']) ?></h4>
+                <p><?= e($step['desc']) ?></p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CASES (Dark section) ====== -->
+<section class="section section--dark">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow section__eyebrow--light"><?= e($config['portfolio']['title']) ?></span>
+            <h2>O que nossos clientes conquistaram</h2>
+            <p class="section__desc" style="color:var(--zinc-400)">Resultados reais de empresas que estruturamos</p>
+        </div>
+
+        <div class="grid grid--3">
+            <?php foreach ($config['portfolio']['items'] as $i => $case): ?>
+            <div class="case-card reveal reveal-delay-<?= $i + 1 ?>">
+                <div class="case-card__tag"><?= e($case['tag']) ?></div>
+                <h3><?= e($case['name']) ?></h3>
+                <p><?= e($case['desc']) ?></p>
+                <?php if (!empty($case['quote'])): ?>
+                <blockquote class="case-card__quote">
+                    <p>“<?= e($case['quote']) ?>”</p>
+                    <cite>— <?= e($case['author']) ?>, <?= e($case['name']) ?></cite>
+                </blockquote>
+                <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ====== PRODUTOS (SaaS) ====== -->
+<section class="section">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Produtos</span>
+            <h2><?= e($config['products']['title']) ?></h2>
+            <p class="section__desc"><?= e($config['products']['subtitle']) ?></p>
+        </div>
+
+        <div class="grid grid--3">
+            <?php foreach ($config['products']['items'] as $i => $product): ?>
+            <div class="product-card reveal reveal-delay-<?= $i + 1 ?>">
+                <div class="product-card__tag"><?= e($product['tag']) ?></div>
+                <div class="product-card__icon">
+                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
+                </div>
+                <h3><?= e($product['name']) ?></h3>
+                <p><?= e($product['desc']) ?></p>
+                <a href="<?= e($product['url']) ?>" class="btn btn--outline btn--sm"><?= e($product['cta']) ?> →</a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ====== PRICING PREVIEW ====== -->
+<section class="section section--subtle">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Planos</span>
@@ -181,9 +186,10 @@ include __DIR__ . '/includes/head.php';
                     <li><?= e($b) ?></li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="#cta-form"
-                   class="btn <?= $plan['featured'] ? 'btn--primary' : 'btn--outline' ?> btn--full">
-                    Começar com <?= e($plan['name']) ?> →
+                <a href="<?= e(whatsappURL("Olá! Tenho interesse no plano {$plan['name']}.", 'planos')) ?>"
+                   class="btn <?= $plan['featured'] ? 'btn--primary' : 'btn--outline' ?> btn--full"
+                   target="_blank" rel="noopener">
+                    Escolher <?= e($plan['name']) ?> →
                 </a>
             </div>
             <?php endforeach; ?>
@@ -194,13 +200,18 @@ include __DIR__ . '/includes/head.php';
             <p class="plan__guarantee">🔒 <?= e($config['plans']['guarantee']) ?></p>
         </div>
         <?php endif; ?>
+
+        <div class="text-center mt-8 reveal">
+            <a href="/planos" class="btn btn--outline">Ver detalhes completos →</a>
+        </div>
     </div>
 </section>
 
-<!-- ====== 8. FAQ ====== -->
-<section class="section section--sm" id="faq">
+<!-- ====== FAQ ====== -->
+<section class="section section--subtle">
     <div class="container">
         <div class="section__header reveal">
+            <span class="section__eyebrow">FAQ</span>
             <h2><?= e($config['faq']['title']) ?></h2>
         </div>
         <div class="faq reveal">
@@ -219,20 +230,20 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== 9. CTA FINAL ====== -->
+<!-- ====== CTA COM FORMULÁRIO INLINE ====== -->
 <section class="cta-section cta-section--dark" id="cta-form">
     <div class="container">
-        <h2>Organize sua operação em 14 dias — sem risco.</h2>
-        <p>Teste grátis qualquer sistema. Se não resolver, você não paga nada.</p>
+        <h2>Sua empresa pronta para o próximo nível</h2>
+        <p>Preencha seus dados e receba um diagnóstico gratuito da sua maturidade digital.</p>
         <form class="cta-inline-form" data-origin="cta-home">
             <input type="text" name="nome" class="form__input" placeholder="Seu nome" required>
-            <input type="tel" name="telefone" class="form__input" placeholder="Seu WhatsApp" required>
-            <button type="submit" class="btn btn--primary btn--lg" style="grid-column:1/-1">Começar teste grátis →</button>
+            <input type="email" name="email" class="form__input" placeholder="Seu e-mail" required>
+            <input type="tel" name="telefone" class="form__input" placeholder="WhatsApp" style="grid-column:span 2">
+            <button type="submit" class="btn btn--primary btn--lg">Quero meu diagnóstico gratuito →</button>
             <div class="form__success"></div>
         </form>
-        <p class="cta__microcopy">Sem cartão de crédito. Respondemos em até 2 horas.</p>
-        <div class="hero__actions" style="margin-top:var(--sp-3)">
-            <a href="<?= e(whatsappURL('Olá! Quero testar os sistemas da OctaBit.', 'cta-home')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar direto? Chama no WhatsApp →</a>
+        <div class="hero__actions" style="margin-top:var(--sp-4)">
+            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.', 'cta-home')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar pelo WhatsApp?</a>
         </div>
     </div>
 </section>

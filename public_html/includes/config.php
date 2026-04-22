@@ -7,7 +7,7 @@
 $config = [
     'brand' => [
         'name'      => 'OctaBit',
-        'tagline'   => 'Tecnologia para pequenas empresas com operação',
+        'tagline'   => 'Estruturação Digital Estratégica',
         'logo'      => '/img/logo.svg',
         'url'       => 'https://octabit.tech',
         'instagram' => 'https://instagram.com/octabit.tech',
@@ -27,48 +27,59 @@ $config = [
 
     'nav' => [
         ['text' => 'Início',    'href' => '/'],
-        ['text' => 'Produtos',  'href' => '/produtos'],
         ['text' => 'Serviços',  'href' => '/servicos'],
+        ['text' => 'Catálogo',  'href' => '/solucoes'],
         ['text' => 'Planos',    'href' => '/planos'],
         ['text' => 'Sobre',     'href' => '/sobre'],
         ['text' => 'Contato',   'href' => '/contato'],
     ],
 
     'hero' => [
-        'badge'    => 'Para lojas, oficinas, deliveries e empresas com equipe',
-        'title'    => 'Ponto no papel e vendas sem controle? A gente resolve.',
-        'subtitle' => '3 sistemas simples que organizam equipe, vendas e clientes — com WhatsApp integrado. Funciona no celular, sem precisar de TI.',
-        'cta_primary'   => 'Testar grátis por 14 dias',
-        'cta_secondary' => 'Ver os produtos',
+        'badge'    => 'Estruturação Digital Estratégica',
+        'title'    => 'Chega de improvisar. Estruture seu negócio com tecnologia que funciona',
+        'subtitle' => 'Em 30 dias, seu negócio com site profissional, processos automatizados e dashboard de resultados — sem precisar de equipe de TI.',
+        'cta_primary'   => 'Receber diagnóstico gratuito',
+        'cta_secondary' => 'Ver como funciona',
     ],
 
     'problem' => [
-        'title' => 'Reconhece alguma dessas situações?',
+        'title' => 'Sua empresa está limitada pela falta de estrutura?',
         'items' => [
-            'Funcionário chega atrasado e você só descobre no final do mês — registro de ponto ainda é no papel',
-            'Venda feita no WhatsApp que nunca virou registro e você perdeu o controle',
-            'Não sabe se o mês fechou positivo sem sentar e somar tudo na planilha',
-            'Cliente mandou mensagem e ninguém respondeu — perdeu a venda',
+            'Horas perdidas com tarefas manuais e repetitivas',
+            'Erros que custam caro por falta de automação',
+            'Dependência de pessoas, não de processos',
+            'Concorrentes mais organizados e mais rápidos',
         ],
     ],
 
     'solution' => [
-        'title' => '3 sistemas que resolvem sua operação',
+        'title' => 'O Método OctaBit resolve isso',
         'steps' => [
-            ['icon' => 'activity',    'title' => 'Organize sua equipe',    'desc' => 'Registro de ponto com reconhecimento facial pelo celular. Banco de horas, escalas e férias automáticos.'],
-            ['icon' => 'zap',         'title' => 'Controle suas vendas',   'desc' => 'Pedidos, pagamentos, rotas de entrega e WhatsApp integrado. Tudo num painel.'],
-            ['icon' => 'briefcase',   'title' => 'Gerencie seus clientes', 'desc' => 'Orçamentos, cobranças, contratos e histórico de cada cliente. CRM simples que funciona.'],
+            ['icon' => 'search',      'title' => 'Diagnóstico',      'desc' => 'Mapeamos processos, dores e objetivos para criar um roteiro personalizado.'],
+            ['icon' => 'tool',        'title' => 'Implantação',      'desc' => 'Estruturamos a tecnologia, automatizamos tarefas e organizamos a operação.'],
+            ['icon' => 'bar-chart-2', 'title' => 'Acompanhamento',   'desc' => 'Monitoramos resultados e ajustamos a rota para garantir crescimento contínuo.'],
+        ],
+    ],
+
+    'method' => [
+        'title'    => 'Método PTE-I',
+        'subtitle' => 'Quatro eixos que organizam o crescimento da sua empresa',
+        'steps'    => [
+            ['icon' => 'globe',       'letter' => 'P', 'title' => 'Presença',     'desc' => 'Site profissional, SEO e posicionamento para tornar sua empresa visível e confiável.'],
+            ['icon' => 'cpu',         'letter' => 'T', 'title' => 'Tecnologia',   'desc' => 'Ferramentas, sistemas e infraestrutura que sustentam a operação com estabilidade.'],
+            ['icon' => 'trending-up', 'letter' => 'E', 'title' => 'Escala',       'desc' => 'Automações e integrações que reduzem dependência operacional e preparam crescimento.'],
+            ['icon' => 'activity',    'letter' => 'I', 'title' => 'Inteligência', 'desc' => 'Dashboards, métricas e relatórios para decisões rápidas e estratégicas.'],
         ],
     ],
 
     'services' => [
-        'title'    => 'Também estruturamos sua presença digital',
-        'subtitle' => 'Além dos sistemas, colocamos sua empresa no Google e automatizamos seu atendimento',
+        'title'    => 'O que fazemos pela sua empresa',
+        'subtitle' => 'Resultados reais, sem complicação',
         'items'    => [
             [
                 'icon'  => 'globe',
-                'title' => 'Seu negócio no Google em 15 dias',
-                'desc'  => 'Site profissional com domínio, e-mail e posicionamento. Seus clientes te encontram quando buscam.',
+                'title' => 'Sua empresa visível no Google',
+                'desc'  => 'Criamos seu site profissional com domínio próprio, e-mail e posicionamento para seus clientes te encontrarem.',
                 'deliverables' => [
                     'Site pronto com sua marca e conteúdo',
                     'Aparecendo nas buscas do Google',
@@ -78,8 +89,8 @@ $config = [
             ],
             [
                 'icon'  => 'bar-chart-2',
-                'title' => 'Painel com seus números no celular',
-                'desc'  => 'Faturamento, vendas e indicadores num dashboard visual. Sem abrir planilha.',
+                'title' => 'Seus números na tela, em tempo real',
+                'desc'  => 'Você acompanha faturamento, vendas e indicadores num painel visual atualizado automaticamente.',
                 'deliverables' => [
                     'Painel com faturamento, ticket médio e conversão',
                     'Dados atualizados automaticamente',
@@ -89,8 +100,8 @@ $config = [
             ],
             [
                 'icon'  => 'zap',
-                'title' => 'WhatsApp atendendo 24h — sem você',
-                'desc'  => 'Respostas automáticas, qualificação de leads e envio de promoções enquanto você foca na operação.',
+                'title' => 'Atendimento e vendas no automático',
+                'desc'  => 'Seu WhatsApp responde, qualifica e organiza pedidos enquanto você foca no que importa.',
                 'deliverables' => [
                     'Respostas automáticas no WhatsApp',
                     'Qualificação de leads sem intervenção',
@@ -100,11 +111,11 @@ $config = [
             ],
             [
                 'icon'  => 'tool',
-                'title' => 'Integração entre seus sistemas',
-                'desc'  => 'Conectamos suas ferramentas e eliminamos retrabalho. Tudo conversando entre si.',
+                'title' => 'Sistemas sob medida para seu negócio',
+                'desc'  => 'Quando nenhuma ferramenta pronta resolve, criamos a solução que encaixa na sua operação.',
                 'deliverables' => [
-                    'Integração entre sistemas existentes',
-                    'Automação de processos repetitivos',
+                    'Sistema exclusivo para sua empresa',
+                    'Integração com ferramentas que você já usa',
                     'Manutenção e evolução contínua',
                     'Treinamento para sua equipe operar',
                 ],
@@ -115,38 +126,40 @@ $config = [
     'target_audience' => [
         'title' => 'Para quem é a OctaBit?',
         'items' => [
-            ['icon' => 'shopping-bag', 'text' => 'Lojas e comércios que controlam vendas no caderno ou planilha'],
-            ['icon' => 'truck',        'text' => 'Deliveries e distribuidoras com pedidos desorganizados no WhatsApp'],
-            ['icon' => 'tool',         'text' => 'Oficinas e prestadores de serviço sem controle de clientes'],
-            ['icon' => 'users',        'text' => 'Qualquer empresa com equipe que ainda faz registro de ponto no papel'],
+            ['icon' => 'briefcase',  'text' => 'Pequenas empresas com 2 a 20 funcionários'],
+            ['icon' => 'trending-up','text' => 'Faturamento entre R$ 20 mil e R$ 200 mil/mês'],
+            ['icon' => 'clipboard',  'text' => 'Processos manuais e falta de organização digital'],
+            ['icon' => 'target',     'text' => 'Querem crescer com previsibilidade e controle'],
         ],
     ],
 
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => '8+',   'label' => 'Meses de retenção média',   'desc' => 'Clientes que ficam porque veem resultado real.'],
-            ['number' => '-70%', 'label' => 'Menos retrabalho',          'desc' => 'Redução média de trabalho manual com automações.'],
-            ['number' => '30',   'label' => 'Dias para o 1º resultado',  'desc' => 'Da contratação ao sistema funcionando.'],
+            ['number' => '12+',   'label' => 'Empresas estruturadas',  'desc' => 'Pequenas empresas com presença digital e processos organizados.'],
+            ['number' => '-70%',  'label' => 'Menos retrabalho',       'desc' => 'Redução média de trabalho manual com automações e integrações.'],
+            ['number' => 'Top 3', 'label' => 'Google Local',           'desc' => 'Posição alcançada por cliente com SEO e presença digital.'],
         ],
     ],
 
     'portfolio' => [
-        'title' => 'Empresas que já organizaram a operação',
+        'title' => 'Nossos clientes',
         'items' => [
-            ['name' => 'KS Oficina',        'desc' => 'Oficina mecânica que saiu da invisibilidade digital para o Top 3 do Google local com site profissional e SEO.', 'tag' => 'Oficina · Presença Digital', 'quote' => 'Saímos do zero no digital para o Top 3 do Google em menos de 3 meses.', 'author' => 'Proprietário'],
-            ['name' => 'Sabor à Domicílio',  'desc' => 'Delivery que reduziu 70% do retrabalho com sistema de pedidos via WhatsApp e painel de controle.', 'tag' => 'Delivery · Automação + Vendas', 'quote' => 'Antes era tudo no papel e no WhatsApp. Hoje o sistema faz 70% do trabalho sozinho.', 'author' => 'Fundadora'],
+            ['name' => 'KS Oficina',        'desc' => 'Oficina mecânica que saiu da invisibilidade digital para o Top 3 do Google local com site profissional e SEO.', 'tag' => 'Cliente · Presença Digital', 'quote' => 'Saímos do zero no digital para o Top 3 do Google em menos de 3 meses.', 'author' => 'Proprietário'],
+            ['name' => 'Sabor à Domicílio',  'desc' => 'Delivery que reduziu 70% do retrabalho com automação de pedidos via WhatsApp e painel administrativo.', 'tag' => 'Cliente · Automação', 'quote' => 'Antes era tudo no papel e no WhatsApp. Hoje o sistema faz 70% do trabalho sozinho.', 'author' => 'Fundadora'],
+            ['name' => 'OctaPonto',          'desc' => 'Produto próprio de controle de jornada, demonstrando capacidade técnica de construir soluções robustas.', 'tag' => 'Produto Próprio'],
         ],
     ],
 
     'catalog' => [
         'title'    => 'Soluções prontas',
-        'subtitle' => 'Projetos com escopo definido. Fale com a gente para saber mais.',
+        'subtitle' => 'Projetos com escopo e preço definidos',
         'items'    => [
             [
                 'id'          => 'site-profissional',
                 'name'        => 'Site Profissional',
                 'desc'        => 'Site pronto com domínio, e-mail, hospedagem e posicionamento no Google. Sua empresa visível para quem procura.',
+                'price'       => 'A partir de R$ 1.200',
                 'icon'        => 'globe',
                 'whatsapp_msg'=> 'Olá! Tenho interesse em um site profissional.',
             ],
@@ -154,6 +167,7 @@ $config = [
                 'id'          => 'painel-vendas',
                 'name'        => 'Painel de Vendas',
                 'desc'        => 'Dashboard com seus números de faturamento, vendas e conversão. Atualização automática, acesso pelo celular.',
+                'price'       => 'A partir de R$ 1.900',
                 'icon'        => 'bar-chart-2',
                 'whatsapp_msg'=> 'Olá! Tenho interesse no Painel de Vendas.',
             ],
@@ -161,6 +175,7 @@ $config = [
                 'id'          => 'automacao-whatsapp',
                 'name'        => 'Automação de WhatsApp',
                 'desc'        => 'Seu WhatsApp atendendo, respondendo dúvidas e qualificando clientes automaticamente, 24h por dia.',
+                'price'       => 'A partir de R$ 1.400',
                 'icon'        => 'zap',
                 'whatsapp_msg'=> 'Olá! Tenho interesse na Automação de WhatsApp.',
             ],
@@ -168,6 +183,7 @@ $config = [
                 'id'          => 'sistema-sob-medida',
                 'name'        => 'Sistema sob medida',
                 'desc'        => 'Sistema exclusivo para resolver um problema específico da sua operação, integrado ao que você já usa.',
+                'price'       => 'Sob consulta',
                 'icon'        => 'cpu',
                 'whatsapp_msg'=> 'Olá! Tenho interesse em um sistema sob medida.',
             ],
@@ -175,9 +191,9 @@ $config = [
     ],
 
     'plans' => [
-        'title'     => 'Escolha o plano certo para o tamanho da sua operação',
-        'subtitle'  => 'Do controle básico à operação no piloto automático',
-        'guarantee' => 'Sem fidelidade após 3 meses · Teste grátis por 14 dias',
+        'title'     => 'Escolha o nível de transformação da sua empresa',
+        'subtitle'  => 'Cada plano representa um estágio de maturidade digital',
+        'guarantee' => 'Sem fidelidade após 3 meses · Diagnóstico gratuito sem compromisso',
         'list'      => [
             [
                 'id'       => 'essencial',
@@ -186,12 +202,12 @@ $config = [
                 'monthly'  => 497,
                 'featured' => false,
                 'badge'    => null,
-                'goal'     => 'Para quem precisa sair do papel',
+                'goal'     => 'Sua empresa visível e profissional',
                 'benefits' => [
-                    'Registro de ponto com reconhecimento facial pelo celular',
-                    'Site profissional no Google',
-                    'E-mail @suaempresa.com.br',
-                    'Suporte técnico incluído',
+                    'Site pronto com sua marca e conteúdo',
+                    'Domínio, e-mail profissional e hospedagem',
+                    'Posicionamento básico no Google',
+                    'Suporte técnico e ajustes incluídos',
                     'Relatório trimestral de resultados',
                 ],
             ],
@@ -202,12 +218,12 @@ $config = [
                 'monthly'  => 997,
                 'featured' => true,
                 'badge'    => 'Mais Escolhido',
-                'goal'     => 'Para quem quer controlar vendas e equipe',
+                'goal'     => 'Visível + dados + atendimento automático',
                 'benefits' => [
-                    'Tudo do Essencial',
-                    'Sistema de vendas e pedidos (OctaVendas)',
-                    'WhatsApp atendendo clientes 24/7',
-                    'Painel com faturamento e vendas no celular',
+                    'Tudo do plano Essencial',
+                    'Painel com seus números de vendas em tempo real',
+                    'Até 2 automações (ex: WhatsApp automático, relatórios)',
+                    'Integração com ferramentas que você já usa',
                     'Reunião mensal com plano de ação',
                 ],
             ],
@@ -218,12 +234,12 @@ $config = [
                 'monthly'  => 1997,
                 'featured' => false,
                 'badge'    => null,
-                'goal'     => 'Para quem quer a operação no piloto automático',
+                'goal'     => 'Operação totalmente organizada',
                 'benefits' => [
-                    'Tudo do Profissional',
-                    'CRM completo (OctaCRM)',
-                    'Automações ilimitadas: pedidos, cobranças, relatórios',
-                    'Dashboard cruzando todas suas fontes de dados',
+                    'Tudo do plano Profissional',
+                    'Sistema exclusivo para sua operação',
+                    'Automações avançadas ilimitadas',
+                    'Painel completo com múltiplas fontes de dados',
                     'Prioridade máxima + acompanhamento semanal',
                 ],
             ],
@@ -231,66 +247,66 @@ $config = [
     ],
 
     'about' => [
-        'title' => 'Tecnologia que entende operação',
-        'text'  => 'A OctaBit cria sistemas para pequenas empresas que têm equipe, operação e clientes — mas ainda controlam tudo no papel, planilha ou WhatsApp. Nossos produtos (OctaPonto, OctaVendas e OctaCRM) foram feitos para quem precisa de resultado, não de complexidade.',
-        'mission' => 'Organizar a operação de pequenas empresas com tecnologia simples, acessível e que funciona desde o primeiro dia.',
-        'vision'  => 'Ser a plataforma de referência para pequenas empresas organizarem equipe, vendas e clientes sem precisar de TI.',
+        'title' => 'Seu parceiro estratégico de crescimento',
+        'text'  => 'A OctaBit atua na interseção entre negócio, tecnologia e operação. Nosso foco é tirar o cliente do improviso e construir uma base que aguenta escala. Não vendemos sites ou sistemas — vendemos estrutura de crescimento contínuo.',
+        'mission' => 'Estruturar e organizar pequenas empresas através da tecnologia, criando base para crescimento com mais controle e clareza.',
+        'vision'  => 'Construir uma operação escalável e reconhecida por transformar pequenas empresas em negócios mais profissionais e preparados para crescer.',
     ],
 
     'products' => [
         'title'    => 'Nossos Produtos',
-        'subtitle' => 'Sistemas prontos para usar, feitos para quem tem operação e equipe',
+        'subtitle' => 'Ferramentas prontas para usar, com planos acessíveis',
         'items'    => [
             [
                 'name'  => 'OctaPonto',
-                'desc'  => 'Gestão de RH simplificada. Registro de ponto com reconhecimento facial pelo celular, banco de horas, escalas, férias e relatórios automáticos. Para qualquer empresa com funcionários.',
-                'tag'   => 'Gestão de RH',
+                'desc'  => 'Controle de jornada e ponto eletrônico. Registro de entrada e saída pelo celular, relatórios automáticos e gestão de equipes.',
+                'tag'   => 'Gestão de Pessoas',
                 'icon'  => 'activity',
                 'cta'   => 'Conhecer o OctaPonto',
-                'url'   => '/produtos/octaponto',
+                'url'   => '#',
             ],
             [
                 'name'  => 'OctaVendas',
-                'desc'  => 'Gestão de vendas e pedidos. Controle de pedidos, rotas de entrega, integração com WhatsApp e aprovação de pagamentos. Para lojas, deliveries e distribuidoras.',
-                'tag'   => 'Gestão de Vendas',
+                'desc'  => 'Gestão comercial pelo WhatsApp. Controle de pedidos, acompanhamento de vendas e CRM simplificado para quem vende todo dia.',
+                'tag'   => 'Vendas e CRM',
                 'icon'  => 'zap',
                 'cta'   => 'Conhecer o OctaVendas',
-                'url'   => '/produtos/octavendas',
+                'url'   => '#',
             ],
             [
-                'name'  => 'OctaCRM',
-                'desc'  => 'CRM para prestadores de serviço. Clientes, orçamentos, cobranças, contratos e histórico. Para oficinas, clínicas e escritórios.',
-                'tag'   => 'Gestão de Clientes',
-                'icon'  => 'briefcase',
-                'cta'   => 'Conhecer o OctaCRM',
-                'url'   => '/produtos/octacrm',
+                'name'  => 'OctaSite',
+                'desc'  => 'Sites institucionais prontos. Escolha um modelo, personalize com sua marca e publique em minutos. Domínio e hospedagem inclusos.',
+                'tag'   => 'Presença Digital',
+                'icon'  => 'globe',
+                'cta'   => 'Conhecer o OctaSite',
+                'url'   => '#',
             ],
         ],
     ],
 
     'lead_magnet' => [
-        'title'    => 'Teste grátis por 14 dias',
-        'subtitle' => 'Escolha o sistema que resolve seu problema e comece a usar hoje. Sem cartão, sem compromisso.',
-        'button'   => 'Começar teste grátis',
+        'title'    => 'Diagnóstico de Maturidade Digital',
+        'subtitle' => 'Descubra em 5 minutos o nível de maturidade digital da sua empresa e receba um relatório personalizado com recomendações práticas.',
+        'button'   => 'Quero meu diagnóstico gratuito',
     ],
 
     'faq' => [
         'title' => 'Dúvidas frequentes',
         'items' => [
-            ['q' => 'Funciona para meu tipo de empresa?',              'a' => 'Se você tem equipe, vende produtos/serviços ou precisa controlar clientes, sim. Atendemos lojas, oficinas, deliveries, distribuidoras, clínicas e qualquer pequena empresa com operação.'],
-            ['q' => 'Preciso ter equipe de TI?',                       'a' => 'Não. Os sistemas são prontos para usar e a gente cuida de toda a configuração. Seu papel é aprovar e usar.'],
-            ['q' => 'Quanto tempo leva para começar a usar?',           'a' => 'O teste é imediato. A implantação completa fica pronta em 7 a 30 dias, dependendo da complexidade.'],
-            ['q' => 'Posso usar só o OctaPonto sem os outros?',         'a' => 'Sim. Cada produto funciona de forma independente. Você começa com o que precisa e adiciona os outros quando quiser.'],
+            ['q' => 'Preciso ter equipe de TI?',                       'a' => 'Não. A OctaBit cuida da implementação e manutenção. Seu único papel é aprovar e usar.'],
+            ['q' => 'Quanto tempo leva para ver resultados?',           'a' => 'Os primeiros ganhos aparecem nas primeiras semanas. Resultados consistentes se consolidam em 2 a 3 meses.'],
             ['q' => 'Posso cancelar quando quiser?',                    'a' => 'Sim. Após os 3 primeiros meses de implantação, você pode cancelar a qualquer momento sem multa.'],
-            ['q' => 'E se eu não gostar do resultado?',                 'a' => 'Trabalhamos com teste grátis de 14 dias. Se não funcionar para você, é só não continuar.'],
-            ['q' => 'Minha equipe vai conseguir usar?',                 'a' => 'Sim. Os sistemas foram feitos para serem simples. Se sua equipe usa WhatsApp, consegue usar nossos produtos.'],
-            ['q' => 'Como funciona o pagamento?',                       'a' => 'Implantação é paga à vista ou em até 3x. A mensalidade começa após o teste grátis e é cobrada via boleto ou Pix.'],
+            ['q' => 'Qual a diferença entre planos e soluções avulsas?','a' => 'Os planos incluem acompanhamento contínuo e evolução mensal. Soluções avulsas são projetos pontuais com entrega definida.'],
+            ['q' => 'Funciona para qualquer tipo de empresa?',          'a' => 'Nosso foco são pequenas empresas com 2 a 20 funcionários que querem sair do improviso e crescer com estrutura.'],
+            ['q' => 'E se eu não gostar do resultado?',                 'a' => 'Trabalhamos com ciclos de entrega e validação. Se o resultado não atender, ajustamos até ficar certo. Após os 3 primeiros meses, você pode cancelar sem multa.'],
+            ['q' => 'Qual o prazo de entrega?',                         'a' => 'O site fica pronto em 7 a 15 dias úteis. Automações e dashboards são implantados em paralelo, com entregas semanais.'],
+            ['q' => 'Como funciona o pagamento?',                       'a' => 'Implantação é paga à vista ou em até 3x. A mensalidade começa após a entrega e é cobrada via boleto ou Pix.'],
         ],
     ],
 
     'footer' => [
         'copyright' => '© 2026 OctaBit. Todos os direitos reservados.',
-        'text'      => 'Sistemas para pequenas empresas com operação: ponto, vendas e clientes.',
+        'text'      => 'Estruturação digital estratégica para pequenas empresas.',
         'cnpj'      => '', // Preencher com CNPJ real
     ],
 ];
