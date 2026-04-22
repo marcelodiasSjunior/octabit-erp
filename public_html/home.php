@@ -7,7 +7,6 @@ require_once __DIR__ . '/includes/config.php';
 include __DIR__ . '/includes/head.php';
 ?>
 
-<!-- ====== HERO (Dark, Linear-style) ====== -->
 <section class="hero hero--dark">
     <div class="container">
         <span class="hero__badge"><?= e($config['hero']['badge']) ?></span>
@@ -20,7 +19,6 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== PROOF BAR ====== -->
 <section class="proof-bar">
     <div class="container">
         <div class="proof-bar__grid">
@@ -34,65 +32,59 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== PARA QUEM É ====== -->
-<section class="section section--subtle">
+<section class="section section--subtle" id="problema">
     <div class="container">
         <div class="section__header reveal">
-            <span class="section__eyebrow">Para quem é</span>
-            <h2><?= e($config['target_audience']['title']) ?></h2>
+            <span class="section__eyebrow">Problema</span>
+            <h2><?= e($config['problem']['title']) ?></h2>
         </div>
-        <div class="grid grid--2 reveal">
-            <?php foreach ($config['target_audience']['items'] as $item): ?>
-            <div class="audience-item">
-                <svg viewBox="0 0 24 24"><use href="#icon-<?= e($item['icon']) ?>"/></svg>
-                <span><?= e($item['text']) ?></span>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- ====== FEATURE BENTO GRID ====== -->
-<section class="section" id="servicos-preview">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow">Serviços</span>
-            <h2><?= e($config['services']['title']) ?></h2>
-            <p class="section__desc"><?= e($config['services']['subtitle']) ?></p>
-        </div>
-
-        <div class="grid grid--2">
-            <?php foreach ($config['services']['items'] as $i => $srv): ?>
+        <div class="grid grid--2 problem-grid">
+            <?php foreach ($config['problem']['items'] as $i => $item): ?>
             <div class="card reveal reveal-delay-<?= $i + 1 ?>">
                 <div class="card__icon">
-                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($srv['icon']) ?>"/></svg>
+                    <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
                 </div>
-                <h3><?= e($srv['title']) ?></h3>
-                <p><?= e($srv['desc']) ?></p>
-                <?php if (!empty($srv['deliverables'])): ?>
-                <ul class="card__list">
-                    <?php foreach ($srv['deliverables'] as $d): ?>
-                    <li><?= e($d) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-                <?php endif; ?>
+                <p><?= e($item) ?></p>
             </div>
             <?php endforeach; ?>
-        </div>
-
-        <div class="text-center mt-8 reveal">
-            <a href="/servicos" class="btn btn--outline">Ver todos os serviços →</a>
         </div>
     </div>
 </section>
 
-<!-- ====== HOW IT WORKS (Timeline) ====== -->
+<section class="section" id="produtos">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Solução</span>
+            <h2><?= e($config['products']['title']) ?></h2>
+            <p class="section__desc"><?= e($config['products']['subtitle']) ?></p>
+        </div>
+        <div class="grid grid--3">
+            <?php foreach ($config['products']['items'] as $i => $product): ?>
+            <div class="product-card reveal reveal-delay-<?= $i + 1 ?>">
+                <div class="product-card__tag"><?= e($product['tag']) ?></div>
+                <?php if (!empty($product['image'])): ?>
+                <div class="product-card__media">
+                    <img src="<?= e($product['image']) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
+                </div>
+                <?php endif; ?>
+                <div class="product-card__icon">
+                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
+                </div>
+                <h3><?= e($product['name']) ?></h3>
+                <p><?= e($product['desc']) ?></p>
+                <a href="<?= e($product['url']) ?>" class="btn btn--outline btn--sm"><?= e($product['cta']) ?> →</a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
 <section class="section section--subtle" id="como-funciona">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Como funciona</span>
-            <h2>Do diagnóstico ao resultado</h2>
-            <p class="section__desc">Um processo claro e transparente em três etapas</p>
+            <h2><?= e($config['solution']['title']) ?></h2>
+            <p class="section__desc">Implementação simples, foco em resultado real.</p>
         </div>
 
         <div class="timeline">
@@ -107,8 +99,7 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== CASES (Dark section) ====== -->
-<section class="section section--dark">
+<section class="section section--dark" id="casos">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow section__eyebrow--light"><?= e($config['portfolio']['title']) ?></span>
@@ -134,38 +125,7 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== PRODUTOS (SaaS) ====== -->
-<section class="section" id="produtos">
-    <div class="container">
-        <div class="section__header reveal">
-            <span class="section__eyebrow">Produtos</span>
-            <h2><?= e($config['products']['title']) ?></h2>
-            <p class="section__desc"><?= e($config['products']['subtitle']) ?></p>
-        </div>
-
-        <div class="grid grid--3">
-            <?php foreach ($config['products']['items'] as $i => $product): ?>
-            <div class="product-card reveal reveal-delay-<?= $i + 1 ?>">
-                <div class="product-card__tag"><?= e($product['tag']) ?></div>
-                <?php if (!empty($product['image'])): ?>
-                <div class="product-card__media">
-                    <img src="<?= e($product['image']) ?>" alt="<?= e($product['name']) ?>" loading="lazy">
-                </div>
-                <?php endif; ?>
-                <div class="product-card__icon">
-                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($product['icon']) ?>"/></svg>
-                </div>
-                <h3><?= e($product['name']) ?></h3>
-                <p><?= e($product['desc']) ?></p>
-                <a href="<?= e($product['url']) ?>" class="btn btn--outline btn--sm"><?= e($product['cta']) ?> →</a>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- ====== PRICING PREVIEW ====== -->
-<section class="section section--subtle">
+<section class="section section--subtle" id="planos">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Planos</span>
@@ -191,9 +151,7 @@ include __DIR__ . '/includes/head.php';
                     <li><?= e($b) ?></li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?= e(whatsappURL("Olá! Tenho interesse no plano {$plan['name']}.", 'planos')) ?>"
-                   class="btn <?= $plan['featured'] ? 'btn--primary' : 'btn--outline' ?> btn--full"
-                   target="_blank" rel="noopener">
+                <a href="#cta-form" class="btn <?= $plan['featured'] ? 'btn--primary' : 'btn--outline' ?> btn--full">
                     Escolher <?= e($plan['name']) ?> →
                 </a>
             </div>
@@ -212,8 +170,7 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== FAQ ====== -->
-<section class="section section--subtle">
+<section class="section section--subtle" id="faq">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">FAQ</span>
@@ -235,20 +192,19 @@ include __DIR__ . '/includes/head.php';
     </div>
 </section>
 
-<!-- ====== CTA COM FORMULÁRIO INLINE ====== -->
 <section class="cta-section cta-section--dark" id="cta-form">
     <div class="container">
-        <h2>Sua empresa pronta para o próximo nível</h2>
-        <p>Preencha seus dados e receba um diagnóstico gratuito da sua maturidade digital.</p>
+        <h2>Descubra agora onde sua operação perde tempo e dinheiro</h2>
+        <p>Sem compromisso. Em poucos minutos você recebe um direcionamento claro do melhor próximo passo.</p>
         <form class="cta-inline-form" data-origin="cta-home">
             <input type="text" name="nome" class="form__input" placeholder="Seu nome" required>
-            <input type="email" name="email" class="form__input" placeholder="Seu e-mail" required>
-            <input type="tel" name="telefone" class="form__input" placeholder="WhatsApp" style="grid-column:span 2">
-            <button type="submit" class="btn btn--primary btn--lg">Quero meu diagnóstico gratuito →</button>
+            <input type="tel" name="telefone" class="form__input" placeholder="Seu WhatsApp" required>
+            <button type="submit" class="btn btn--primary btn--lg">Testar grátis por 14 dias →</button>
             <div class="form__success"></div>
+            <p class="cta__microcopy">Resposta em até 2 horas úteis.</p>
         </form>
         <div class="hero__actions" style="margin-top:var(--sp-4)">
-            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.', 'cta-home')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar pelo WhatsApp?</a>
+            <a href="<?= e(whatsappURL('Olá! Quero saber mais sobre a OctaBit.', 'cta-home')) ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">Prefere falar direto pelo WhatsApp?</a>
         </div>
     </div>
 </section>

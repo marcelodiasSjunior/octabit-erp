@@ -7,7 +7,7 @@
 $config = [
     'brand' => [
         'name'      => 'OctaBit',
-        'tagline'   => 'Estruturação Digital Estratégica',
+        'tagline'   => 'Sistemas para pequenas empresas',
         'logo'      => '/img/logo.svg',
         'url'       => 'https://octabit.tech',
         'instagram' => 'https://instagram.com/octabit.tech',
@@ -29,36 +29,35 @@ $config = [
         ['text' => 'Início',    'href' => '/'],
         ['text' => 'Produtos',  'href' => '/produtos'],
         ['text' => 'Serviços',  'href' => '/servicos'],
-        ['text' => 'Catálogo',  'href' => '/solucoes'],
         ['text' => 'Planos',    'href' => '/planos'],
         ['text' => 'Sobre',     'href' => '/sobre'],
         ['text' => 'Contato',   'href' => '/contato'],
     ],
 
     'hero' => [
-        'badge'    => 'Estruturação Digital Estratégica',
-        'title'    => 'Chega de improvisar. Estruture seu negócio com tecnologia que funciona',
-        'subtitle' => 'Em 30 dias, seu negócio com site profissional, processos automatizados e dashboard de resultados — sem precisar de equipe de TI.',
-        'cta_primary'   => 'Receber diagnóstico gratuito',
+        'badge'    => 'Para lojas, oficinas, deliveries e negócios com equipe',
+        'title'    => 'Sua operação organizada em 30 dias, sem complicar sua rotina.',
+        'subtitle' => 'Registro de ponto com reconhecimento facial, vendas com WhatsApp sob controle e clientes organizados em um CRM simples.',
+        'cta_primary'   => 'Testar grátis por 14 dias',
         'cta_secondary' => 'Ver os produtos',
     ],
 
     'problem' => [
-        'title' => 'Sua empresa está limitada pela falta de estrutura?',
+        'title' => 'Sua empresa cresce, mas a operação não acompanha?',
         'items' => [
-            'Horas perdidas com tarefas manuais e repetitivas',
-            'Erros que custam caro por falta de automação',
-            'Dependência de pessoas, não de processos',
-            'Concorrentes mais organizados e mais rápidos',
+            'Equipe sem controle claro de jornada e produtividade',
+            'Vendas espalhadas em conversas e anotações sem padrão',
+            'Clientes sem histórico, follow-up e prioridade definidos',
+            'Você resolve tudo no braço e falta tempo para crescer',
         ],
     ],
 
     'solution' => [
-        'title' => 'O Método OctaBit resolve isso',
+        'title' => 'Da desorganização para o controle em 3 passos',
         'steps' => [
-            ['icon' => 'search',      'title' => 'Diagnóstico',      'desc' => 'Mapeamos processos, dores e objetivos para criar um roteiro personalizado.'],
-            ['icon' => 'tool',        'title' => 'Implantação',      'desc' => 'Estruturamos a tecnologia, automatizamos tarefas e organizamos a operação.'],
-            ['icon' => 'bar-chart-2', 'title' => 'Acompanhamento',   'desc' => 'Monitoramos resultados e ajustamos a rota para garantir crescimento contínuo.'],
+            ['icon' => 'search',      'title' => 'Diagnóstico rápido', 'desc' => 'Mapeamos a principal dor operacional e definimos o sistema certo para começar.'],
+            ['icon' => 'tool',        'title' => 'Implantação guiada', 'desc' => 'Configuramos, treinamos sua equipe e colocamos a operação para rodar sem ruído.'],
+            ['icon' => 'bar-chart-2', 'title' => 'Acompanhamento',     'desc' => 'Ajustamos processos com base em dados para manter ganho real mês a mês.'],
         ],
     ],
 
@@ -79,7 +78,7 @@ $config = [
         'items'    => [
             [
                 'icon'  => 'globe',
-                'title' => 'Sua empresa visível no Google',
+                'title' => 'Clientes te encontrando no Google',
                 'desc'  => 'Criamos seu site profissional com domínio próprio, e-mail e posicionamento para seus clientes te encontrarem.',
                 'deliverables' => [
                     'Site pronto com sua marca e conteúdo',
@@ -90,7 +89,7 @@ $config = [
             ],
             [
                 'icon'  => 'bar-chart-2',
-                'title' => 'Seus números na tela, em tempo real',
+                'title' => 'Adeus planilha: números em tempo real',
                 'desc'  => 'Você acompanha faturamento, vendas e indicadores num painel visual atualizado automaticamente.',
                 'deliverables' => [
                     'Painel com faturamento, ticket médio e conversão',
@@ -101,7 +100,7 @@ $config = [
             ],
             [
                 'icon'  => 'zap',
-                'title' => 'Atendimento e vendas no automático',
+                'title' => 'WhatsApp organizado e produtivo',
                 'desc'  => 'Seu WhatsApp responde, qualifica e organiza pedidos enquanto você foca no que importa.',
                 'deliverables' => [
                     'Respostas automáticas no WhatsApp',
@@ -112,7 +111,7 @@ $config = [
             ],
             [
                 'icon'  => 'tool',
-                'title' => 'Sistemas sob medida para seu negócio',
+                'title' => 'Sistema sob medida para sua operação',
                 'desc'  => 'Quando nenhuma ferramenta pronta resolve, criamos a solução que encaixa na sua operação.',
                 'deliverables' => [
                     'Sistema exclusivo para sua empresa',
@@ -128,7 +127,7 @@ $config = [
         'title' => 'Para quem é a OctaBit?',
         'items' => [
             ['icon' => 'briefcase',  'text' => 'Pequenas empresas com 2 a 20 funcionários'],
-            ['icon' => 'trending-up','text' => 'Faturamento entre R$ 20 mil e R$ 200 mil/mês'],
+            ['icon' => 'trending-up','text' => 'Negócios que querem sair do improviso e ganhar previsibilidade'],
             ['icon' => 'clipboard',  'text' => 'Processos manuais e falta de organização digital'],
             ['icon' => 'target',     'text' => 'Querem crescer com previsibilidade e controle'],
         ],
@@ -137,9 +136,9 @@ $config = [
     'authority' => [
         'title' => 'Resultados que já entregamos',
         'items' => [
-            ['number' => '10+',  'label' => 'Clientes satisfeitos',     'desc' => 'Negócios que estruturaram operação com a OctaBit.'],
-            ['number' => '70%',  'label' => 'Menos trabalho manual',    'desc' => 'Redução média com automações e integrações.' ],
-            ['number' => '30',   'label' => 'Dias para 1º resultado',   'desc' => 'Do diagnóstico à operação funcionando.' ],
+            ['number' => '10+',  'label' => 'Clientes satisfeitos',      'desc' => 'Operações organizadas com ganhos reais no dia a dia.'],
+            ['number' => '70%',  'label' => 'Menos trabalho manual',     'desc' => 'Tempo devolvido para foco em venda e gestão.'],
+            ['number' => '30',   'label' => 'Dias para o 1º resultado',  'desc' => 'Da implantação ao impacto visível na operação.'],
         ],
     ],
 
@@ -194,7 +193,7 @@ $config = [
     'plans' => [
         'title'     => 'Escolha o nível de transformação da sua empresa',
         'subtitle'  => 'Cada plano representa um estágio de maturidade digital',
-        'guarantee' => 'Sem fidelidade após 3 meses · Diagnóstico gratuito sem compromisso',
+        'guarantee' => 'Sem fidelidade após 3 meses · Comece com o que resolve sua maior dor hoje',
         'list'      => [
             [
                 'id'       => 'essencial',
@@ -203,7 +202,7 @@ $config = [
                 'monthly'  => 497,
                 'featured' => false,
                 'badge'    => null,
-                'goal'     => 'Sua empresa visível e profissional',
+                'goal'     => 'Deixe de ser invisível e organize sua base digital',
                 'benefits' => [
                     'Site pronto com sua marca e conteúdo',
                     'Domínio, e-mail profissional e hospedagem',
@@ -219,7 +218,7 @@ $config = [
                 'monthly'  => 997,
                 'featured' => true,
                 'badge'    => 'Mais Escolhido',
-                'goal'     => 'Visível + dados + atendimento automático',
+                'goal'     => 'Visível, automatizado e com dados na mão',
                 'benefits' => [
                     'Tudo do plano Essencial',
                     'Painel com seus números de vendas em tempo real',
@@ -235,7 +234,7 @@ $config = [
                 'monthly'  => 1997,
                 'featured' => false,
                 'badge'    => null,
-                'goal'     => 'Operação totalmente organizada',
+                'goal'     => 'Operação no piloto automático, com controle total',
                 'benefits' => [
                     'Tudo do plano Profissional',
                     'Sistema exclusivo para sua operação',
@@ -310,7 +309,7 @@ $config = [
 
     'footer' => [
         'copyright' => '© 2026 OctaBit. Todos os direitos reservados.',
-        'text'      => 'Estruturação digital estratégica para pequenas empresas.',
+        'text'      => 'Sistemas práticos para organizar equipe, vendas e clientes.',
         'cnpj'      => '', // Preencher com CNPJ real
     ],
 ];
