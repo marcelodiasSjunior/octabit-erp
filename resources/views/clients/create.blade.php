@@ -1,10 +1,18 @@
-<x-layouts.app title="Novo Cliente" header="Clientes / Novo">
+@php
+    $isLeads = ($segment ?? 'clients') === 'leads';
+    $pageTitle = $isLeads ? 'Novo Lead' : 'Novo Cliente';
+    $header = $isLeads ? 'Leads / Novo' : 'Clientes / Novo';
+    $storeRoute = $isLeads ? 'leads.store' : 'clients.store';
+    $backRoute = $isLeads ? 'leads.index' : 'clients.index';
+@endphp
+
+<x-layouts.app :title="$pageTitle" :header="$header">
 
     <div class="max-w-2xl">
         <div class="card">
-            <h2 class="text-base font-semibold text-slate-200 mb-6">Dados do Cliente</h2>
+            <h2 class="text-base font-semibold text-slate-200 mb-6">Dados do {{ $isLeads ? 'Lead' : 'Cliente' }}</h2>
 
-            <form method="POST" action="{{ route('clients.store') }}" x-data="{ loading: false }" @submit="loading = true">
+            <form method="POST" action="{{ route($storeRoute) }}" x-data="{ loading: false }" @submit="loading = true">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -62,15 +70,21 @@
                     {{-- Status --}}
                     <div>
                         <label for="status" class="label">Status <span class="text-red-500">*</span></label>
-                        <select id="status" name="status"
-                                class="select @error('status') input-error @enderror" required>
-                            @foreach(\App\Enums\ClientStatus::cases() as $status)
-                                <option value="{{ $status->value }}"
-                                    {{ old('status', \App\Enums\ClientStatus::Lead->value) === $status->value ? 'selected' : '' }}>
-                                    {{ $status->label() }}
-                                </option>
-                            @endforeach
-                        </select>
+                        @if($isLeads)
+                            <input type="hidden" name="status" value="{{ \App\Enums\ClientStatus::Lead->value }}" />
+                            <div class="input flex items-center text-slate-300">Lead</div>
+                        @else
+                            <select id="status" name="status"
+                                    class="select @error('status') input-error @enderror" required>
+                                @foreach(\App\Enums\ClientStatus::cases() as $status)
+                                    @continue($status === \App\Enums\ClientStatus::Lead)
+                                    <option value="{{ $status->value }}"
+                                        {{ old('status', \App\Enums\ClientStatus::Active->value) === $status->value ? 'selected' : '' }}>
+                                        {{ $status->label() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        @endif
                         @error('status') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
 
@@ -117,9 +131,9 @@
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                         </svg>
-                        <span x-text="loading ? 'Salvando...' : 'Salvar cliente'">Salvar cliente</span>
+                        <span x-text="loading ? 'Salvando...' : '{{ $isLeads ? 'Salvar lead' : 'Salvar cliente' }}'">{{ $isLeads ? 'Salvar lead' : 'Salvar cliente' }}</span>
                     </button>
-                    <a href="{{ route('clients.index') }}" class="btn-secondary">Cancelar</a>
+                    <a href="{{ route($backRoute) }}" class="btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>

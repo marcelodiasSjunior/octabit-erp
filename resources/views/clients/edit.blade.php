@@ -1,8 +1,14 @@
-<x-layouts.app :title="'Editar — ' . $client->name" :header="'Clientes / ' . $client->name">
+@php
+    $isLeads = ($segment ?? null) === 'leads' || $client->status === \App\Enums\ClientStatus::Lead;
+    $entityLabel = $isLeads ? 'Lead' : 'Cliente';
+    $sectionLabel = $isLeads ? 'Leads' : 'Clientes';
+@endphp
+
+<x-layouts.app :title="'Editar ' . $entityLabel . ' — ' . $client->name" :header="$sectionLabel . ' / ' . $client->name">
 
     <div class="max-w-2xl">
         <div class="card">
-            <h2 class="text-base font-semibold text-slate-200 mb-6">Editar Cliente</h2>
+            <h2 class="text-base font-semibold text-slate-200 mb-6">Editar {{ $entityLabel }}</h2>
 
             <form method="POST" action="{{ route('clients.update', $client) }}"
                   x-data="{ loading: false }" @submit="loading = true">
@@ -108,7 +114,7 @@
                         </svg>
                         <span x-text="loading ? 'Salvando...' : 'Salvar alterações'">Salvar alterações</span>
                     </button>
-                    <a href="{{ route('clients.show', $client) }}" class="btn-secondary">Cancelar</a>
+                    <a href="{{ $isLeads ? route('leads.index') : route('clients.show', $client) }}" class="btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>

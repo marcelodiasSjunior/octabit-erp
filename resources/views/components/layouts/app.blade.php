@@ -42,6 +42,10 @@
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CRM</span>
             </div>
 
+            <x-nav-item href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="users">
+                Leads
+            </x-nav-item>
+
             <x-nav-item href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
                 Clientes
             </x-nav-item>

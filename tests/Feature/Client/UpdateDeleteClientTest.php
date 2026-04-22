@@ -8,7 +8,7 @@ use App\Enums\ClientStatus;
 // ── UPDATE ────────────────────────────────────────────────────────
 
 it('allows an admin to update a client', function () {
-    $client = Client::factory()->create(['name' => 'Old Name']);
+    $client = Client::factory()->active()->create(['name' => 'Old Name']);
 
     $this->actingAs(adminUser())
         ->put(route('clients.update', $client), [
@@ -23,6 +23,27 @@ it('allows an admin to update a client', function () {
         'id'   => $client->id,
         'name' => 'New Name',
     ]);
+});
+
+it('converts lead to client and redirects to clients list', function () {
+    $client = Client::factory()->lead()->create(['name' => 'Lead To Convert']);
+
+    $this->actingAs(adminUser())
+        ->put(route('clients.update', $client), [
+            'name'     => $client->name,
+            'email'    => $client->email,
+            'document' => $client->document,
+            'status'   => ClientStatus::Active->value,
+        ])
+        ->assertRedirect(route('clients.index'));
+
+    $this->actingAs(adminUser())
+        ->get(route('leads.index'))
+        ->assertDontSee('Lead To Convert');
+
+    $this->actingAs(adminUser())
+        ->get(route('clients.index'))
+        ->assertSee('Lead To Convert');
 });
 
 it('can change client status to active', function () {

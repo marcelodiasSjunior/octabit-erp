@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Clients
+    Route::get('leads', [ClientController::class, 'leads'])->name('leads.index');
+    Route::get('leads/create', [ClientController::class, 'createLead'])->name('leads.create');
+    Route::post('leads', [ClientController::class, 'storeLead'])->name('leads.store');
     Route::resource('clients', ClientController::class);
 
     // Deals / opportunities

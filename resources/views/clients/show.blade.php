@@ -1,4 +1,9 @@
-<x-layouts.app :title="$client->name" :header="'Clientes / ' . $client->name">
+@php
+    $isLeads = $client->status === \App\Enums\ClientStatus::Lead;
+    $sectionLabel = $isLeads ? 'Leads' : 'Clientes';
+@endphp
+
+<x-layouts.app :title="$client->name" :header="$sectionLabel . ' / ' . $client->name">
 
     <div class="max-w-5xl space-y-6">
 
@@ -26,7 +31,7 @@
                 @endif
             </div>
             <div class="flex gap-2 flex-shrink-0">
-                <a href="{{ route('clients.edit', $client) }}" class="btn-secondary btn-sm">Editar</a>
+                <a href="{{ route('clients.edit', ['client' => $client, 'segment' => $isLeads ? 'leads' : 'clients']) }}" class="btn-secondary btn-sm">Editar</a>
             </div>
         </div>
 

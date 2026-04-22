@@ -40,6 +40,10 @@ class ClientRepository implements ClientRepositoryInterface
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
+        } elseif (($filters['segment'] ?? null) === 'leads') {
+            $query->where('status', 'lead');
+        } elseif (($filters['segment'] ?? null) === 'clients') {
+            $query->where('status', '!=', 'lead');
         }
 
         if (!empty($filters['search'])) {

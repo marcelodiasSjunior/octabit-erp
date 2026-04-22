@@ -19,13 +19,12 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="label">Cliente</label>
+                    <label class="label">Lead/Cliente</label>
                     <select name="client_id" class="input" required>
-                        <option value="">Selecione um cliente</option>
+                        <option value="">Selecione um lead ou cliente ativo</option>
                         <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $client): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($client->id); ?>" <?php if(old('client_id') == $client->id): echo 'selected'; endif; ?>>
-                                <?php echo e($client->display_name); ?>
-
+                                <?php echo e($client->display_name); ?> (<?php echo e($client->status->label()); ?>)
                             </option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>

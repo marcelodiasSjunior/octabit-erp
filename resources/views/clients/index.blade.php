@@ -1,9 +1,28 @@
-<x-layouts.app title="Clientes" header="Clientes">
+@php
+    $isLeads = ($segment ?? 'clients') === 'leads';
+    $pageTitle = $isLeads ? 'Leads' : 'Clientes';
+    $indexRoute = $isLeads ? 'leads.index' : 'clients.index';
+    $createRoute = $isLeads ? 'leads.create' : 'clients.create';
+    $newLabel = $isLeads ? 'Novo Lead' : 'Novo Cliente';
+@endphp
+
+<x-layouts.app :title="$pageTitle" :header="$pageTitle">
+
+    <div class="mb-4 inline-flex rounded-lg border border-bg-border bg-bg-secondary p-1">
+        <a href="{{ route('leads.index') }}"
+           class="px-3 py-1.5 text-sm rounded-md transition-colors {{ $isLeads ? 'bg-octa-500/20 text-octa-300' : 'text-slate-400 hover:text-slate-200' }}">
+            Leads
+        </a>
+        <a href="{{ route('clients.index') }}"
+           class="px-3 py-1.5 text-sm rounded-md transition-colors {{ !$isLeads ? 'bg-octa-500/20 text-octa-300' : 'text-slate-400 hover:text-slate-200' }}">
+            Clientes
+        </a>
+    </div>
 
     {{-- Toolbar --}}
     <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
         {{-- Search / filters --}}
-        <form method="GET" action="{{ route('clients.index') }}"
+        <form method="GET" action="{{ route($indexRoute) }}"
               class="flex flex-1 flex-col sm:flex-row gap-3" id="filter-form">
 
             <input
@@ -15,8 +34,10 @@
             />
 
             <select name="status" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
-                <option value="">Todos os status</option>
+                <option value="">{{ $isLeads ? 'Todos os leads' : 'Todos os clientes' }}</option>
                 @foreach(\App\Enums\ClientStatus::cases() as $status)
+                    @continue($isLeads && $status !== \App\Enums\ClientStatus::Lead)
+                    @continue(!$isLeads && $status === \App\Enums\ClientStatus::Lead)
                     <option value="{{ $status->value }}"
                         {{ ($filters['status'] ?? '') === $status->value ? 'selected' : '' }}>
                         {{ $status->label() }}
@@ -25,17 +46,17 @@
             </select>
 
             @if(!empty($filters['search']) || !empty($filters['status']))
-                <a href="{{ route('clients.index') }}" class="btn-ghost btn-sm self-center">
+                <a href="{{ route($indexRoute) }}" class="btn-ghost btn-sm self-center">
                     Limpar
                 </a>
             @endif
         </form>
 
-        <a href="{{ route('clients.create') }}" class="btn-primary whitespace-nowrap self-start sm:self-auto">
+        <a href="{{ route($createRoute) }}" class="btn-primary whitespace-nowrap self-start sm:self-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Novo Cliente
+            {{ $newLabel }}
         </a>
     </div>
 
@@ -73,7 +94,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
                                 </a>
-                                <a href="{{ route('clients.edit', $client) }}"
+                                          <a href="{{ route('clients.edit', ['client' => $client, 'segment' => $segment]) }}"
                                    class="btn-ghost btn-sm" title="Editar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -102,8 +123,8 @@
                             <svg class="w-10 h-10 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
-                            Nenhum cliente encontrado.
-                            <a href="{{ route('clients.create') }}" class="text-octa-400 hover:text-octa-300 ml-1">Criar o primeiro?</a>
+                            Nenhum {{ $isLeads ? 'lead' : 'cliente' }} encontrado.
+                            <a href="{{ route($createRoute) }}" class="text-octa-400 hover:text-octa-300 ml-1">Criar o primeiro?</a>
                         </td>
                     </tr>
                 @endforelse

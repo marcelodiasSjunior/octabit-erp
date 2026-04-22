@@ -18,7 +18,7 @@ it('allows an admin to create a client', function () {
             'status'   => ClientStatus::Lead->value,
         ]);
 
-    $response->assertRedirect(route('clients.index'));
+    $response->assertRedirect(route('leads.index'));
     $this->assertDatabaseHas('clients', [
         'email'  => 'joao@example.com',
         'status' => ClientStatus::Lead->value,
@@ -35,7 +35,7 @@ it('allows a manager to create a client', function () {
             'document' => '12345678000195',
             'status'   => ClientStatus::Lead->value,
         ])
-        ->assertRedirect(route('clients.index'));
+        ->assertRedirect(route('leads.index'));
 
     $this->assertDatabaseHas('clients', ['email' => 'empresa@x.com']);
 });

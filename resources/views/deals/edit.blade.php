@@ -11,12 +11,12 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="label">Cliente</label>
+                    <label class="label">Lead/Cliente</label>
                     <select name="client_id" class="input" required>
-                        <option value="">Selecione um cliente</option>
+                        <option value="">Selecione um lead ou cliente ativo</option>
                         @foreach($clients as $client)
                             <option value="{{ $client->id }}" @selected(old('client_id', $deal->client_id) == $client->id)>
-                                {{ $client->display_name }}
+                                {{ $client->display_name }} ({{ $client->status->label() }})
                             </option>
                         @endforeach
                     </select>

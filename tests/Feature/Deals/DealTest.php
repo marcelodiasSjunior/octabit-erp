@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\DealStatus;
+use App\Enums\ClientStatus;
 use App\Models\Client;
 use App\Models\Deal;
 use App\Models\DealStageHistory;
@@ -50,6 +51,19 @@ it('creates a deal', function () {
     expect(DealStageHistory::where('deal_id', $deal->id)->count())->toBe(1)
         ->and(DealStageHistory::where('deal_id', $deal->id)->first()?->to_stage_id)->toBe($stage->id);
 });
+
+    it('shows only lead and active clients on deal create form', function () {
+        $lead = Client::factory()->create(['name' => 'Lead Option', 'company_name' => null, 'status' => ClientStatus::Lead]);
+        $active = Client::factory()->create(['name' => 'Active Option', 'company_name' => null, 'status' => ClientStatus::Active]);
+        $inactive = Client::factory()->create(['name' => 'Inactive Hidden', 'company_name' => null, 'status' => ClientStatus::Inactive]);
+
+        $this->actingAs(adminUser())
+        ->get(route('deals.create'))
+        ->assertOk()
+        ->assertSee($lead->name)
+        ->assertSee($active->name)
+        ->assertDontSee($inactive->name);
+    });
 
 it('moves deal stage and marks as won when stage type is won', function () {
     $pipeline = Pipeline::factory()->create();

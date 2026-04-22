@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Deal;
 
+use App\Enums\ClientStatus;
 use App\Enums\DealStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
@@ -19,6 +20,11 @@ use Illuminate\View\View;
 
 final class DealController extends Controller
 {
+    private const ELIGIBLE_CLIENT_STATUSES = [
+        ClientStatus::Lead->value,
+        ClientStatus::Active->value,
+    ];
+
     public function index(Request $request): View
     {
         $deals = Deal::query()
@@ -31,7 +37,10 @@ final class DealController extends Controller
 
     public function create(): View
     {
-        $clients = Client::active()->orderBy('name')->get();
+        $clients = Client::query()
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->orderBy('name')
+            ->get();
         $pipelines = Pipeline::query()
             ->where('active', true)
             ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
@@ -52,6 +61,17 @@ final class DealController extends Controller
             'expected_close_date' => ['nullable', 'date'],
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
+
+        $clientIsEligible = Client::query()
+            ->whereKey((int) $validated['client_id'])
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->exists();
+
+        if (!$clientIsEligible) {
+            return back()->withErrors([
+                'client_id' => 'Selecione um lead ou cliente ativo para criar a oportunidade.',
+            ])->withInput();
+        }
 
         $stage = PipelineStage::query()
             ->where('id', $validated['stage_id'])
@@ -92,7 +112,10 @@ final class DealController extends Controller
     public function edit(int $id): View
     {
         $deal = Deal::with(['pipeline.stages'])->findOrFail($id);
-        $clients = Client::active()->orderBy('name')->get();
+        $clients = Client::query()
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->orderBy('name')
+            ->get();
         $pipelines = Pipeline::query()
             ->where('active', true)
             ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
@@ -115,6 +138,17 @@ final class DealController extends Controller
             'expected_close_date' => ['nullable', 'date'],
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
+
+        $clientIsEligible = Client::query()
+            ->whereKey((int) $validated['client_id'])
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->exists();
+
+        if (!$clientIsEligible) {
+            return back()->withErrors([
+                'client_id' => 'Selecione um lead ou cliente ativo para atualizar a oportunidade.',
+            ])->withInput();
+        }
 
         $stage = PipelineStage::query()
             ->where('id', $validated['stage_id'])
