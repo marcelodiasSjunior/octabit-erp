@@ -56,6 +56,48 @@
         </x-stat-card>
     </div>
 
+    {{-- CRM Stat cards --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <x-stat-card
+            label="Oportunidades Abertas"
+            :value="number_format($openDeals)"
+            color="octa"
+            sub="Pipeline ativo"
+        >
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </x-slot:icon>
+        </x-stat-card>
+
+        <x-stat-card
+            label="Fechamentos (mês)"
+            :value="number_format($wonDealsThisMonth)"
+            color="emerald"
+            sub="{{ now()->format('M/Y') }}"
+        >
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+            </x-slot:icon>
+        </x-stat-card>
+
+        <x-stat-card
+            label="Pipeline Ponderado"
+            :value="'R$ ' . number_format($weightedPipeline, 2, ',', '.')"
+            color="blue"
+            sub="Valor × probabilidade"
+        >
+            <x-slot:icon>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+            </x-slot:icon>
+        </x-stat-card>
+    </div>
+
     {{-- Payment status breakdown --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

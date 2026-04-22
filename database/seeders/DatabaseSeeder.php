@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             ServiceSeeder::class,
             ProductSeeder::class,
+            PipelineSeeder::class,
+            FollowupSLASeeder::class,
+            FollowupRuleSeeder::class,
         ]);
     }
 }

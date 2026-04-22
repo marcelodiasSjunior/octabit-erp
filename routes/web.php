@@ -10,6 +10,10 @@ use App\Http\Controllers\Client\ClientInteractionController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientServiceController;
 use App\Http\Controllers\Contract\ContractController;
+use App\Http\Controllers\Deal\DealActivityController;
+use App\Http\Controllers\Deal\DealController;
+use App\Http\Controllers\Deal\FollowupDashboardController;
+use App\Http\Controllers\Deal\FollowupSettingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Quote\QuoteController as WebQuoteController;
 use App\Http\Controllers\Financial\AccountsPayableController;
@@ -35,6 +39,22 @@ Route::middleware('auth')->group(function () {
 
     // Clients
     Route::resource('clients', ClientController::class);
+
+    // Deals / opportunities
+    Route::resource('deals', DealController::class);
+    Route::patch('deals/{id}/move-stage', [DealController::class, 'moveStage'])->name('deals.move-stage');
+    Route::get('pipelines/{pipeline}/kanban', [DealController::class, 'kanban'])->name('deals.kanban');
+
+    // Deal activities
+    Route::post('deals/{deal}/activities', [DealActivityController::class, 'store'])->name('deals.activities.store');
+    Route::patch('deals/{deal}/activities/{activity}/complete', [DealActivityController::class, 'complete'])->name('deals.activities.complete');
+    Route::delete('deals/{deal}/activities/{activity}', [DealActivityController::class, 'destroy'])->name('deals.activities.destroy');
+
+    // Follow-up settings and dashboard
+    Route::get('followups/settings', [FollowupSettingsController::class, 'index'])->name('followups.settings.index');
+    Route::post('followups/settings/slas', [FollowupSettingsController::class, 'storeSla'])->name('followups.settings.slas.store');
+    Route::post('followups/settings/rules', [FollowupSettingsController::class, 'storeRule'])->name('followups.settings.rules.store');
+    Route::get('followups/dashboard', [FollowupDashboardController::class, 'index'])->name('followups.dashboard.index');
 
     // CRM — Client sub-resources
     Route::post('clients/{client}/services',             [ClientServiceController::class, 'store'])->name('clients.services.store');

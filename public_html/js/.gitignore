@@ -1,0 +1,53 @@
+# OctaBit PTE .gitignore
+# Node, build, and editor files
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+# VS Code
+.vscode/
+# OS
+*.swp
+*.swo
+# Images cache
+img/cache/
+# Static site artifacts
+site.webmanifest
+# Ignore compiled JS/CSS (if any)
+*.min.js
+*.min.css
+# Ignore personal files
+melhorias-landingpage.md
+UX_UI_AUDIT.md
+# Ignore all files in docs except OCTABIT_CONTEXT.md
+.github/docs/*
+!.github/docs/OCTABIT_CONTEXT.md
+# Ignore backups
+backup/
+# Ignore test output
+coverage/
+# Ignore npm debug logs
+npm-debug.log*
+# Ignore yarn logs
+yarn-error.log*
+# Ignore lock files
+package-lock.json
+yarn.lock
+# Ignore temporary files
+~$*
+# Ignore Windows specific files
+*.exe
+*.dll
+*.bat
+*.msi
+# Ignore Mac specific files
+.AppleDouble
+.LSOverride
+# Ignore Linux specific files
+lost+found/

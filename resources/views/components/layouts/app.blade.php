@@ -46,6 +46,10 @@
                 Clientes
             </x-nav-item>
 
+            <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')" icon="target">
+                Oportunidades
+            </x-nav-item>
+
             <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')" icon="clipboard">
                 Orçamentos
             </x-nav-item>
