@@ -1,6 +1,6 @@
 ﻿<?php
 $page_title       = 'Serviços | OctaBit';
-$page_description = 'Conheça o método PTE-I e os serviços de estruturação digital da OctaBit. Presença, Tecnologia, Escala e Inteligência para pequenas empresas.';
+$page_description = 'Serviços de software house da OctaBit: sites institucionais, sistemas sob medida, aplicativos mobile, automações e integrações para operações reais.';
 $current_page     = 'servicos';
 require_once __DIR__ . '/includes/config.php';
 include __DIR__ . '/includes/head.php';
@@ -9,32 +9,37 @@ include __DIR__ . '/includes/head.php';
 <!-- ====== SUB-HERO ====== -->
 <section class="hero hero--light hero--sub">
     <div class="container">
-        <span class="hero__badge">Método + Serviços</span>
+        <span class="hero__badge">Software House</span>
         <h1 class="hero__title"><?= e($config['services']['title']) ?></h1>
         <p class="hero__subtitle"><?= e($config['services']['subtitle']) ?></p>
     </div>
 </section>
 
-<!-- ====== MÉTODO PTE-I (Feature Rows alternados) ====== -->
-<section class="section" id="metodo-ptei">
+<!-- ====== POSICIONAMENTO ====== -->
+<section class="section" id="como-atuamos">
     <div class="container">
         <div class="section__header reveal">
-            <span class="section__eyebrow">Método PTE-I</span>
-            <h2><?= e($config['method']['subtitle']) ?></h2>
+            <span class="section__eyebrow">Como atuamos</span>
+            <h2>Desenvolvimento orientado à necessidade real do cliente</h2>
+            <p class="section__desc">Entramos quando um site pronto não resolve, quando a operação precisa de sistema próprio ou quando o produto digital precisa ser construído do zero com mais profundidade técnica.</p>
         </div>
-
-        <?php foreach ($config['method']['steps'] as $i => $step): ?>
-        <div class="feature-row<?= $i % 2 ? ' feature-row--reverse' : '' ?> reveal mb-12">
-            <div class="feature-row__content">
-                <span class="section__eyebrow"><?= e($step['letter']) ?> — <?= e($step['title']) ?></span>
-                <h3><?= e($step['title']) ?></h3>
-                <p style="color:var(--zinc-500);line-height:1.7"><?= e($step['desc']) ?></p>
+        <div class="grid grid--3">
+            <div class="card reveal reveal-delay-1">
+                <div class="card__icon"><svg viewBox="0 0 24 24"><use href="#icon-globe"/></svg></div>
+                <h3>Sites e presença digital</h3>
+                <p>Projetos institucionais e comerciais com estrutura profissional para apresentar a empresa, captar contatos e sustentar vendas.</p>
             </div>
-            <div class="feature-row__visual">
-                <svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:var(--zinc-300);fill:none;stroke-width:1.5"><use href="#icon-<?= e($step['icon']) ?>"/></svg>
+            <div class="card reveal reveal-delay-2">
+                <div class="card__icon"><svg viewBox="0 0 24 24"><use href="#icon-cpu"/></svg></div>
+                <h3>Sistemas sob medida</h3>
+                <p>Soluções web com lógica de negócio, operação administrativa, integrações e fluxo próprio quando a empresa precisa de algo além do padrão.</p>
+            </div>
+            <div class="card reveal reveal-delay-3">
+                <div class="card__icon"><svg viewBox="0 0 24 24"><use href="#icon-activity"/></svg></div>
+                <h3>Apps e produtos digitais</h3>
+                <p>Aplicativos mobile, áreas do cliente, plataformas internas e produtos digitais construídos de acordo com o cenário de uso real.</p>
             </div>
         </div>
-        <?php endforeach; ?>
     </div>
 </section>
 
@@ -43,7 +48,8 @@ include __DIR__ . '/includes/head.php';
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">O que entregamos</span>
-            <h2>Cada serviço atua em um eixo do método PTE-I</h2>
+            <h2>Soluções típicas de uma software house</h2>
+            <p class="section__desc">Cada projeto pode começar em um formato mais objetivo ou evoluir para algo mais robusto conforme a necessidade da operação.</p>
         </div>
         <div class="bento">
             <?php foreach ($config['services']['items'] as $i => $srv): ?>
@@ -79,8 +85,8 @@ include __DIR__ . '/includes/head.php';
 
 <!-- ====== CTA ====== -->
 <?php
-$cta_title = 'Quer aplicar o método PTE-I na sua empresa?';
-$cta_subtitle = 'Comece pelo diagnóstico gratuito e descubra o caminho mais eficiente.';
+$cta_title = 'Quer tirar um projeto de software do papel?';
+$cta_subtitle = 'Converse com a OctaBit e entenda a melhor abordagem para site, sistema, app ou integração no seu cenário.';
 include __DIR__ . '/includes/cta-section.php';
 ?>
 

@@ -40,13 +40,32 @@ include __DIR__ . '/includes/head.php';
     </div>
 </div>
 
+<section class="section section--sm product-summary">
+    <div class="container">
+        <div class="grid grid--3">
+            <div class="card summary-card reveal reveal-delay-1">
+                <h3>Para quem é</h3>
+                <p>Empresas com equipe presencial ou externa que precisam controlar jornada sem papel.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-2">
+                <h3>O que resolve</h3>
+                <p>Fraude de ponto, banco de horas confuso, férias desorganizadas e baixa visibilidade da equipe.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-3">
+                <h3>Resultado prático</h3>
+                <p>Rotina previsível no RH, fechamento mais rápido e gestor com dados claros no painel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ====== FUNCIONALIDADES PRINCIPAIS ====== -->
 <section class="section" id="funcionalidades">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Funcionalidades</span>
-            <h2>Tudo que sua empresa precisa para gestão de pessoas</h2>
-            <p class="section__desc">Do registro de ponto à aprovação de férias, tudo integrado em uma única plataforma.</p>
+            <h2>O essencial para organizar a equipe</h2>
+            <p class="section__desc">Ponto, banco de horas, escalas e férias em um fluxo simples.</p>
         </div>
 
         <div class="bento">
@@ -57,7 +76,7 @@ include __DIR__ . '/includes/head.php';
                             <svg viewBox="0 0 24 24"><use href="#icon-activity"/></svg>
                         </div>
                         <h3>Registro de Ponto com Reconhecimento Facial</h3>
-                        <p>Colaborador registra entrada, saída para almoço, retorno e saída final pelo aplicativo no celular. Geolocalização e reconhecimento facial garantem a autenticidade de cada registro.</p>
+                        <p>O colaborador registra entrada e saída no app. Reconhecimento facial e geolocalização validam cada marcação sem depender de relógio físico.</p>
                     </div>
                     <div class="bento__visual"><img src="/img/produtos/octaponto/dashboard.jpg" alt="Painel OctaPonto — Dashboard de frequência" loading="lazy"></div>
                 </div>
@@ -68,7 +87,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
                 </div>
                 <h3>Biometria Facial</h3>
-                <p>Reconhecimento facial integrado com inteligência artificial. Impede fraudes e garante que quem registrou é realmente o colaborador.</p>
+                <p>Evita marcação por terceiros e reduz fraude de ponto com validação automática.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -76,7 +95,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-bar-chart-2"/></svg>
                 </div>
                 <h3>Banco de Horas</h3>
-                <p>Cálculo automático de horas extras, atrasos e saldo de banco de horas. Acompanhe o acumulado de cada colaborador sem planilhas.</p>
+                <p>Calcula horas extras, atrasos e saldo automaticamente, sem planilhas paralelas.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-1">
@@ -84,7 +103,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-users"/></svg>
                 </div>
                 <h3>Escalas e Jornadas</h3>
-                <p>Configure escalas fixas ou rotativas, horários flexíveis e turnos personalizados. O sistema calcula tudo automaticamente conforme a jornada de cada colaborador.</p>
+                <p>Escalas fixas ou rotativas com regras claras por colaborador e cálculo automático.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -92,7 +111,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-clipboard"/></svg>
                 </div>
                 <h3>Férias e Atestados</h3>
-                <p>Colaborador solicita férias ou envia atestado médico direto pelo app. O gestor aprova ou recusa com um clique no painel administrativo.</p>
+                <p>Solicitação de férias e envio de atestados no app, com aprovação rápida no painel.</p>
             </div>
         </div>
     </div>
@@ -178,7 +197,7 @@ include __DIR__ . '/includes/head.php';
             <p class="section__desc section__desc--center" style="color:var(--zinc-400)">O aplicativo mobile permite que seus colaboradores registrem o ponto, consultem o banco de horas, solicitem férias e acompanhem suas atividades — tudo pelo celular.</p>
         </div>
 
-        <div class="grid grid--3">
+        <div class="grid grid--3 ideal-for-grid">
             <div class="card reveal reveal-delay-1" style="background:var(--zinc-900);border-color:rgba(255,255,255,.08)">
                 <div class="card__icon" style="background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.2)">
                     <svg viewBox="0 0 24 24"><use href="#icon-activity"/></svg>

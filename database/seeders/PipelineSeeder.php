@@ -50,9 +50,9 @@ class PipelineSeeder extends Seeder
             $pipeline = Pipeline::firstOrCreate(['name' => $data['name']], ['active' => true]);
 
             foreach ($data['stages'] as $stage) {
-                PipelineStage::firstOrCreate(
+                PipelineStage::updateOrCreate(
                     ['pipeline_id' => $pipeline->id, 'name' => $stage['name']],
-                    [...$stage, 'active' => true],
+                    ['type' => $stage['type'], 'probability' => $stage['probability'], 'position' => $stage['position'], 'active' => true],
                 );
             }
         }

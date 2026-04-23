@@ -1,6 +1,6 @@
 ﻿<?php
 $page_title       = 'Planos | OctaBit';
-$page_description = 'Escolha o nível de transformação digital da sua empresa. Planos Essencial, Profissional e Empresarial com acompanhamento contínuo.';
+$page_description = 'Consultoria recorrente PTE-I com execução guiada para templates institucionais, dashboards BI e automações leves. Produtos próprios e projetos complexos são tratados separadamente.';
 $current_page     = 'planos';
 require_once __DIR__ . '/includes/config.php';
 include __DIR__ . '/includes/head.php';
@@ -9,7 +9,7 @@ include __DIR__ . '/includes/head.php';
 <!-- ====== SUB-HERO ====== -->
 <section class="hero hero--light hero--sub">
     <div class="container">
-        <span class="hero__badge">Planos Recorrentes</span>
+        <span class="hero__badge">Consultoria + Execução Guiada</span>
         <h1 class="hero__title"><?= e($config['plans']['title']) ?></h1>
         <p class="hero__subtitle"><?= e($config['plans']['subtitle']) ?></p>
     </div>
@@ -18,6 +18,11 @@ include __DIR__ . '/includes/head.php';
 <!-- ====== PLANOS ====== -->
 <section class="section">
     <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Como funciona</span>
+            <h2>Consultoria recorrente com escopo claro e evolução contínua</h2>
+            <p class="section__desc">Os planos cobrem templates institucionais, dashboards BI e automações leves com rotina definida de acompanhamento. Produtos próprios da OctaBit, sistemas complexos e automações avançadas são tratados como serviços adicionais, fora do plano.</p>
+        </div>
         <div class="plans">
             <?php foreach ($config['plans']['list'] as $i => $plan): ?>
             <div class="plan<?= $plan['featured'] ? ' plan--featured' : '' ?> reveal reveal-delay-<?= $i + 1 ?>">
@@ -44,9 +49,32 @@ include __DIR__ . '/includes/head.php';
 
         <div class="text-center mt-12 reveal">
             <p style="color:var(--zinc-500);font-size:var(--text-sm);max-width:480px;margin:0 auto var(--sp-4);">
-                Valores podem variar conforme complexidade. O diagnóstico gratuito ajuda a definir o plano ideal.
+                Cada plano atende um estágio de maturidade diferente. No diagnóstico, alinhamos escopo, frequência de acompanhamento e nível de prioridade.
             </p>
             <a href="/contato" class="btn btn--outline">Agendar diagnóstico gratuito →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ====== CONSULTORIA PTE-I ====== -->
+<section class="section section--subtle">
+    <div class="container">
+        <div class="section__header reveal">
+            <span class="section__eyebrow">Consultoria PTE-I</span>
+            <h2>O método que orienta prioridade e execução</h2>
+            <p class="section__desc">O PTE-I organiza a evolução em quatro frentes: presença digital, tecnologia operacional, escala com automação e inteligência para tomada de decisão.</p>
+        </div>
+        <div class="grid grid--4">
+            <?php foreach ($config['method']['steps'] as $i => $step): ?>
+            <div class="card reveal reveal-delay-<?= ($i % 4) + 1 ?>">
+                <div class="card__icon">
+                    <svg viewBox="0 0 24 24"><use href="#icon-<?= e($step['icon']) ?>"/></svg>
+                </div>
+                <span class="section__eyebrow"><?= e($step['letter']) ?></span>
+                <h3><?= e($step['title']) ?></h3>
+                <p><?= e($step['desc']) ?></p>
+            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -56,8 +84,8 @@ include __DIR__ . '/includes/head.php';
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Por que recorrente?</span>
-            <h2>A OctaBit acompanha sua evolução</h2>
-            <p class="section__desc">Não vendemos projetos pontuais — construímos parceria de crescimento</p>
+            <h2>Porque estrutura digital exige ajuste contínuo</h2>
+            <p class="section__desc">A recorrência garante revisão de prioridade, execução guiada e evolução consistente sem depender de projetos pontuais.</p>
         </div>
         <div class="grid-3">
             <div class="card reveal reveal-delay-1">
@@ -65,21 +93,21 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-refresh-cw"/></svg>
                 </div>
                 <h3>Melhoria Contínua</h3>
-                <p>Sua estrutura digital evolui junto com seu negócio, sem parar no tempo.</p>
+                <p>O projeto evolui em ciclos curtos, com entregas que acompanham a fase do negócio.</p>
             </div>
             <div class="card reveal reveal-delay-2">
                 <div class="card__icon">
                     <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
                 </div>
                 <h3>Suporte Dedicado</h3>
-                <p>Não é preciso abrir chamado — somos parceiros, não fornecedores distantes.</p>
+                <p>Você tem acompanhamento técnico e consultivo para manter ritmo e reduzir retrabalho.</p>
             </div>
             <div class="card reveal reveal-delay-3">
                 <div class="card__icon">
                     <svg viewBox="0 0 24 24"><use href="#icon-trending-up"/></svg>
                 </div>
                 <h3>Visão Estratégica</h3>
-                <p>Acompanhamos indicadores e recomendamos ações que geram resultado real.</p>
+                <p>As decisões são orientadas por dados e pelo método PTE-I, não por urgências soltas.</p>
             </div>
         </div>
     </div>
@@ -87,8 +115,8 @@ include __DIR__ . '/includes/head.php';
 
 <!-- ====== CTA ====== -->
 <?php
-$cta_title = 'Pronto para estruturar o crescimento?';
-$cta_subtitle = 'O diagnóstico é gratuito e sem compromisso.';
+$cta_title = 'Vamos definir o plano certo para sua fase?';
+$cta_subtitle = 'No diagnóstico inicial, alinhamos escopo, frequência de acompanhamento e entregas do plano. Demandas fora do escopo recebem proposta separada.';
 include __DIR__ . '/includes/cta-section.php';
 ?>
 

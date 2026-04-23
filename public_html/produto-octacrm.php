@@ -40,13 +40,32 @@ include __DIR__ . '/includes/head.php';
     </div>
 </div>
 
+<section class="section section--sm product-summary">
+    <div class="container">
+        <div class="grid grid--3">
+            <div class="card summary-card reveal reveal-delay-1">
+                <h3>Para quem é</h3>
+                <p>Prestadores de serviço que precisam organizar relacionamento, contratos e cobrança.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-2">
+                <h3>O que resolve</h3>
+                <p>Cliente sem histórico, orçamento perdido, contrato fora do radar e cobrança atrasada.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-3">
+                <h3>Resultado prático</h3>
+                <p>Pipeline previsível, cobrança organizada e visão completa do ciclo de cada cliente.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ====== FUNCIONALIDADES PRINCIPAIS ====== -->
 <section class="section" id="funcionalidades">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Funcionalidades</span>
-            <h2>Gerencie clientes com profissionalismo</h2>
-            <p class="section__desc">Do lead ao contrato assinado, cada passo organizado e rastreável.</p>
+            <h2>CRM simples para operar melhor</h2>
+            <p class="section__desc">Lead, proposta, contrato e cobrança em uma jornada única.</p>
         </div>
 
         <div class="bento">
@@ -57,7 +76,7 @@ include __DIR__ . '/includes/head.php';
                             <svg viewBox="0 0 24 24"><use href="#icon-users"/></svg>
                         </div>
                         <h3>Gestão de Clientes</h3>
-                        <p>Cadastro completo com status (Lead, Ativo, Inativo, Cancelado), dados de contato, endereço e histórico. Busca rápida, filtros por status e visão consolidada de tudo que acontece com cada cliente.</p>
+                        <p>Perfil único por cliente com status, contatos e histórico para evitar perda de contexto.</p>
                     </div>
                     <div class="bento__visual"><img src="/img/produtos/octacrm/dashboard.jpg" alt="Painel OctaCRM — Dashboard de clientes" loading="lazy"></div>
                 </div>
@@ -68,7 +87,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-clipboard"/></svg>
                 </div>
                 <h3>Orçamentos</h3>
-                <p>Crie orçamentos profissionais vinculados ao cliente. Acompanhe status (aprovado, pendente, recusado) e converta em contrato com um clique.</p>
+                <p>Crie proposta, acompanhe status e converta em contrato sem retrabalho.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -76,7 +95,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-bar-chart-2"/></svg>
                 </div>
                 <h3>Contas a Receber</h3>
-                <p>Visualize todas as cobranças com status (Pago, Pendente, Vencido). Marque como pago direto no painel. Filtre por período e acompanhe o fluxo de caixa.</p>
+                <p>Controle cobranças por status e período, com visão rápida do que entrou e do que está pendente.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-1">
@@ -84,7 +103,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-briefcase"/></svg>
                 </div>
                 <h3>Contratos</h3>
-                <p>Gerencie contratos ativos, pausados e encerrados. Vincule serviços e produtos ao contrato e saiba exatamente o que cada cliente contratou.</p>
+                <p>Contratos com status claro e serviços vinculados para evitar ruídos no atendimento.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -92,7 +111,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-message-circle"/></svg>
                 </div>
                 <h3>Histórico de Interações</h3>
-                <p>Registre cada ligação, e-mail, reunião ou mensagem de WhatsApp. Nunca perca o contexto de uma negociação. Tudo vinculado ao perfil do cliente.</p>
+                <p>Histórico de contato centralizado para qualquer pessoa do time entender o cenário em segundos.</p>
             </div>
         </div>
     </div>
@@ -177,7 +196,7 @@ include __DIR__ . '/includes/head.php';
             <h2>Feito para quem presta serviço</h2>
         </div>
 
-        <div class="grid grid--3">
+        <div class="grid grid--3 ideal-for-grid">
             <div class="card reveal reveal-delay-1" style="background:var(--zinc-900);border-color:rgba(255,255,255,.08)">
                 <div class="card__icon" style="background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.2)">
                     <svg viewBox="0 0 24 24"><use href="#icon-tool"/></svg>

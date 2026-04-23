@@ -40,13 +40,32 @@ include __DIR__ . '/includes/head.php';
     </div>
 </div>
 
+<section class="section section--sm product-summary">
+    <div class="container">
+        <div class="grid grid--3">
+            <div class="card summary-card reveal reveal-delay-1">
+                <h3>Para quem é</h3>
+                <p>Operações de venda por WhatsApp com entrega por bairro, rota ou motorista.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-2">
+                <h3>O que resolve</h3>
+                <p>Pedido perdido, entrega desorganizada, validação manual de região e retrabalho no atendimento.</p>
+            </div>
+            <div class="card summary-card reveal reveal-delay-3">
+                <h3>Resultado prático</h3>
+                <p>Venda mais fluida, rota mais eficiente e operação de entrega com menos ruído.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ====== FUNCIONALIDADES PRINCIPAIS ====== -->
 <section class="section" id="funcionalidades">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__eyebrow">Funcionalidades</span>
-            <h2>Da venda à entrega, sem retrabalho</h2>
-            <p class="section__desc">Cada etapa do processo comercial integrada em uma única plataforma.</p>
+            <h2>Da venda à entrega, com controle real</h2>
+            <p class="section__desc">Pedidos, rotas, pagamento e atendimento conectados no mesmo fluxo.</p>
         </div>
 
         <div class="bento">
@@ -57,7 +76,7 @@ include __DIR__ . '/includes/head.php';
                             <svg viewBox="0 0 24 24"><use href="#icon-clipboard"/></svg>
                         </div>
                         <h3>Gestão de Pedidos</h3>
-                        <p>Receba pedidos, organize por região, acompanhe o status de cada um e processe os pedidos do dia com um clique. Visualize tudo em uma interface clara e objetiva.</p>
+                        <p>Receba pedidos, organize por região e acompanhe status sem planilhas ou mensagens soltas.</p>
                     </div>
                     <div class="bento__visual"><img src="/img/produtos/octavendas/dashboard.jpg?v=2" alt="Painel OctaVendas — Dashboard de pedidos" loading="lazy"></div>
                 </div>
@@ -68,7 +87,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-target"/></svg>
                 </div>
                 <h3>Rotas Otimizadas</h3>
-                <p>Agrupe entregas por região e motorista. Gere rotas com GPS otimizado e exporte o link direto para o Google Maps. Menos combustível, mais entregas.</p>
+                <p>Agrupa entregas por região e gera rota pronta para o motorista no Google Maps.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -76,7 +95,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-zap"/></svg>
                 </div>
                 <h3>Integração WhatsApp</h3>
-                <p>Conectado ao BotConversa, o sistema recebe pedidos automaticamente via WhatsApp. O cliente pede, o bot valida a região e envia ao painel.</p>
+                <p>Pedido entra pelo WhatsApp, a região é validada e tudo cai no painel automaticamente.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-1">
@@ -84,7 +103,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
                 </div>
                 <h3>Aprovação de Pagamentos</h3>
-                <p>O cliente envia o comprovante pelo WhatsApp. Você aprova ou recusa no painel. Sem planilhas, sem conferência manual.</p>
+                <p>Comprovante chega pelo WhatsApp e você aprova no painel com poucos cliques.</p>
             </div>
 
             <div class="bento__card reveal reveal-delay-2">
@@ -92,7 +111,7 @@ include __DIR__ . '/includes/head.php';
                     <svg viewBox="0 0 24 24"><use href="#icon-users"/></svg>
                 </div>
                 <h3>Gestão de Motoristas</h3>
-                <p>Cadastre motoristas, atribua regiões de entrega e acompanhe o progresso de cada rota em tempo real. Cada motorista sabe exatamente suas próximas paradas.</p>
+                <p>Motorista recebe rota clara e você acompanha a execução da operação em tempo real.</p>
             </div>
         </div>
     </div>
@@ -177,7 +196,7 @@ include __DIR__ . '/includes/head.php';
             <h2>Feito para quem vende e entrega</h2>
         </div>
 
-        <div class="grid grid--3">
+        <div class="grid grid--3 ideal-for-grid">
             <div class="card reveal reveal-delay-1" style="background:var(--zinc-900);border-color:rgba(255,255,255,.08)">
                 <div class="card__icon" style="background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.2)">
                     <svg viewBox="0 0 24 24"><use href="#icon-zap"/></svg>
