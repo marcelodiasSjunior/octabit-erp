@@ -1,8 +1,9 @@
 <x-layouts.app title="Novo Orçamento" header="Orçamentos / Novo">
 
-    <div class="max-w-4xl"
+    <div class="max-w-5xl"
          x-data="{
             items: [{ description: '', quantity: 1, unit_price: '', discount: 0, product_id: '', service_id: '' }],
+            {{-- ... (rest of x-data unchanged) ... --}}
             get subtotal() {
                 return this.items.reduce((sum, item) => {
                     return sum + (parseFloat(item.quantity || 0) * parseFloat(item.unit_price || 0));
@@ -29,11 +30,11 @@
             }
          }">
 
-        <form method="POST" action="{{ route('quotes.store') }}">
+        <form id="form-create-quote" method="POST" action="{{ route('quotes.store') }}">
             @csrf
 
             {{-- Header card --}}
-            <div class="card mb-4">
+            <div id="quote-header-card" class="card mb-4">
                 <h2 class="text-base font-semibold text-slate-200 mb-6">Dados do Orçamento</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -66,10 +67,10 @@
             </div>
 
             {{-- Items card --}}
-            <div class="card mb-4">
+            <div id="quote-items-card" class="card mb-4">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-base font-semibold text-slate-200">Itens</h2>
-                    <button type="button" @click="addItem()"
+                    <button id="btn-add-item" type="button" @click="addItem()"
                             class="btn-ghost btn-sm gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -79,16 +80,17 @@
                 </div>
 
                 {{-- Validation error for items --}}
-                @error('items') <p class="form-error mb-3">{{ $message }}</p> @enderror
+                @error('items') <p id="error-items" class="form-error mb-3">{{ $message }}</p> @enderror
 
-                <div class="space-y-3">
+                <div id="quote-items-list" class="space-y-3">
                     <template x-for="(item, index) in items" :key="index">
-                        <div class="border border-bg-border rounded-lg p-4 bg-bg-primary/40">
+                        <div :id="`item-row-${index}`" class="border border-bg-border rounded-lg p-4 bg-bg-primary/40">
                             <div class="grid grid-cols-12 gap-3">
                                 {{-- Description --}}
-                                <div class="col-span-12 sm:col-span-5">
+                                <div class="col-span-12 sm:col-span-4">
                                     <label class="label text-xs">Descrição *</label>
                                     <input type="text"
+                                           :id="`item-description-${index}`"
                                            :name="`items[${index}][description]`"
                                            x-model="item.description"
                                            placeholder="Descrição do item"
@@ -96,19 +98,21 @@
                                 </div>
 
                                 {{-- Qty --}}
-                                <div class="col-span-6 sm:col-span-2">
+                                <div class="col-span-6 sm:col-span-1">
                                     <label class="label text-xs">Qtd *</label>
                                     <input type="number"
+                                           :id="`item-quantity-${index}`"
                                            :name="`items[${index}][quantity]`"
                                            x-model="item.quantity"
                                            min="0.0001" step="any"
-                                           class="input text-sm" required/>
+                                           class="input text-sm px-2 text-center" required/>
                                 </div>
 
                                 {{-- Unit price --}}
                                 <div class="col-span-6 sm:col-span-2">
                                     <label class="label text-xs">Preço unit. *</label>
                                     <input type="number"
+                                           :id="`item-unit-price-${index}`"
                                            :name="`items[${index}][unit_price]`"
                                            x-model="item.unit_price"
                                            min="0" step="any"
@@ -120,6 +124,7 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label class="label text-xs">Desc. R$</label>
                                     <input type="number"
+                                           :id="`item-discount-${index}`"
                                            :name="`items[${index}][discount]`"
                                            x-model="item.discount"
                                            min="0" step="any"
@@ -128,10 +133,14 @@
                                 </div>
 
                                 {{-- Line total + remove --}}
-                                <div class="col-span-6 sm:col-span-1 flex flex-col items-end justify-center sm:justify-start gap-2 pt-4 sm:pt-5">
-                                    <span class="text-sm font-semibold text-octa-300 leading-none"
-                                          x-text="fmt(lineTotal(item))"></span>
-                                    <button type="button" @click="removeItem(index)"
+                                <div class="col-span-6 sm:col-span-3 flex items-center justify-end gap-3 pt-5 border-l border-bg-border/50 pl-3">
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 uppercase tracking-widest leading-none mb-1">Total Item</p>
+                                        <span :id="`item-total-${index}`"
+                                              class="text-sm font-semibold text-octa-300 whitespace-nowrap"
+                                              x-text="fmt(lineTotal(item))"></span>
+                                    </div>
+                                    <button :id="`btn-remove-item-${index}`" type="button" @click="removeItem(index)"
                                             x-show="items.length > 1"
                                             class="text-slate-600 hover:text-red-400 transition-colors p-1" title="Remover">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,26 +158,26 @@
                 </div>
 
                 {{-- Totals --}}
-                <div class="mt-6 flex flex-col items-end gap-1 text-sm border-t border-bg-border pt-4">
+                <div id="quote-totals" class="mt-6 flex flex-col items-end gap-1 text-sm border-t border-bg-border pt-4">
                     <div class="flex gap-6 text-slate-400">
                         <span>Subtotal</span>
-                        <span x-text="fmt(subtotal)" class="w-28 text-right"></span>
+                        <span id="quote-subtotal" x-text="fmt(subtotal)" class="w-32 text-right"></span>
                     </div>
                     <div class="flex gap-6 text-slate-400">
                         <span>Descontos</span>
-                        <span x-text="'- ' + fmt(discountTotal)" class="w-28 text-right text-red-400"></span>
+                        <span id="quote-discount-total" x-text="'- ' + fmt(discountTotal)" class="w-32 text-right text-red-400"></span>
                     </div>
                     <div class="flex gap-6 text-slate-100 font-semibold text-base mt-1">
-                        <span>Total</span>
-                        <span x-text="fmt(total)" class="w-28 text-right text-octa-300"></span>
+                        <span>Total Geral</span>
+                        <span id="quote-total" x-text="fmt(total)" class="w-32 text-right text-octa-300"></span>
                     </div>
                 </div>
             </div>
 
             {{-- Actions --}}
-            <div class="flex gap-3">
-                <button type="submit" class="btn-primary">Salvar rascunho</button>
-                <a href="{{ route('quotes.index') }}" class="btn-ghost">Cancelar</a>
+            <div id="quote-actions" class="flex gap-3">
+                <button id="btn-save-quote" type="submit" class="btn-primary">Salvar rascunho</button>
+                <a id="btn-cancel-quote" href="{{ route('quotes.index') }}" class="btn-ghost">Cancelar</a>
             </div>
         </form>
     </div>
