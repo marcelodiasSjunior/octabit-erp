@@ -96,44 +96,44 @@
                                 </div>
 
                                 {{-- Qty --}}
-                                <div class="col-span-4 sm:col-span-2">
+                                <div class="col-span-6 sm:col-span-2">
                                     <label class="label text-xs">Qtd *</label>
                                     <input type="number"
                                            :name="`items[${index}][quantity]`"
                                            x-model="item.quantity"
-                                           min="0.0001" step="0.01"
+                                           min="0.0001" step="any"
                                            class="input text-sm" required/>
                                 </div>
 
                                 {{-- Unit price --}}
-                                <div class="col-span-4 sm:col-span-2">
+                                <div class="col-span-6 sm:col-span-2">
                                     <label class="label text-xs">Preço unit. *</label>
                                     <input type="number"
                                            :name="`items[${index}][unit_price]`"
                                            x-model="item.unit_price"
-                                           min="0" step="0.01"
+                                           min="0" step="any"
                                            placeholder="0,00"
                                            class="input text-sm" required/>
                                 </div>
 
-                                {{-- Discount % --}}
-                                <div class="col-span-4 sm:col-span-2">
+                                {{-- Discount R$ --}}
+                                <div class="col-span-6 sm:col-span-2">
                                     <label class="label text-xs">Desc. R$</label>
                                     <input type="number"
                                            :name="`items[${index}][discount]`"
                                            x-model="item.discount"
-                                           min="0" step="0.01"
+                                           min="0" step="any"
                                            placeholder="0,00"
                                            class="input text-sm"/>
                                 </div>
 
                                 {{-- Line total + remove --}}
-                                <div class="col-span-12 sm:col-span-1 flex sm:flex-col items-end sm:items-end justify-between sm:justify-start gap-2 pt-0 sm:pt-5">
-                                    <span class="text-sm font-semibold text-octa-300"
+                                <div class="col-span-6 sm:col-span-1 flex flex-col items-end justify-center sm:justify-start gap-2 pt-4 sm:pt-5">
+                                    <span class="text-sm font-semibold text-octa-300 leading-none"
                                           x-text="fmt(lineTotal(item))"></span>
                                     <button type="button" @click="removeItem(index)"
                                             x-show="items.length > 1"
-                                            class="text-slate-600 hover:text-red-400 transition-colors" title="Remover">
+                                            class="text-slate-600 hover:text-red-400 transition-colors p-1" title="Remover">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
