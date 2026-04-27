@@ -1,4 +1,4 @@
-@props(['href', 'active' => false, 'icon' => 'circle'])
+@props(['href', 'active' => false, 'icon' => 'circle', 'id' => null])
 
 @php
     $iconPaths = [
@@ -16,7 +16,7 @@
     $path = $iconPaths[$icon] ?? $iconPaths['circle'];
 @endphp
 
-<a href="{{ $href }}" @class(['nav-item', 'active' => $active])>
+<a href="{{ $href }}" @if($id) id="{{ $id }}" @endif @class(['nav-item', 'active' => $active])>
     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $path }}"/>
     </svg>

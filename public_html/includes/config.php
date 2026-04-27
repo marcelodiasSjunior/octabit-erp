@@ -35,29 +35,29 @@ $config = [
     ],
 
     'hero' => [
-        'badge'    => 'Para lojas, oficinas, deliveries e negócios com equipe',
-        'title'    => 'Sua operação organizada em 30 dias, sem complicar sua rotina.',
-        'subtitle' => 'Seu time trabalha de forma organizada, você tem tudo sob controle em um painel. Sem papéis, sem confusão, sem perder tempo.',
-        'cta_primary'   => 'Testar grátis por 14 dias',
-        'cta_secondary' => 'Ver como funciona',
+        'badge'    => 'Sistemas práticos para organizar seu dia a dia',
+        'title'    => 'Gestão de equipe, vendas e clientes em um só lugar.',
+        'subtitle' => 'Simplificamos sua rotina substituindo processos manuais por tecnologia prática. Mais controle para você, mais agilidade para seu time.',
+        'cta_primary'   => 'Testar gratuitamente',
+        'cta_secondary' => 'Conhecer Soluções',
     ],
 
     'problem' => [
-        'title' => 'Você é o gargalo da sua operação',
+        'title' => 'Sua gestão ainda depende de tarefas manuais?',
         'items' => [
-            'Equipe desorganizada: sem controle de jornada, foco ou produtividade',
-            'Vendas em risco: espalhadas em WhatsApp, anotações, nenhum follow-up automático',
-            'Clientes esquecidos: sem histórico, sem prioridade, taxa de perda crescente',
-            'Você preso em tarefas manuais: precisa estar em tudo, não consegue crescer',
+            'Equipe: falta de clareza sobre jornada e produtividade diária',
+            'Vendas: informações espalhadas que dificultam o acompanhamento',
+            'Clientes: histórico fragmentado e falta de avisos automáticos',
+            'Tempo: excesso de rotinas operacionais que travam o crescimento',
         ],
     ],
 
     'solution' => [
-        'title' => 'Do caos para operação que roda sozinha em 3 fases',
+        'title' => 'Centralize sua operação com agilidade',
         'steps' => [
-            ['icon' => 'search',      'title' => 'Diagnóstico estratégico', 'desc' => 'Mapeamos onde você perde tempo, dinheiro e clientes. Você sai com plano concreto.'],
-            ['icon' => 'tool',        'title' => 'Implementação guiada', 'desc' => 'Implementamos, seu time aprende, primeira automação funciona. Resultados imediatos.'],
-            ['icon' => 'bar-chart-2', 'title' => 'Escala contínua',     'desc' => 'Ajustes constantes, sem limite. Sua operação fica mais organizada e preparada para crescer.'],
+            ['icon' => 'search',      'title' => 'Análise de Fluxo', 'desc' => 'Entendemos sua rotina para identificar onde a tecnologia pode economizar tempo e reduzir erros.'],
+            ['icon' => 'tool',        'title' => 'Implantação Ágil', 'desc' => 'Configuramos o sistema e treinamos seu time. Você começa a ver os benefícios em poucos dias.'],
+            ['icon' => 'bar-chart-2', 'title' => 'Evolução e Suporte', 'desc' => 'Acompanhamos seu crescimento com ajustes contínuos e métricas claras para sua decisão.'],
         ],
     ],
 

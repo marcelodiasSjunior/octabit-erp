@@ -12,10 +12,11 @@
         <div class="card">
             <h2 class="text-base font-semibold text-slate-200 mb-6">Dados do {{ $isLeads ? 'Lead' : 'Cliente' }}</h2>
 
-            <form method="POST" action="{{ route($storeRoute) }}" x-data="{ loading: false }" @submit="loading = true">
+            <form id="form-create-client" method="POST" action="{{ route($storeRoute) }}" x-data="{ loading: false }" @submit="loading = true">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {{-- ... (fields already have IDs) ... --}}
 
                     {{-- Name --}}
                     <div class="sm:col-span-2">
@@ -126,14 +127,14 @@
 
                 {{-- Actions --}}
                 <div class="flex items-center gap-3 mt-6 pt-5 border-t border-bg-border">
-                    <button type="submit" class="btn-primary" :disabled="loading">
+                    <button id="btn-save-client" type="submit" class="btn-primary" :disabled="loading">
                         <svg x-show="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                         </svg>
                         <span x-text="loading ? 'Salvando...' : '{{ $isLeads ? 'Salvar lead' : 'Salvar cliente' }}'">{{ $isLeads ? 'Salvar lead' : 'Salvar cliente' }}</span>
                     </button>
-                    <a href="{{ route($backRoute) }}" class="btn-secondary">Cancelar</a>
+                    <a id="btn-cancel-client" href="{{ route($backRoute) }}" class="btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>

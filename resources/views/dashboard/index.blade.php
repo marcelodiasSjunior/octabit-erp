@@ -1,9 +1,10 @@
 <x-layouts.app title="Dashboard" header="Dashboard">
 
     {{-- Stat cards grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+    <div id="stat-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
 
         <x-stat-card
+            id="stat-active-clients"
             label="Clientes Ativos"
             :value="number_format($activeClients)"
             color="emerald"
@@ -17,6 +18,7 @@
         </x-stat-card>
 
         <x-stat-card
+            id="stat-leads"
             label="Leads"
             :value="number_format($totalLeads)"
             color="blue"
@@ -30,6 +32,7 @@
         </x-stat-card>
 
         <x-stat-card
+            id="stat-received-month"
             label="Recebido (mês)"
             :value="'R$ ' . number_format($totalPaidThisMonth, 2, ',', '.')"
             color="octa"
@@ -43,6 +46,7 @@
         </x-stat-card>
 
         <x-stat-card
+            id="stat-to-receive-month"
             label="A Receber (mês)"
             :value="'R$ ' . number_format($totalDueThisMonth, 2, ',', '.')"
             color="yellow"
@@ -57,8 +61,9 @@
     </div>
 
     {{-- CRM Stat cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <div id="crm-stats-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <x-stat-card
+            id="stat-open-deals"
             label="Oportunidades Abertas"
             :value="number_format($openDeals)"
             color="octa"
@@ -72,6 +77,7 @@
         </x-stat-card>
 
         <x-stat-card
+            id="stat-won-deals"
             label="Fechamentos (mês)"
             :value="number_format($wonDealsThisMonth)"
             color="emerald"
@@ -85,6 +91,7 @@
         </x-stat-card>
 
         <x-stat-card
+            id="stat-weighted-pipeline"
             label="Pipeline Ponderado"
             :value="'R$ ' . number_format($weightedPipeline, 2, ',', '.')"
             color="blue"
@@ -102,7 +109,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- Status breakdown chart / summary --}}
-        <div class="lg:col-span-1">
+        <div id="status-breakdown-card" class="lg:col-span-1">
             <div class="card">
                 <h2 class="text-sm font-semibold text-slate-200 mb-4">Cobranças por Status</h2>
                 <div class="space-y-3">
@@ -120,7 +127,7 @@
                             $count = $receivableByStatus[$item['key']] ?? 0;
                             $pct   = $total > 0 ? round(($count / $total) * 100) : 0;
                         @endphp
-                        <div>
+                        <div id="status-row-{{ $item['key'] }}">
                             <div class="flex justify-between items-center mb-1">
                                 <x-status-badge :status="$item['status']"/>
                                 <span class="text-sm font-semibold text-slate-300">{{ $count }}</span>
@@ -140,11 +147,11 @@
         </div>
 
         {{-- Quick actions --}}
-        <div class="lg:col-span-2">
+        <div id="quick-actions-card" class="lg:col-span-2">
             <div class="card">
                 <h2 class="text-sm font-semibold text-slate-200 mb-4">Ações Rápidas</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <a href="{{ route('clients.create') }}"
+                    <a id="btn-quick-new-client" href="{{ route('clients.create') }}"
                        class="flex flex-col items-center gap-2 p-4 rounded-lg border border-bg-border
                               hover:border-octa-500/40 hover:bg-octa-500/5 text-slate-400 hover:text-octa-400
                               transition-all duration-200 text-center">
@@ -154,7 +161,7 @@
                         <span class="text-xs font-medium">Novo Cliente</span>
                     </a>
 
-                    <a href="{{ route('receivable.create') }}"
+                    <a id="btn-quick-new-receivable" href="{{ route('receivable.create') }}"
                        class="flex flex-col items-center gap-2 p-4 rounded-lg border border-bg-border
                               hover:border-emerald-500/40 hover:bg-emerald-500/5 text-slate-400 hover:text-emerald-400
                               transition-all duration-200 text-center">
@@ -164,7 +171,7 @@
                         <span class="text-xs font-medium">Nova Cobrança</span>
                     </a>
 
-                    <a href="{{ route('receivable.index', ['status' => 'overdue']) }}"
+                    <a id="btn-quick-view-overdue" href="{{ route('receivable.index', ['status' => 'overdue']) }}"
                        class="flex flex-col items-center gap-2 p-4 rounded-lg border border-bg-border
                               hover:border-red-500/40 hover:bg-red-500/5 text-slate-400 hover:text-red-400
                               transition-all duration-200 text-center">

@@ -1,4 +1,4 @@
-@props(['label', 'value', 'icon' => null, 'color' => 'octa', 'sub' => null])
+@props(['label', 'value', 'icon' => null, 'color' => 'octa', 'sub' => null, 'id' => null])
 
 @php
     $colors = [
@@ -12,7 +12,7 @@
     $iconClass = $colors[$color] ?? $colors['octa'];
 @endphp
 
-<div class="stat-card">
+<div @if($id) id="{{ $id }}" @endif class="stat-card">
     @if($icon)
         <div class="stat-icon {{ $iconClass }}">
             {!! $icon !!}
