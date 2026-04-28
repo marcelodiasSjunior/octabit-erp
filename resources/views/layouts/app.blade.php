@@ -41,48 +41,62 @@
                 Dashboard
             </x-nav-item>
 
-            <div class="pt-4 pb-1 px-3">
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CRM</span>
-            </div>
-
-            <x-nav-dropdown label="Base de Clientes" icon="users" :active="request()->routeIs('leads.*', 'clients.*', 'tags.*')">
-                <x-nav-item id="nav-leads" href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="target">
+            {{-- CRM --}}
+            <x-nav-group icon="users" label="CRM" :active="request()->routeIs('leads.*', 'clients.*', 'deals.*', 'quotes.*', 'tags.*')">
+                <x-nav-item href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="target">
                     Leads
                 </x-nav-item>
-                <x-nav-item id="nav-clients" href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
+                <x-nav-item href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
                     Clientes
                 </x-nav-item>
-                <x-nav-item id="nav-tags" href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')" icon="tag">
+                <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')" icon="clipboard">
+                    Oportunidades
+                </x-nav-item>
+                <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')" icon="file-text">
+                    Orçamentos
+                </x-nav-item>
+                <x-nav-item href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')" icon="tag">
                     Tags / Categorias
                 </x-nav-item>
-            </x-nav-dropdown>
+            </x-nav-group>
 
-            <div class="pt-4 pb-1 px-3">
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Vendas e Financeiro</span>
-            </div>
-
-            <x-nav-dropdown label="Comercial" icon="trending-up" :active="request()->routeIs('quotes.*', 'deals.*')">
-                <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')" icon="clipboard">Oportunidades</x-nav-item>
-                <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')" icon="file-text">Orçamentos</x-nav-item>
-            </x-nav-dropdown>
-
-            <x-nav-dropdown label="Financeiro" icon="trending-down" :active="request()->routeIs('receivable.*', 'payable.*')">
-                <x-nav-item id="nav-receivable" href="{{ route('receivable.index') }}" :active="request()->routeIs('receivable.*')">
+            {{-- Financeiro --}}
+            <x-nav-group icon="trending-down" label="Financeiro" :active="request()->routeIs('receivable.*', 'payable.*')">
+                <x-nav-item href="{{ route('receivable.index') }}" :active="request()->routeIs('receivable.*')" icon="circle">
                     Contas a Receber
                 </x-nav-item>
-                <x-nav-item id="nav-payable" href="{{ route('payable.index') }}" :active="request()->routeIs('payable.*')">
+                <x-nav-item href="{{ route('payable.index') }}" :active="request()->routeIs('payable.*')" icon="circle">
                     Contas a Pagar
                 </x-nav-item>
-            </x-nav-dropdown>
+            </x-nav-group>
 
-            <div class="pt-4 pb-1 px-3 border-t border-bg-border/50 mt-4">
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Sistema</span>
-            </div>
+            {{-- Operações --}}
+            <x-nav-group icon="layers" label="Operações" :active="request()->routeIs('contracts.*', 'services.*', 'products.*')">
+                <x-nav-item href="{{ route('contracts.index') }}" :active="request()->routeIs('contracts.*')" icon="file-text">
+                    Contratos
+                </x-nav-item>
+                <x-nav-item href="{{ route('services.index') }}" :active="request()->routeIs('services.*')" icon="layers">
+                    Serviços
+                </x-nav-item>
+                <x-nav-item href="{{ route('products.index') }}" :active="request()->routeIs('products.*')" icon="package">
+                    Produtos
+                </x-nav-item>
+            </x-nav-group>
 
-            <x-nav-dropdown label="Configurações" icon="settings" :active="request()->routeIs('services.*', 'products.*')">
-                <x-nav-item href="{{ route('services.index') }}" :active="request()->routeIs('services.*')" icon="layers">Serviços</x-nav-item>
-                <x-nav-item href="{{ route('products.index') }}" :active="request()->routeIs('products.*')" icon="package">Produtos</x-nav-item>
-            </x-nav-dropdown>
+            {{-- Admin --}}
+            @if(auth()->user()->role === \App\Enums\UserRole::Admin)
+                <x-nav-group icon="settings" label="Admin" :active="request()->routeIs('admin.*')">
+                    <x-nav-item href="#" :active="request()->routeIs('admin.users.*')" icon="users">
+                        Usuários
+                    </x-nav-item>
+                    <x-nav-item href="#" :active="request()->routeIs('admin.settings.*')" icon="settings">
+                        Configurações
+                    </x-nav-item>
+                    <x-nav-item href="#" :active="request()->routeIs('admin.backups.*')" icon="layers">
+                        Backups
+                    </x-nav-item>
+                </x-nav-group>
+            @endif
         </nav>
 
         {{-- User info at bottom --}}
@@ -99,7 +113,9 @@
                 </div>
                 <form id="logout-form" method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button id="btn-logout" type="submit" class="text-slate-500 hover:text-red-400 transition-colors" title="Sair">
+                    <button id="btn-logout" type="submit" 
+                            @click="Object.keys(localStorage).forEach(k => k.startsWith('nav-group-') && localStorage.removeItem(k))"
+                            class="text-slate-500 hover:text-red-400 transition-colors" title="Sair">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
