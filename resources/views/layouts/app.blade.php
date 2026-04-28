@@ -7,7 +7,6 @@
     <title>{{ isset($title) ? $title . ' — ' : '' }}OctaBit ERP</title>
     
     {{-- Scripts Externos --}}
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
