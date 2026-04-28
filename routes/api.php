@@ -9,6 +9,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('quotes', QuoteController::class);
+Route::post('webhooks/leads', \App\Http\Controllers\Api\LeadWebhookController::class);
 Route::patch('quotes/{id}/send', [QuoteController::class, 'markAsSent']);
 Route::patch('quotes/{id}/approve', [QuoteController::class, 'approve']);
 Route::patch('quotes/{id}/reject', [QuoteController::class, 'reject']);
