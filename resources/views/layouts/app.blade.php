@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title . ' — ' : '' }}OctaBit ERP</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 </head>
 <body class="bg-bg-primary min-h-screen flex" x-data="{ sidebarOpen: true }">
 
@@ -40,24 +40,28 @@
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CRM</span>
             </div>
 
-            <x-nav-item id="nav-leads" href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="target">
-                Leads
-            </x-nav-item>
-
-            <x-nav-item id="nav-clients" href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
-                Clientes
-            </x-nav-item>
+            <x-nav-dropdown label="Base de Clientes" icon="users" :active="request()->routeIs('leads.*', 'clients.*', 'tags.*')">
+                <x-nav-item id="nav-leads" href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="target">
+                    Leads
+                </x-nav-item>
+                <x-nav-item id="nav-clients" href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
+                    Clientes
+                </x-nav-item>
+                <x-nav-item id="nav-tags" href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')" icon="tag">
+                    Tags / Categorias
+                </x-nav-item>
+            </x-nav-dropdown>
 
             <div class="pt-4 pb-1 px-3">
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Vendas e Financeiro</span>
             </div>
 
             <x-nav-dropdown label="Comercial" icon="trending-up" :active="request()->routeIs('quotes.*', 'deals.*')">
-                <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')">Oportunidades</x-nav-item>
-                <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')">Orçamentos</x-nav-item>
+                <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')" icon="clipboard">Oportunidades</x-nav-item>
+                <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')" icon="file-text">Orçamentos</x-nav-item>
             </x-nav-dropdown>
 
-            <x-nav-dropdown label="Financeiro" icon="clipboard" :active="request()->routeIs('receivable.*', 'payable.*')">
+            <x-nav-dropdown label="Financeiro" icon="trending-down" :active="request()->routeIs('receivable.*', 'payable.*')">
                 <x-nav-item id="nav-receivable" href="{{ route('receivable.index') }}" :active="request()->routeIs('receivable.*')">
                     Contas a Receber
                 </x-nav-item>
@@ -66,12 +70,11 @@
                 </x-nav-item>
             </x-nav-dropdown>
 
-            <div class="pt-4 pb-1 px-3">
+            <div class="pt-4 pb-1 px-3 border-t border-bg-border/50 mt-4">
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Sistema</span>
             </div>
 
-            <x-nav-dropdown label="Configurações" icon="settings" :active="request()->routeIs('tags.*', 'services.*', 'products.*')">
-                <x-nav-item href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')" icon="tag">Tags</x-nav-item>
+            <x-nav-dropdown label="Configurações" icon="settings" :active="request()->routeIs('services.*', 'products.*')">
                 <x-nav-item href="{{ route('services.index') }}" :active="request()->routeIs('services.*')" icon="layers">Serviços</x-nav-item>
                 <x-nav-item href="{{ route('products.index') }}" :active="request()->routeIs('products.*')" icon="package">Produtos</x-nav-item>
             </x-nav-dropdown>

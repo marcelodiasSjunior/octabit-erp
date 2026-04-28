@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DTOs\Quote\CreateQuoteDTO;
+use App\DTOs\Quote\UpdateQuoteDTO;
 use App\Enums\QuoteStatus;
 use App\Models\Quote;
 use App\Repositories\Contracts\QuoteRepositoryInterface;
@@ -27,18 +29,18 @@ final class QuoteService
         return $this->repository->findWithItemsOrFail($id);
     }
 
-    public function create(array $data): Quote
+    public function create(CreateQuoteDTO $dto): Quote
     {
-        return DB::transaction(function () use ($data) {
-            $calculation = $this->calculate($data['items']);
+        return DB::transaction(function () use ($dto) {
+            $calculation = $this->calculate($dto->items);
 
             $quote = $this->repository->create([
-                'client_id' => $data['client_id'],
-                'status' => $data['status'] ?? QuoteStatus::Draft->value,
-                'valid_until' => $data['valid_until'],
-                'subtotal' => $calculation['subtotal'],
+                'client_id'      => $dto->clientId,
+                'status'         => QuoteStatus::Draft->value,
+                'valid_until'    => $dto->validUntil,
+                'subtotal'       => $calculation['subtotal'],
                 'discount_total' => $calculation['discount_total'],
-                'total' => $calculation['total'],
+                'total'          => $calculation['total'],
             ]);
 
             $quote->items()->createMany($calculation['items']);
@@ -47,19 +49,18 @@ final class QuoteService
         });
     }
 
-    public function update(int $id, array $data): Quote
+    public function update(int $id, UpdateQuoteDTO $dto): Quote
     {
-        return DB::transaction(function () use ($id, $data) {
-            $quote = $this->findOrFail($id);
-            $calculation = $this->calculate($data['items']);
+        return DB::transaction(function () use ($id, $dto) {
+            $quote       = $this->findOrFail($id);
+            $calculation = $this->calculate($dto->items);
 
             $this->repository->update($id, [
-                'client_id' => $data['client_id'],
-                'status' => $data['status'] ?? $quote->status->value,
-                'valid_until' => $data['valid_until'],
-                'subtotal' => $calculation['subtotal'],
+                'client_id'      => $dto->clientId,
+                'valid_until'    => $dto->validUntil,
+                'subtotal'       => $calculation['subtotal'],
                 'discount_total' => $calculation['discount_total'],
-                'total' => $calculation['total'],
+                'total'          => $calculation['total'],
             ]);
 
             $quote->items()->delete();
@@ -123,47 +124,42 @@ final class QuoteService
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
-     * @return array{subtotal: float, discount_total: float, total: float, items: array<int, array<string, mixed>>}
+     * @param \App\DTOs\Quote\QuoteItemDTO[] $items
      */
     private function calculate(array $items): array
     {
-        $subtotal = 0.0;
+        $subtotal      = 0.0;
         $discountTotal = 0.0;
         $preparedItems = [];
 
         foreach ($items as $item) {
-            $quantity = (float) $item['quantity'];
-            $unitPrice = (float) $item['unit_price'];
-            $discount = isset($item['discount']) ? (float) $item['discount'] : 0.0;
+            $lineSubtotal = round($item->quantity * $item->unitPrice, 2);
+            $lineDiscount = min($item->discount, $lineSubtotal);
+            $lineTotal    = round($lineSubtotal - $lineDiscount, 2);
 
-            $lineSubtotal = round($quantity * $unitPrice, 2);
-            $lineDiscount = min($discount, $lineSubtotal);
-            $lineTotal = round($lineSubtotal - $lineDiscount, 2);
-
-            $subtotal += $lineSubtotal;
+            $subtotal      += $lineSubtotal;
             $discountTotal += $lineDiscount;
 
             $preparedItems[] = [
-                'product_id' => $item['product_id'] ?? null,
-                'service_id' => $item['service_id'] ?? null,
-                'description' => $item['description'],
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
-                'discount' => $lineDiscount,
+                'product_id'    => $item->productId,
+                'service_id'    => $item->serviceId,
+                'description'   => $item->description,
+                'quantity'      => $item->quantity,
+                'unit_price'    => $item->unitPrice,
+                'discount'      => $lineDiscount,
                 'line_subtotal' => $lineSubtotal,
-                'line_total' => $lineTotal,
+                'line_total'    => $lineTotal,
             ];
         }
 
-        $subtotal = round($subtotal, 2);
+        $subtotal      = round($subtotal, 2);
         $discountTotal = round($discountTotal, 2);
 
         return [
-            'subtotal' => $subtotal,
+            'subtotal'       => $subtotal,
             'discount_total' => $discountTotal,
-            'total' => round($subtotal - $discountTotal, 2),
-            'items' => $preparedItems,
+            'total'          => round($subtotal - $discountTotal, 2),
+            'items'          => $preparedItems,
         ];
     }
 }

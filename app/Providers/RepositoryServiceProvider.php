@@ -6,8 +6,10 @@ namespace App\Providers;
 
 use App\Repositories\Contracts\AccountsReceivableRepositoryInterface;
 use App\Repositories\Contracts\ClientRepositoryInterface;
+use App\Repositories\Contracts\DealRepositoryInterface;
 use App\Repositories\Eloquent\AccountsReceivableRepository;
 use App\Repositories\Eloquent\ClientRepository;
+use App\Repositories\Eloquent\EloquentDealRepository;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -19,6 +21,7 @@ class RepositoryServiceProvider extends ServiceProvider
 {
     public array $bindings = [
         ClientRepositoryInterface::class             => ClientRepository::class,
-        AccountsReceivableRepositoryInterface::class  => AccountsReceivableRepository::class,
+        AccountsReceivableRepositoryInterface::class => AccountsReceivableRepository::class,
+        DealRepositoryInterface::class               => EloquentDealRepository::class,
     ];
 }

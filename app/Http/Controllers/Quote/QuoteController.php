@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Quote;
 
+use App\DTOs\Quote\CreateQuoteDTO;
+use App\DTOs\Quote\UpdateQuoteDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Quote\StoreQuoteRequest;
+use App\Http\Requests\Quote\UpdateQuoteRequest;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\Service;
@@ -37,21 +41,10 @@ final class QuoteController extends Controller
         return view('quotes.create', compact('clients', 'products', 'services'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreQuoteRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'client_id'           => ['required', 'exists:clients,id'],
-            'valid_until'         => ['required', 'date', 'after:today'],
-            'items'               => ['required', 'array', 'min:1'],
-            'items.*.description' => ['required', 'string', 'max:255'],
-            'items.*.quantity'    => ['required', 'numeric', 'min:0.0001'],
-            'items.*.unit_price'  => ['required', 'numeric', 'min:0'],
-            'items.*.discount'    => ['nullable', 'numeric', 'min:0'],
-            'items.*.product_id'  => ['nullable', 'exists:products,id'],
-            'items.*.service_id'  => ['nullable', 'exists:services,id'],
-        ]);
-
-        $quote = $this->service->create($data);
+        $dto   = CreateQuoteDTO::fromArray($request->validated());
+        $quote = $this->service->create($dto);
 
         return redirect()->route('quotes.show', $quote->id)
             ->with('success', "Orçamento #{$quote->id} criado com sucesso.");
@@ -74,21 +67,10 @@ final class QuoteController extends Controller
         return view('quotes.edit', compact('quote', 'clients', 'products', 'services'));
     }
 
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(UpdateQuoteRequest $request, int $id): RedirectResponse
     {
-        $data = $request->validate([
-            'client_id'           => ['required', 'exists:clients,id'],
-            'valid_until'         => ['required', 'date'],
-            'items'               => ['required', 'array', 'min:1'],
-            'items.*.description' => ['required', 'string', 'max:255'],
-            'items.*.quantity'    => ['required', 'numeric', 'min:0.0001'],
-            'items.*.unit_price'  => ['required', 'numeric', 'min:0'],
-            'items.*.discount'    => ['nullable', 'numeric', 'min:0'],
-            'items.*.product_id'  => ['nullable', 'exists:products,id'],
-            'items.*.service_id'  => ['nullable', 'exists:services,id'],
-        ]);
-
-        $quote = $this->service->update($id, $data);
+        $dto   = UpdateQuoteDTO::fromArray($request->validated());
+        $quote = $this->service->update($id, $dto);
 
         return redirect()->route('quotes.show', $quote->id)
             ->with('success', 'Orçamento atualizado com sucesso.');

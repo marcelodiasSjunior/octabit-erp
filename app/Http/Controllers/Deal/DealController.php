@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Deal;
 
+use App\DTOs\Deal\CreateDealDTO;
+use App\DTOs\Deal\UpdateDealDTO;
 use App\Enums\ClientStatus;
-use App\Enums\DealStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Deal\StoreDealRequest;
+use App\Http\Requests\Deal\UpdateDealRequest;
 use App\Models\Client;
-use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
-use App\Services\DealFollowupService;
+use App\Services\DealService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,78 +27,31 @@ final class DealController extends Controller
         ClientStatus::Active->value,
     ];
 
-    public function index(Request $request): View
-    {
-        $deals = Deal::query()
-            ->with(['client', 'pipeline', 'stage'])
-            ->latest()
-            ->paginate(15);
+    public function __construct(
+        private readonly DealService $service
+    ) {}
 
+    public function index(): View
+    {
+        $deals = $this->service->list();
         return view('deals.index', compact('deals'));
     }
 
     public function create(): View
     {
-        $clients = Client::query()
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->orderBy('name')
-            ->get();
-        $pipelines = Pipeline::query()
-            ->where('active', true)
-            ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
-            ->orderBy('name')
-            ->get();
+        $clients   = $this->getEligibleClients();
+        $pipelines = $this->getActivePipelines();
 
         return view('deals.create', compact('clients', 'pipelines'));
     }
 
-    public function store(Request $request, DealFollowupService $followupService): RedirectResponse
+    public function store(StoreDealRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'client_id' => ['required', 'exists:clients,id'],
-            'pipeline_id' => ['required', 'exists:pipelines,id'],
-            'stage_id' => ['required', 'exists:pipeline_stages,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'value' => ['required', 'numeric', 'min:0'],
-            'expected_close_date' => ['nullable', 'date'],
-            'notes' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $dto = CreateDealDTO::fromArray($request->validated());
+        
+        $this->ensureClientIsEligible($dto->clientId);
 
-        $clientIsEligible = Client::query()
-            ->whereKey((int) $validated['client_id'])
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->exists();
-
-        if (!$clientIsEligible) {
-            return back()->withErrors([
-                'client_id' => 'Selecione um lead ou cliente ativo para criar a oportunidade.',
-            ])->withInput();
-        }
-
-        $stage = PipelineStage::query()
-            ->where('id', $validated['stage_id'])
-            ->where('pipeline_id', $validated['pipeline_id'])
-            ->first();
-
-        if (!$stage) {
-            return back()->withErrors([
-                'stage_id' => 'A etapa precisa pertencer ao pipeline selecionado.',
-            ])->withInput();
-        }
-
-        $status = match ($stage->type) {
-            'won' => DealStatus::Won,
-            'lost' => DealStatus::Lost,
-            default => DealStatus::Open,
-        };
-
-        $deal = Deal::create([
-            ...$validated,
-            'status' => $status,
-            'closed_at' => $status === DealStatus::Open ? null : now(),
-        ]);
-
-        $followupService->initializeStageHistory($deal, $request->user()?->id);
+        $this->service->create($dto, $request->user()?->id);
 
         return redirect()->route('deals.index')
             ->with('success', 'Oportunidade criada com sucesso.');
@@ -104,74 +59,28 @@ final class DealController extends Controller
 
     public function show(int $id): View
     {
-        $deal = Deal::with(['client', 'pipeline.stages', 'stage', 'activities.user'])->findOrFail($id);
+        $deal = $this->service->findOrFail($id);
+        $deal->load(['client', 'pipeline.stages', 'stage', 'activities.user']);
 
         return view('deals.show', compact('deal'));
     }
 
     public function edit(int $id): View
     {
-        $deal = Deal::with(['pipeline.stages'])->findOrFail($id);
-        $clients = Client::query()
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->orderBy('name')
-            ->get();
-        $pipelines = Pipeline::query()
-            ->where('active', true)
-            ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
-            ->orderBy('name')
-            ->get();
+        $deal      = $this->service->findOrFail($id);
+        $clients   = $this->getEligibleClients();
+        $pipelines = $this->getActivePipelines();
 
         return view('deals.edit', compact('deal', 'clients', 'pipelines'));
     }
 
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(UpdateDealRequest $request, int $id): RedirectResponse
     {
-        $deal = Deal::findOrFail($id);
+        $dto = UpdateDealDTO::fromArray($request->validated());
 
-        $validated = $request->validate([
-            'client_id' => ['required', 'exists:clients,id'],
-            'pipeline_id' => ['required', 'exists:pipelines,id'],
-            'stage_id' => ['required', 'exists:pipeline_stages,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'value' => ['required', 'numeric', 'min:0'],
-            'expected_close_date' => ['nullable', 'date'],
-            'notes' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $this->ensureClientIsEligible($dto->clientId);
 
-        $clientIsEligible = Client::query()
-            ->whereKey((int) $validated['client_id'])
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->exists();
-
-        if (!$clientIsEligible) {
-            return back()->withErrors([
-                'client_id' => 'Selecione um lead ou cliente ativo para atualizar a oportunidade.',
-            ])->withInput();
-        }
-
-        $stage = PipelineStage::query()
-            ->where('id', $validated['stage_id'])
-            ->where('pipeline_id', $validated['pipeline_id'])
-            ->first();
-
-        if (!$stage) {
-            return back()->withErrors([
-                'stage_id' => 'A etapa precisa pertencer ao pipeline selecionado.',
-            ])->withInput();
-        }
-
-        $status = match ($stage->type) {
-            'won' => DealStatus::Won,
-            'lost' => DealStatus::Lost,
-            default => DealStatus::Open,
-        };
-
-        $deal->update([
-            ...$validated,
-            'status' => $status,
-            'closed_at' => $status === DealStatus::Open ? null : now(),
-        ]);
+        $deal = $this->service->update($id, $dto);
 
         return redirect()->route('deals.show', $deal->id)
             ->with('success', 'Oportunidade atualizada com sucesso.');
@@ -179,42 +88,22 @@ final class DealController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
-        $deal = Deal::findOrFail($id);
-        $deal->delete();
+        $this->service->delete($id);
 
         return redirect()->route('deals.index')
             ->with('success', 'Oportunidade removida.');
     }
 
-    public function moveStage(Request $request, int $id, DealFollowupService $followupService): JsonResponse|RedirectResponse
+    public function moveStage(Request $request, int $id): JsonResponse|RedirectResponse
     {
-        $deal = Deal::with('stage')->findOrFail($id);
-
         $validated = $request->validate([
-            'stage_id' => [
-                'required',
-                Rule::exists('pipeline_stages', 'id')->where('pipeline_id', $deal->pipeline_id),
-            ],
+            'stage_id' => ['required', 'exists:pipeline_stages,id'],
         ]);
 
-        $stage = PipelineStage::findOrFail((int) $validated['stage_id']);
-
-        $status = match ($stage->type) {
-            'won'  => DealStatus::Won,
-            'lost' => DealStatus::Lost,
-            default => DealStatus::Open,
-        };
-
-        $followupService->recordStageTransition($deal, $stage, $request->user()?->id);
-
-        $deal->update([
-            'stage_id'  => $stage->id,
-            'status'    => $status,
-            'closed_at' => $status === DealStatus::Open ? null : now(),
-        ]);
+        $deal = $this->service->moveStage($id, (int) $validated['stage_id'], $request->user()?->id);
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'status' => $status->value]);
+            return response()->json(['success' => true, 'status' => $deal->status->value]);
         }
 
         return redirect()->route('deals.show', $deal->id)
@@ -229,5 +118,36 @@ final class DealController extends Controller
         ]);
 
         return view('deals.kanban', compact('pipeline'));
+    }
+
+    /** Clean Code Helpers */
+
+    private function getEligibleClients()
+    {
+        return Client::query()
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->orderBy('name')
+            ->get();
+    }
+
+    private function getActivePipelines()
+    {
+        return Pipeline::query()
+            ->where('active', true)
+            ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
+            ->orderBy('name')
+            ->get();
+    }
+
+    private function ensureClientIsEligible(int $clientId): void
+    {
+        $eligible = Client::query()
+            ->whereKey($clientId)
+            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
+            ->exists();
+
+        if (!$eligible) {
+            abort(422, 'O cliente selecionado não é elegível para uma oportunidade.');
+        }
     }
 }

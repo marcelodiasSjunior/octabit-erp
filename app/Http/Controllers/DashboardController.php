@@ -22,6 +22,22 @@ final class DashboardController extends Controller
 
     public function index(): View
     {
+        $user = auth()->user();
+        
+        // Padrão de layout se o usuário não personalizou
+        $defaultLayout = [
+            ['id' => 'stat-cards',      'visible' => true, 'order' => 1],
+            ['id' => 'crm-stat-cards',  'visible' => true, 'order' => 2],
+            ['id' => 'revenue-chart',   'visible' => true, 'order' => 3],
+            ['id' => 'status-breakdown','visible' => true, 'order' => 4],
+            ['id' => 'quick-actions',   'visible' => true, 'order' => 5],
+        ];
+
+        $layout = $user->dashboard_layout ?? $defaultLayout;
+        
+        // Sort by order
+        usort($layout, fn($a, $b) => $a['order'] <=> $b['order']);
+
         $clientCounts = Cache::remember('dashboard.client_counts', 300, fn () =>
             $this->clientService->countByStatus()
         );
@@ -46,6 +62,20 @@ final class DashboardController extends Controller
             'wonDealsThisMonth'  => $wonDealsThisMonth,
             'weightedPipeline'   => $weightedPipeline,
             'charts'             => $charts,
+            'layout'             => $layout,
         ]);
+    }
+
+    public function updateLayout(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'layout' => 'required|array'
+        ]);
+
+        auth()->user()->update([
+            'dashboard_layout' => $request->layout
+        ]);
+
+        return response()->json(['success' => true]);
     }
 }

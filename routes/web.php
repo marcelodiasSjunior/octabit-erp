@@ -36,6 +36,7 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('dashboard/layout', [DashboardController::class, 'updateLayout'])->name('dashboard.update-layout');
 
     // Clients
     Route::get('leads', [ClientController::class, 'leads'])->name('leads.index');
