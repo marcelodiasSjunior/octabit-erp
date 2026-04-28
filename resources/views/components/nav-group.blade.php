@@ -10,8 +10,9 @@
         this.open = !this.open;
         localStorage.setItem('{{ $id }}', this.open);
     }
-}" class="w-full">
+}" class="w-full" x-cloak>
     <button @click="toggle()" 
+            type="button"
             @class([
                 'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-150 group',
                 'text-octa-400 bg-octa-500/5' => $active,
@@ -37,7 +38,6 @@
 
     <div x-show="open" 
          x-collapse
-         x-cloak
          class="ml-4 mt-0.5 border-l border-bg-border/50 pl-2 space-y-0.5">
         {{ $slot }}
     </div>
