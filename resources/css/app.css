@@ -6,6 +6,8 @@
 
 /* ── Base ──────────────────────────────────────────────────────── */
 @layer base {
+    [x-cloak] { display: none !important; }
+
     html, body {
         @apply bg-bg-primary text-slate-200 antialiased;
         font-family: 'Inter', system-ui, sans-serif;
