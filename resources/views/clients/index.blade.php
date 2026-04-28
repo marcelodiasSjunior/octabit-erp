@@ -46,7 +46,17 @@
                 @endforeach
             </select>
 
-            @if(!empty($filters['search']) || !empty($filters['status']))
+            <select id="select-tag" name="tag_id" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+                <option value="">Filtrar por Tag</option>
+                @foreach($tags as $tag)
+                    <option value="{{ $tag->id }}"
+                        {{ ($filters['tag_id'] ?? '') == $tag->id ? 'selected' : '' }}>
+                        {{ $tag->name }}
+                    </option>
+                @endforeach
+            </select>
+
+            @if(!empty($filters['search']) || !empty($filters['status']) || !empty($filters['tag_id']))
                 <a id="btn-clear-filters" href="{{ route($indexRoute) }}" class="btn-ghost btn-sm self-center">
                     Limpar
                 </a>
@@ -81,6 +91,13 @@
                             <div class="font-medium text-slate-200">{{ $client->name }}</div>
                             @if($client->company_name)
                                 <div class="text-xs text-slate-500">{{ $client->company_name }}</div>
+                            @endif
+                            @if($client->tags->isNotEmpty())
+                                <div class="flex flex-wrap gap-1 mt-1.5">
+                                    @foreach($client->tags as $tag)
+                                        <x-tag :tag="$tag" />
+                                    @endforeach
+                                </div>
                             @endif
                         </td>
                         <td class="font-mono text-xs">{{ $client->formatted_document }}</td>

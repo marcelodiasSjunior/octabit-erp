@@ -20,6 +20,7 @@ final readonly class UpdateClientDTO
         public ?string      $address     = null,
         public ?string      $city        = null,
         public ?string      $state       = null,
+        public array        $tags        = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -36,6 +37,7 @@ final readonly class UpdateClientDTO
             address:     $data['address'] ?? null,
             city:        $data['city'] ?? null,
             state:       $data['state'] ?? null,
+            tags:        $data['tags'] ?? [],
         );
     }
 
@@ -53,6 +55,7 @@ final readonly class UpdateClientDTO
             'address'      => $this->address,
             'city'         => $this->city,
             'state'        => $this->state,
+            'tags'         => $this->tags,
         ];
     }
 }

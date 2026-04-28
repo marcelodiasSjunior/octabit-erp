@@ -67,6 +67,11 @@ class Client extends Model
         return $this->hasMany(ClientInteraction::class);
     }
 
+    public function tags(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
     // ── Scopes ────────────────────────────────────────────────────
 
     public function scopeActive($query)

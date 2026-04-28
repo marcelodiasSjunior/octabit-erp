@@ -36,7 +36,7 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function paginateFiltered(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->newQuery()->with('tags');
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -44,6 +44,12 @@ class ClientRepository implements ClientRepositoryInterface
             $query->where('status', 'lead');
         } elseif (($filters['segment'] ?? null) === 'clients') {
             $query->where('status', '!=', 'lead');
+        }
+
+        if (!empty($filters['tag_id'])) {
+            $query->whereHas('tags', function ($q) use ($filters) {
+                $q->where('tags.id', $filters['tag_id']);
+            });
         }
 
         if (!empty($filters['search'])) {
@@ -61,15 +67,31 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function create(array $data): Client
     {
-        return $this->model->create($data);
+        $tags = $data['tags'] ?? [];
+        unset($data['tags']);
+
+        $client = $this->model->create($data);
+
+        if (!empty($tags)) {
+            $client->tags()->sync($tags);
+        }
+
+        return $client->load('tags');
     }
 
     public function update(int $id, array $data): Client
     {
+        $tags = $data['tags'] ?? null;
+        unset($data['tags']);
+
         $client = $this->findOrFail($id);
         $client->update($data);
 
-        return $client->fresh();
+        if ($tags !== null) {
+            $client->tags()->sync($tags);
+        }
+
+        return $client->fresh(['tags']);
     }
 
     public function delete(int $id): bool

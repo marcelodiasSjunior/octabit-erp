@@ -29,6 +29,8 @@ final class StoreClientRequest extends FormRequest
             'address'      => 'nullable|string|max:255',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|size:2',
+            'tags'         => 'nullable|array',
+            'tags.*'       => 'exists:tags,id',
         ];
     }
 

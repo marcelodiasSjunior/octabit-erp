@@ -35,24 +35,29 @@ final class ClientController extends Controller
 
     private function renderIndex(Request $request, string $segment): View
     {
-        $filters = $request->only(['status', 'search']);
+        $filters = $request->only(['status', 'search', 'tag_id']);
         $filters['segment'] = $segment;
         $clients = $this->service->list($filters);
+        $tags = \App\Models\Tag::orderBy('name')->get();
 
-        return view('clients.index', compact('clients', 'filters', 'segment'));
+        return view('clients.index', compact('clients', 'filters', 'segment', 'tags'));
     }
 
     public function create(): View
     {
+        $tags = \App\Models\Tag::orderBy('name')->get();
         return view('clients.create', [
             'segment' => 'clients',
+            'tags'    => $tags,
         ]);
     }
 
     public function createLead(): View
     {
+        $tags = \App\Models\Tag::orderBy('name')->get();
         return view('clients.create', [
             'segment' => 'leads',
+            'tags'    => $tags,
         ]);
     }
 
@@ -101,13 +106,14 @@ final class ClientController extends Controller
     public function edit(Request $request, int $id): View
     {
         $client = $this->service->findOrFail($id);
+        $tags = \App\Models\Tag::orderBy('name')->get();
 
         $segment = $request->query('segment');
         if (!in_array($segment, ['leads', 'clients'], true)) {
             $segment = $client->status === ClientStatus::Lead ? 'leads' : 'clients';
         }
 
-        return view('clients.edit', compact('client', 'segment'));
+        return view('clients.edit', compact('client', 'segment', 'tags'));
     }
 
     public function update(UpdateClientRequest $request, int $id): RedirectResponse

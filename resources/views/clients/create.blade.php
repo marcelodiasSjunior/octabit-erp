@@ -89,6 +89,32 @@
                         @error('status') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
 
+                    {{-- Tags --}}
+                    <div class="sm:col-span-2">
+                        <label class="label mb-2">Categorias / Tags</label>
+                        <div class="flex flex-wrap gap-2">
+                            @forelse($tags as $tag)
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" name="tags[]" value="{{ $tag->id }}" class="hidden peer"
+                                        {{ in_array($tag->id, old('tags', [])) ? 'checked' : '' }}>
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-all
+                                              peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-offset-bg-primary
+                                              border-bg-border bg-bg-secondary text-slate-400
+                                              hover:border-slate-500 peer-checked:border-transparent"
+                                         style="--tw-ring-color: {{ $tag->color }};"
+                                         :class="{'opacity-100': true}"
+                                         data-color="{{ $tag->color }}">
+                                        <span class="w-2 h-2 rounded-full mr-2" style="background-color: {{ $tag->color }};"></span>
+                                        {{ $tag->name }}
+                                    </div>
+                                </label>
+                            @empty
+                                <p class="text-xs text-slate-500 italic">Nenhuma tag cadastrada. <a href="#" class="text-octa-400 hover:underline">Criar agora?</a></p>
+                            @endforelse
+                        </div>
+                        @error('tags') <p class="form-error mt-1">{{ $message }}</p> @enderror
+                    </div>
+
                     {{-- Notes --}}
                     <div class="sm:col-span-2">
                         <label for="notes" class="label">Observações <span class="text-slate-600 font-normal">(opcional)</span></label>
