@@ -53,8 +53,12 @@
 
         updateLayoutState() {
             const newLayout = [];
-            const items = this.$refs.widgetContainer.querySelectorAll('.widget-item');
+            // Usar direct children para evitar pegar elementos internos caso existam
+            const items = Array.from(this.$refs.widgetContainer.children);
+            
             items.forEach((item, index) => {
+                if (!item.classList.contains('widget-item')) return;
+                
                 const id = item.getAttribute('data-id');
                 const original = this.layout.find(l => l.id === id);
                 if (id) {
@@ -65,10 +69,14 @@
                     });
                 }
             });
+
+            console.log('Novo Layout gerado:', newLayout);
             this.layout = newLayout;
         },
 
         saveLayout() {
+            console.log('Enviando layout para o servidor...', this.layout);
+            
             fetch('{{ route('dashboard.update-layout') }}', {
                 method: 'POST',
                 headers: {
@@ -76,8 +84,18 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({ layout: this.layout })
-            }).then(() => {
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erro na resposta do servidor');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Sucesso:', data);
                 window.location.reload();
+            })
+            .catch(error => {
+                console.error('Erro ao salvar:', error);
+                alert('Erro ao salvar a ordem dos widgets.');
             });
         }
     }">
