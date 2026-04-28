@@ -29,8 +29,7 @@ final class DashboardController extends Controller
             ['id' => 'stat-cards',      'visible' => true, 'order' => 1],
             ['id' => 'crm-stat-cards',  'visible' => true, 'order' => 2],
             ['id' => 'revenue-chart',   'visible' => true, 'order' => 3],
-            ['id' => 'status-breakdown','visible' => true, 'order' => 4],
-            ['id' => 'quick-actions',   'visible' => true, 'order' => 5],
+            ['id' => 'status-and-actions','visible' => true, 'order' => 4],
         ];
 
         $layout = $user->dashboard_layout ?? $defaultLayout;

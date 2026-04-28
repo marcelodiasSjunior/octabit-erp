@@ -7,6 +7,7 @@
     <title>{{ isset($title) ? $title . ' — ' : '' }}OctaBit ERP</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body class="bg-bg-primary min-h-screen flex" x-data="{ sidebarOpen: true }">
 

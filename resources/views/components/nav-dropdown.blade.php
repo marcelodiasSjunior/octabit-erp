@@ -20,7 +20,7 @@
          x-transition:enter="transition ease-out duration-100"
          x-transition:enter-start="opacity-0 -translate-y-2"
          x-transition:enter-end="opacity-100 translate-y-0"
-         class="pl-10 space-y-1">
+         class="pl-9 space-y-1 border-l border-bg-border/40 ml-5 mt-1">
         {{ $slot }}
     </div>
 </div>
