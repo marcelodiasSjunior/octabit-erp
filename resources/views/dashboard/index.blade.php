@@ -6,9 +6,11 @@
         sortable: null,
         
         init() {
+            // Monitorar mudança no estado de customização
             this.$watch('customizing', value => {
                 if (value) {
-                    this.initSortable();
+                    // Timeout para garantir que o x-show terminou de renderizar os drag-handles
+                    setTimeout(() => this.initSortable(), 100);
                 } else if (this.sortable) {
                     this.sortable.destroy();
                 }
@@ -16,25 +18,35 @@
         },
 
         initSortable() {
-            this.sortable = new Sortable(this.$refs.widgetContainer, {
+            const el = this.$refs.widgetContainer;
+            if (!el) return;
+
+            this.sortable = new Sortable(el, {
                 animation: 150,
-                ghostClass: 'opacity-50',
+                ghostClass: 'bg-octa-500/10',
                 handle: '.drag-handle',
-                onEnd: (evt) => {
-                    const newLayout = [];
-                    const items = this.$refs.widgetContainer.querySelectorAll('[data-id]');
-                    items.forEach((item, index) => {
-                        const id = item.getAttribute('data-id');
-                        const original = this.layout.find(l => l.id === id);
-                        newLayout.push({
-                            id: id,
-                            visible: original ? original.visible : true,
-                            order: index + 1
-                        });
-                    });
-                    this.layout = newLayout;
+                draggable: '.widget-item',
+                onEnd: () => {
+                    this.updateLayoutState();
                 }
             });
+        },
+
+        updateLayoutState() {
+            const newLayout = [];
+            const items = this.$refs.widgetContainer.querySelectorAll('.widget-item');
+            items.forEach((item, index) => {
+                const id = item.getAttribute('data-id');
+                const original = this.layout.find(l => l.id === id);
+                if (id) {
+                    newLayout.push({
+                        id: id,
+                        visible: original ? original.visible : true,
+                        order: index + 1
+                    });
+                }
+            });
+            this.layout = newLayout;
         },
 
         saveLayout() {
@@ -45,7 +57,9 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({ layout: this.layout })
-            }).then(() => window.location.reload());
+            }).then(() => {
+                window.location.reload();
+            });
         }
     }">
         {{-- Toolbar de Personalização --}}
@@ -60,7 +74,7 @@
                     </svg>
                     <span x-text="customizing ? 'Sair da Edição' : 'Personalizar'"></span>
                 </button>
-                <button x-show="customizing" @click="saveLayout()" class="btn-primary btn-sm">Salvar Ordem</button>
+                <button x-show="customizing" @click="saveLayout()" class="btn-primary btn-sm" x-cloak>Salvar Ordem</button>
             </div>
         </div>
 
@@ -71,8 +85,8 @@
                     
                     {{-- Widget: Cards de Resumo --}}
                     @if($widget['id'] === 'stat-cards')
-                        <div data-id="stat-cards" class="relative group">
-                            <div x-show="customizing" class="drag-handle absolute -left-2 -top-2 z-10 p-1 bg-octa-500 text-white rounded cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div data-id="stat-cards" class="widget-item relative group">
+                            <div x-show="customizing" x-cloak class="drag-handle absolute -left-2 -top-2 z-10 p-1.5 bg-octa-500 text-white rounded shadow-lg cursor-move">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"/></svg>
                             </div>
                             <div id="stat-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" :class="customizing ? 'ring-2 ring-dashed ring-octa-500/30 p-2 rounded-xl' : ''">
@@ -94,8 +108,8 @@
 
                     {{-- Widget: Cards de CRM --}}
                     @if($widget['id'] === 'crm-stat-cards')
-                        <div data-id="crm-stat-cards" class="relative group">
-                            <div x-show="customizing" class="drag-handle absolute -left-2 -top-2 z-10 p-1 bg-octa-500 text-white rounded cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div data-id="crm-stat-cards" class="widget-item relative group">
+                            <div x-show="customizing" x-cloak class="drag-handle absolute -left-2 -top-2 z-10 p-1.5 bg-octa-500 text-white rounded shadow-lg cursor-move">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"/></svg>
                             </div>
                             <div id="crm-stats-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4" :class="customizing ? 'ring-2 ring-dashed ring-octa-500/30 p-2 rounded-xl' : ''">
@@ -114,8 +128,8 @@
 
                     {{-- Widget: Gráficos --}}
                     @if($widget['id'] === 'revenue-chart')
-                        <div data-id="revenue-chart" class="relative group">
-                            <div x-show="customizing" class="drag-handle absolute -left-2 -top-2 z-10 p-1 bg-octa-500 text-white rounded cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div data-id="revenue-chart" class="widget-item relative group">
+                            <div x-show="customizing" x-cloak class="drag-handle absolute -left-2 -top-2 z-10 p-1.5 bg-octa-500 text-white rounded shadow-lg cursor-move">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"/></svg>
                             </div>
                             <div id="dashboard-charts" class="grid grid-cols-1 lg:grid-cols-3 gap-6" :class="customizing ? 'ring-2 ring-dashed ring-octa-500/30 p-2 rounded-xl' : ''">
@@ -146,8 +160,8 @@
 
                     {{-- Widget: Status e Ações Unificado --}}
                     @if($widget['id'] === 'status-and-actions')
-                        <div data-id="status-and-actions" class="relative group">
-                            <div x-show="customizing" class="drag-handle absolute -left-2 -top-2 z-10 p-1 bg-octa-500 text-white rounded cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div data-id="status-and-actions" class="widget-item relative group">
+                            <div x-show="customizing" x-cloak class="drag-handle absolute -left-2 -top-2 z-10 p-1.5 bg-octa-500 text-white rounded shadow-lg cursor-move">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"/></svg>
                             </div>
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" :class="customizing ? 'ring-2 ring-dashed ring-octa-500/30 p-2 rounded-xl' : ''">
