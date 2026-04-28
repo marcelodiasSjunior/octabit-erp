@@ -13,21 +13,15 @@
 </head>
 <body class="bg-bg-primary min-h-screen flex" 
       x-data="{ 
-          sidebarOpen: true, 
-          activeMenu: '{{ 
-              request()->routeIs('leads.*', 'clients.*', 'tags.*') ? 'menu-base-de-clientes' : 
-              (request()->routeIs('quotes.*', 'deals.*') ? 'menu-comercial' : 
-              (request()->routeIs('receivable.*', 'payable.*') ? 'menu-financeiro' : 
-              (request()->routeIs('services.*', 'products.*') ? 'menu-configuracoes' : 'null'))) 
-          }}' 
+          sidebarOpen: true
       }">
 
     {{-- ── Sidebar ─────────────────────────────────────────────── --}}
     <aside
         id="sidebar"
         class="fixed inset-y-0 left-0 z-30 flex flex-col w-64 bg-bg-secondary border-r border-bg-border
-               transition-transform duration-300"
-        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+               transition-all duration-300"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-0 overflow-hidden'"
     >
         {{-- Logo --}}
         <div id="sidebar-logo" class="flex items-center gap-3 px-5 h-16 border-b border-bg-border">

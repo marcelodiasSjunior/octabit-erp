@@ -1,31 +1,33 @@
-@props(['label', 'icon' => 'circle', 'active' => false, 'id' => null])
+@props(['label', 'icon' => 'circle', 'active' => false, 'open' => false])
 
-@php
-    $id = $id ?? 'menu-' . Str::slug($label);
-@endphp
-
-<div class="space-y-1">
-    <button @click="activeMenu = (activeMenu === '{{ $id }}' ? null : '{{ $id }}')" 
+<div x-data="{ open: {{ ($active || $open) ? 'true' : 'false' }} }" class="w-full">
+    <button @click="open = !open" 
             @class([
-                'w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
-                'text-octa-400 bg-octa-500/10 border border-octa-500/20 shadow-sm' => $active,
+                'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-150 group',
+                'text-octa-400 bg-octa-500/5' => $active,
                 'text-slate-400 hover:text-slate-200 hover:bg-bg-elevated' => !$active,
             ])>
-        <div class="flex items-center gap-3">
-            <x-nav-item-icon :icon="$icon" class="w-4 h-4" />
-            <span>{{ $label }}</span>
+        <div class="flex items-center gap-2.5">
+            <x-nav-item-icon :icon="$icon" @class([
+                'w-4 h-4 transition-colors',
+                'text-octa-400' => $active,
+                'text-slate-500 group-hover:text-slate-300' => !$active
+            ]) />
+            <span class="truncate font-medium">{{ $label }}</span>
         </div>
-        <svg class="w-4 h-4 transition-transform duration-200" :class="activeMenu === '{{ $id }}' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        <svg class="w-3.5 h-3.5 transition-transform duration-300 text-slate-600 group-hover:text-slate-400" 
+             :class="open ? 'rotate-180' : ''" 
+             fill="none" 
+             stroke="currentColor" 
+             viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </button>
 
-    <div x-show="activeMenu === '{{ $id }}'" 
-         x-transition:enter="transition ease-out duration-150"
-         x-transition:enter-start="opacity-0 -translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
+    <div x-show="open" 
+         x-collapse
          x-cloak
-         class="pl-9 space-y-1 border-l border-bg-border/40 ml-5 mt-1">
+         class="ml-4 mt-0.5 border-l border-bg-border/50 pl-2 space-y-0.5">
         {{ $slot }}
     </div>
 </div>
