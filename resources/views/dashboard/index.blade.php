@@ -9,10 +9,12 @@
             // Monitorar mudança no estado de customização
             this.$watch('customizing', value => {
                 if (value) {
-                    // Timeout para garantir que o x-show terminou de renderizar os drag-handles
-                    setTimeout(() => this.initSortable(), 100);
-                } else if (this.sortable) {
-                    this.sortable.destroy();
+                    // $nextTick para garantir que o DOM foi atualizado (handles visíveis)
+                    this.$nextTick(() => {
+                        this.initSortable();
+                    });
+                } else {
+                    this.destroySortable();
                 }
             });
         },
@@ -21,15 +23,32 @@
             const el = this.$refs.widgetContainer;
             if (!el) return;
 
-            this.sortable = new Sortable(el, {
-                animation: 150,
-                ghostClass: 'bg-octa-500/10',
-                handle: '.drag-handle',
-                draggable: '.widget-item',
-                onEnd: () => {
-                    this.updateLayoutState();
-                }
-            });
+            // Destruir se já existir para evitar duplicados
+            this.destroySortable();
+
+            try {
+                this.sortable = new Sortable(el, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    dragClass: 'sortable-drag',
+                    handle: '.drag-handle',
+                    draggable: '.widget-item',
+                    forceFallback: true, // Garante que funcione consistentemente em todos os browsers
+                    onEnd: () => {
+                        this.updateLayoutState();
+                    }
+                });
+                console.log('Sortable inicializado com sucesso');
+            } catch (e) {
+                console.error('Erro ao inicializar Sortable:', e);
+            }
+        },
+
+        destroySortable() {
+            if (this.sortable) {
+                this.sortable.destroy();
+                this.sortable = null;
+            }
         },
 
         updateLayoutState() {

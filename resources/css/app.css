@@ -153,4 +153,17 @@
     .stat-icon {
         @apply flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl;
     }
+
+    /* SortableJS Styles */
+    .sortable-ghost {
+        @apply opacity-40 bg-octa-500/20 border-2 border-dashed border-octa-500/50 !important;
+    }
+
+    .sortable-drag {
+        @apply cursor-grabbing !important;
+    }
+
+    .drag-handle {
+        @apply cursor-grab active:cursor-grabbing;
+    }
 }
