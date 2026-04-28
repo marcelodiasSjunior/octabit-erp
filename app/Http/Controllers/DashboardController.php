@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\Analytics\AnalyticsService;
 use App\Services\ClientService;
 use App\Services\DealService;
 use App\Services\FinancialService;
@@ -16,6 +17,7 @@ final class DashboardController extends Controller
         private readonly ClientService    $clientService,
         private readonly FinancialService $financialService,
         private readonly DealService      $dealService,
+        private readonly AnalyticsService $analyticsService,
     ) {}
 
     public function index(): View
@@ -32,6 +34,8 @@ final class DashboardController extends Controller
         $wonDealsThisMonth = $this->dealService->countWonThisMonth();
         $weightedPipeline  = $this->dealService->weightedPipeline();
 
+        $charts = $this->analyticsService->getDashboardCharts();
+
         return view('dashboard.index', [
             'activeClients'      => $clientCounts['active']    ?? 0,
             'totalLeads'         => $clientCounts['lead']       ?? 0,
@@ -41,6 +45,7 @@ final class DashboardController extends Controller
             'openDeals'          => $openDeals,
             'wonDealsThisMonth'  => $wonDealsThisMonth,
             'weightedPipeline'   => $weightedPipeline,
+            'charts'             => $charts,
         ]);
     }
 }

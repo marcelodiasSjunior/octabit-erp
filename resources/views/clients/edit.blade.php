@@ -90,7 +90,7 @@
                                     </div>
                                 </label>
                             @empty
-                                <p class="text-xs text-slate-500 italic">Nenhuma tag cadastrada. <a href="#" class="text-octa-400 hover:underline">Criar agora?</a></p>
+                                <p class="text-xs text-slate-500 italic">Nenhuma tag cadastrada. <a href="{{ route('tags.index') }}" class="text-octa-400 hover:underline">Criar agora?</a></p>
                             @endforelse
                         </div>
                         @error('tags') <p class="form-error mt-1">{{ $message }}</p> @enderror

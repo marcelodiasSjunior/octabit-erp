@@ -67,6 +67,9 @@ Route::middleware('auth')->group(function () {
     Route::post('clients/{client}/interactions',         [ClientInteractionController::class, 'store'])->name('clients.interactions.store');
     Route::delete('clients/{client}/interactions/{ci}',  [ClientInteractionController::class, 'destroy'])->name('clients.interactions.destroy');
 
+    // Tags
+    Route::resource('tags', \App\Http\Controllers\TagController::class);
+
     // Services catalog
     Route::resource('services', ServiceController::class);
 

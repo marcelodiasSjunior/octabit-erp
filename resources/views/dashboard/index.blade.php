@@ -105,6 +105,31 @@
         </x-stat-card>
     </div>
 
+    {{-- Charts Section --}}
+    <div id="dashboard-charts" class="grid grid-cols-1 gap-6 mb-8">
+        <div class="card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-200">Desempenho Financeiro</h2>
+                    <p class="text-xs text-slate-500 mt-1">Receita realizada nos últimos 6 meses</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="flex items-center gap-1.5 text-xs text-slate-400">
+                        <span class="w-2 h-2 rounded-full bg-octa-500"></span>
+                        Receita (R$)
+                    </span>
+                </div>
+            </div>
+            <x-chart 
+                id="revenue-chart"
+                type="area" 
+                :labels="$charts['revenue']['labels']" 
+                :series="$charts['revenue']['series']"
+                :height="320"
+            />
+        </div>
+    </div>
+
     {{-- Payment status breakdown --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
