@@ -106,18 +106,17 @@
     </div>
 
     {{-- Charts Section --}}
-    <div id="dashboard-charts" class="grid grid-cols-1 gap-6 mb-8">
-        <div class="card p-6">
+    <div id="dashboard-charts" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {{-- Revenue Chart --}}
+        <div class="card p-6 lg:col-span-2">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h2 class="text-sm font-semibold text-slate-200">Desempenho Financeiro</h2>
                     <p class="text-xs text-slate-500 mt-1">Receita realizada nos últimos 6 meses</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="flex items-center gap-1.5 text-xs text-slate-400">
-                        <span class="w-2 h-2 rounded-full bg-octa-500"></span>
-                        Receita (R$)
-                    </span>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="w-2 h-2 rounded-full bg-octa-500"></span>
+                    Receita (R$)
                 </div>
             </div>
             <x-chart 
@@ -125,8 +124,26 @@
                 type="area" 
                 :labels="$charts['revenue']['labels']" 
                 :series="$charts['revenue']['series']"
-                :height="320"
+                :height="300"
             />
+        </div>
+
+        {{-- Tags Distribution Chart --}}
+        <div class="card p-6 lg:col-span-1">
+            <div class="mb-6">
+                <h2 class="text-sm font-semibold text-slate-200">Distribuição de Tags</h2>
+                <p class="text-xs text-slate-500 mt-1">Principais categorias na base</p>
+            </div>
+            <div class="flex flex-col justify-center h-[300px]">
+                <x-chart 
+                    id="tags-chart"
+                    type="donut" 
+                    :labels="$charts['tags_distribution']['labels']" 
+                    :series="$charts['tags_distribution']['series']"
+                    :colors="$charts['tags_distribution']['colors']"
+                    :height="300"
+                />
+            </div>
         </div>
     </div>
 

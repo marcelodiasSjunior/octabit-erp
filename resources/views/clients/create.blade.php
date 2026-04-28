@@ -91,7 +91,12 @@
 
                     {{-- Tags --}}
                     <div class="sm:col-span-2">
-                        <label class="label mb-2">Categorias / Tags</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="label mb-0">Categorias / Tags</label>
+                            <a href="{{ route('tags.index') }}" class="text-[10px] uppercase tracking-widest text-octa-400 hover:text-octa-300 font-semibold transition-colors">
+                                Gerenciar Tags
+                            </a>
+                        </div>
                         <div class="flex flex-wrap gap-2">
                             @forelse($tags as $tag)
                                 <label class="cursor-pointer group">
@@ -102,14 +107,13 @@
                                               border-bg-border bg-bg-secondary text-slate-400
                                               hover:border-slate-500 peer-checked:border-transparent"
                                          style="--tw-ring-color: {{ $tag->color }};"
-                                         :class="{'opacity-100': true}"
                                          data-color="{{ $tag->color }}">
                                         <span class="w-2 h-2 rounded-full mr-2" style="background-color: {{ $tag->color }};"></span>
                                         {{ $tag->name }}
                                     </div>
                                 </label>
                             @empty
-                                <p class="text-xs text-slate-500 italic">Nenhuma tag cadastrada. <a href="{{ route('tags.index') }}" class="text-octa-400 hover:underline">Criar agora?</a></p>
+                                <p class="text-xs text-slate-500 italic">Nenhuma tag cadastrada.</p>
                             @endforelse
                         </div>
                         @error('tags') <p class="form-error mt-1">{{ $message }}</p> @enderror

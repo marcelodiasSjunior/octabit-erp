@@ -3,6 +3,7 @@
 namespace App\Services\Analytics;
 
 use App\Services\Analytics\Providers\RevenueChartProvider;
+use App\Services\Analytics\Providers\TagsDistributionChartProvider;
 
 class AnalyticsService
 {
@@ -10,7 +11,7 @@ class AnalyticsService
     {
         return [
             'revenue' => (new RevenueChartProvider())->get(),
-            // Future providers will be added here
+            'tags_distribution' => (new TagsDistributionChartProvider())->get(),
         ];
     }
 }

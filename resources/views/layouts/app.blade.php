@@ -32,10 +32,6 @@
 
         {{-- Navigation --}}
         <nav id="sidebar-nav" class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            @php
-                $current = request()->routeIs(...);
-            @endphp
-
             <x-nav-item id="nav-dashboard" href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="grid">
                 Dashboard
             </x-nav-item>
@@ -44,37 +40,41 @@
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CRM</span>
             </div>
 
+            <x-nav-item id="nav-leads" href="{{ route('leads.index') }}" :active="request()->routeIs('leads.*')" icon="target">
+                Leads
+            </x-nav-item>
+
             <x-nav-item id="nav-clients" href="{{ route('clients.index') }}" :active="request()->routeIs('clients.*')" icon="users">
                 Clientes
             </x-nav-item>
 
             <div class="pt-4 pb-1 px-3">
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Financeiro</span>
+                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Vendas e Financeiro</span>
             </div>
 
-            <x-nav-item id="nav-receivable" href="{{ route('receivable.index') }}" :active="request()->routeIs('receivable.*')" icon="trending-up">
-                Contas a Receber
-            </x-nav-item>
+            <x-nav-dropdown label="Comercial" icon="trending-up" :active="request()->routeIs('quotes.*', 'deals.*')">
+                <x-nav-item href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')">Oportunidades</x-nav-item>
+                <x-nav-item href="{{ route('quotes.index') }}" :active="request()->routeIs('quotes.*')">Orçamentos</x-nav-item>
+            </x-nav-dropdown>
 
-            <x-nav-item id="nav-payable" href="#" :active="false" icon="trending-down">
-                Contas a Pagar
-            </x-nav-item>
+            <x-nav-dropdown label="Financeiro" icon="clipboard" :active="request()->routeIs('receivable.*', 'payable.*')">
+                <x-nav-item id="nav-receivable" href="{{ route('receivable.index') }}" :active="request()->routeIs('receivable.*')">
+                    Contas a Receber
+                </x-nav-item>
+                <x-nav-item id="nav-payable" href="{{ route('payable.index') }}" :active="request()->routeIs('payable.*')">
+                    Contas a Pagar
+                </x-nav-item>
+            </x-nav-dropdown>
 
             <div class="pt-4 pb-1 px-3">
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Operações</span>
+                <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Sistema</span>
             </div>
 
-            <x-nav-item id="nav-contracts" href="#" :active="false" icon="file-text">
-                Contratos
-            </x-nav-item>
-
-            <x-nav-item id="nav-services" href="#" :active="false" icon="layers">
-                Serviços
-            </x-nav-item>
-
-            <x-nav-item id="nav-products" href="#" :active="false" icon="package">
-                Produtos
-            </x-nav-item>
+            <x-nav-dropdown label="Configurações" icon="settings" :active="request()->routeIs('tags.*', 'services.*', 'products.*')">
+                <x-nav-item href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')" icon="tag">Tags</x-nav-item>
+                <x-nav-item href="{{ route('services.index') }}" :active="request()->routeIs('services.*')" icon="layers">Serviços</x-nav-item>
+                <x-nav-item href="{{ route('products.index') }}" :active="request()->routeIs('products.*')" icon="package">Produtos</x-nav-item>
+            </x-nav-dropdown>
         </nav>
 
         {{-- User info at bottom --}}
