@@ -11,7 +11,7 @@ final readonly class CreateClientDTO
     public function __construct(
         public string       $name,
         public string       $email,
-        public string       $document,
+        public ?string      $document,
         public ClientStatus $status,
         public ?string      $companyName = null,
         public ?string      $phone       = null,

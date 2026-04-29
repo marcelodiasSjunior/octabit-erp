@@ -39,7 +39,7 @@
             ContractStatus::Canceled => 'text-red-400 bg-red-500/10 border-red-500/20',
         };
     } else {
-        $label = (string) $status;
+        $label = $status instanceof \UnitEnum ? ($status->label() ?? $status->name) : (string) $status;
         $color = 'text-slate-400 bg-slate-500/10 border-slate-500/20';
     }
 @endphp
