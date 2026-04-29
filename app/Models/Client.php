@@ -91,8 +91,12 @@ class Client extends Model
         return $this->company_name ?? $this->name;
     }
 
-    public function getFormattedDocumentAttribute(): string
+    public function getFormattedDocumentAttribute(): ?string
     {
+        if (empty($this->document)) {
+            return null;
+        }
+
         $doc = preg_replace('/\D/', '', $this->document);
 
         if (strlen($doc) === 11) {
