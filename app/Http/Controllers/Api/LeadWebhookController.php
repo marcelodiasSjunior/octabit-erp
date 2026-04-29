@@ -8,6 +8,7 @@ use App\DTOs\Client\CreateClientDTO;
 use App\Enums\ClientStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Tag;
 use App\Services\ClientService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,12 @@ final class LeadWebhookController extends Controller
         try {
             $data = $validator->validated();
             
+            // Garantir que a tag 'Site Octa' existe
+            $siteTag = Tag::firstOrCreate(
+                ['name' => 'Site Octa'],
+                ['color' => 'blue', 'description' => 'Leads vindos do site octabit.tech']
+            );
+
             // Lógica para tratar e-mail ausente
             $email = $data['email'];
             if (empty($email)) {
@@ -67,6 +74,9 @@ final class LeadWebhookController extends Controller
                     Log::info("Lead restaurado: ID {$existing->id}");
                 }
 
+                // Garantir que o lead existente tenha a tag do site
+                $existing->tags()->syncWithoutDetaching([$siteTag->id]);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Lead já cadastrado anteriormente.',
@@ -82,6 +92,7 @@ final class LeadWebhookController extends Controller
                 status: ClientStatus::Lead,
                 phone: $data['telefone'] ?? '',
                 notes: isset($data['mensagem']) ? "Mensagem da Landing Page: " . $data['mensagem'] : "Lead vindo da Landing Page (" . ($data['origem'] ?? 'home') . ")",
+                tags: [$siteTag->id], // Adicionando a tag do site
             );
 
             $client = $this->clientService->create($dto);
