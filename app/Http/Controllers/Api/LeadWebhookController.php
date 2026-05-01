@@ -71,7 +71,9 @@ final class LeadWebhookController extends Controller
                 // Se o registro estava excluído, vamos restaurá-lo em vez de criar um novo
                 if ($existing->trashed()) {
                     $existing->restore();
-                    Log::info("Lead restaurado: ID {$existing->id}");
+                    // Atualizar o nome apenas se foi restaurado (solicitação do item 2 e 3)
+                    $existing->update(['name' => $data['nome']]);
+                    Log::info("Lead restaurado e nome atualizado: ID {$existing->id}");
                 }
 
                 // Garantir que o lead existente tenha a tag do site

@@ -27,6 +27,27 @@
             },
             addItem() {
                 this.items.push({ description: '', quantity: 1, unit_price: '', discount: 0, product_id: '', service_id: '' });
+                this.$nextTick(() => {
+                    if (window.initTomSelect) window.initTomSelect();
+                });
+            },
+            onSearchSelect(index, type, event) {
+                const ts = event.target.tomselect;
+                const data = ts.options[ts.getValue()];
+                if (!data) return;
+
+                this.items[index].description = data.text.split(' - ')[0];
+                this.items[index].unit_price = data.price;
+                if (type === 'product') {
+                    this.items[index].product_id = data.id;
+                    this.items[index].service_id = '';
+                } else {
+                    this.items[index].service_id = data.id;
+                    this.items[index].product_id = '';
+                }
+                
+                // Clear the search select
+                ts.clear();
             },
             removeItem(index) {
                 if (this.items.length > 1) this.items.splice(index, 1);
@@ -45,18 +66,22 @@
                 <h2 class="text-base font-semibold text-slate-200 mb-6">Dados do Orçamento</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {{-- Client --}}
+                    {{-- Client selector --}}
                     <div class="sm:col-span-2">
                         <label for="client_id" class="label">Cliente <span class="text-red-500">*</span></label>
                         <select id="client_id" name="client_id"
-                                class="select @error('client_id') input-error @enderror" required>
-                            <option value="">Selecione um cliente...</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}"
-                                    {{ (old('client_id', $quote->client_id) == $client->id) ? 'selected' : '' }}>
-                                    {{ $client->name }}
-                                </option>
-                            @endforeach
+                                class="form-select ajax-select @error('client_id') input-error @enderror"
+                                data-search-url="{{ route('search.clients') }}"
+                                required>
+                            @php 
+                                $selectedId = old('client_id', $quote->client_id);
+                                $selectedClient = \App\Models\Client::find($selectedId);
+                            @endphp
+                            @if($selectedClient)
+                                <option value="{{ $selectedClient->id }}" selected>{{ $selectedClient->display_name }}</option>
+                            @else
+                                <option value="">Buscar cliente...</option>
+                            @endif
                         </select>
                         @error('client_id') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
@@ -90,6 +115,26 @@
                 <div class="space-y-3">
                     <template x-for="(item, index) in items" :key="index">
                         <div class="border border-bg-border rounded-lg p-4 bg-bg-primary/40">
+                            {{-- Autocomplete de Produto/Serviço --}}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 pb-4 border-b border-bg-border/30">
+                                <div>
+                                    <label class="label text-[10px] uppercase text-slate-500">Buscar Produto</label>
+                                    <select class="ajax-select" 
+                                            data-search-url="{{ route('search.products') }}"
+                                            @change="onSearchSelect(index, 'product', $event)">
+                                        <option value="">Pesquisar produto...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="label text-[10px] uppercase text-slate-500">Buscar Serviço</label>
+                                    <select class="ajax-select" 
+                                            data-search-url="{{ route('search.services') }}"
+                                            @change="onSearchSelect(index, 'service', $event)">
+                                        <option value="">Pesquisar serviço...</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="grid grid-cols-12 gap-3">
                                 <div class="col-span-12 sm:col-span-5">
                                     <label class="label text-xs">Descrição *</label>

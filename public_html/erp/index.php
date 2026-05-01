@@ -5,7 +5,7 @@
  * Bootstraps the Laravel application from the laravel_app directory.
  */
 
-// Point to the Laravel app root (two levels up from public_html/erp/, then into laravel_app)
+// Point to the Laravel app root (two levels up from public_html/erp/, then into laravel_app symlink)
 $laravelBase = dirname(__DIR__, 2) . '/laravel_app';
 
 // Validate Laravel installation exists

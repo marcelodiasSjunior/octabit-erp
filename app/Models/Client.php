@@ -88,7 +88,7 @@ class Client extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return $this->company_name ?? $this->name;
+        return empty($this->company_name) ? $this->name : $this->company_name;
     }
 
     public function getFormattedDocumentAttribute(): ?string

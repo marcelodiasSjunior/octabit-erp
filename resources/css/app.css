@@ -168,4 +168,53 @@
     .drag-handle {
         @apply cursor-grab active:cursor-grabbing;
     }
+
+    /* ── TomSelect ERP Style ──────────────────────────────────────── */
+    .ts-wrapper.ts-erp-style .ts-control {
+        @apply input flex items-center !bg-bg-elevated !border-bg-border !py-0 min-h-[42px] !shadow-none;
+    }
+    
+    .ts-wrapper.ts-erp-style.single .ts-control {
+        @apply pr-10;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0.75rem center !important;
+        background-size: 1rem !important;
+    }
+
+    .ts-wrapper.ts-erp-style.focus .ts-control {
+        @apply border-octa-500 ring-2 ring-octa-500/30 !outline-none;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-control input {
+        @apply text-slate-200 text-sm !placeholder-slate-500;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown {
+        @apply bg-bg-secondary border-bg-border rounded-lg shadow-xl mt-1 overflow-hidden;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown .active {
+        @apply bg-bg-elevated text-white;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown .option {
+        @apply cursor-pointer;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown-content {
+        @apply max-h-60 overflow-y-auto;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown .dropdown-input-wrap {
+        @apply p-2 bg-bg-elevated border-b border-bg-border;
+    }
+    
+    .ts-wrapper.ts-erp-style .ts-dropdown .dropdown-input {
+        @apply input py-1.5 text-xs;
+    }
+
+    .ts-wrapper.loading .ts-control::after {
+        @apply border-octa-500;
+    }
 }

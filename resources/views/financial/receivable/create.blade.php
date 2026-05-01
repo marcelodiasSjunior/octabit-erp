@@ -13,14 +13,16 @@
                     <div>
                         <label for="client_id" class="label">Cliente <span class="text-red-500">*</span></label>
                         <select id="client_id" name="client_id"
-                                class="select @error('client_id') input-error @enderror" required>
-                            <option value="">Selecione um cliente...</option>
-                            @foreach(\App\Models\Client::orderBy('name')->get() as $client)
-                                <option value="{{ $client->id }}"
-                                    {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                                    {{ $client->name }}{{ $client->company_name ? ' — ' . $client->company_name : '' }}
-                                </option>
-                            @endforeach
+                                class="form-select ajax-select @error('client_id') input-error @enderror"
+                                data-search-url="{{ route('search.clients') }}"
+                                required>
+                            <option value="">Buscar cliente...</option>
+                            @if(old('client_id'))
+                                @php $oldClient = \App\Models\Client::find(old('client_id')); @endphp
+                                @if($oldClient)
+                                    <option value="{{ $oldClient->id }}" selected>{{ $oldClient->display_name }}</option>
+                                @endif
+                            @endif
                         </select>
                         @error('client_id') <p class="form-error">{{ $message }}</p> @enderror
                     </div>

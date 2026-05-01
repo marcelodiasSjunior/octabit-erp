@@ -15,6 +15,7 @@ use App\Http\Controllers\Deal\DealController;
 use App\Http\Controllers\Deal\FollowupDashboardController;
 use App\Http\Controllers\Deal\FollowupSettingsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Quote\QuoteController as WebQuoteController;
 use App\Http\Controllers\Financial\AccountsPayableController;
 use App\Http\Controllers\Financial\AccountsReceivableController;
@@ -105,6 +106,15 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{id}/paid',    [AccountsPayableController::class, 'markAsPaid'])->name('mark-paid');
             Route::delete('/{id}',        [AccountsPayableController::class, 'destroy'])->name('destroy');
         });
+    });
+
+    // Search endpoints for AJAX autocomplete
+    Route::prefix('search')->name('search.')->group(function () {
+        Route::get('/clients', [SearchController::class, 'clients'])->name('clients');
+        Route::get('/leads', [SearchController::class, 'leads'])->name('leads');
+        Route::get('/all', [SearchController::class, 'all'])->name('all');
+        Route::get('/products', [SearchController::class, 'products'])->name('products');
+        Route::get('/services', [SearchController::class, 'services'])->name('services');
     });
 });
 

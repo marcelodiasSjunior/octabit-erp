@@ -10,9 +10,14 @@ class TagsDistributionChartProvider implements ChartProviderInterface
 {
     public function get(): array
     {
-        // Contagem de associações por tag
+        // Contagem de associações por tag, apenas para clientes não excluídos
         $data = DB::table('taggables')
             ->join('tags', 'tags.id', '=', 'taggables.tag_id')
+            ->join('clients', function ($join) {
+                $join->on('clients.id', '=', 'taggables.taggable_id')
+                    ->where('taggables.taggable_type', '=', \App\Models\Client::class);
+            })
+            ->whereNull('clients.deleted_at')
             ->select('tags.name', 'tags.color', DB::raw('count(*) as total'))
             ->groupBy('tags.id', 'tags.name', 'tags.color')
             ->orderByDesc('total')

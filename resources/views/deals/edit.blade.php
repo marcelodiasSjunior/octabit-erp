@@ -12,13 +12,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="label">Lead/Cliente</label>
-                    <select name="client_id" class="input" required>
-                        <option value="">Selecione um lead ou cliente ativo</option>
-                        @foreach($clients as $client)
-                            <option value="{{ $client->id }}" @selected(old('client_id', $deal->client_id) == $client->id)>
-                                {{ $client->display_name }} ({{ $client->status->label() }})
-                            </option>
-                        @endforeach
+                    <select id="deal_client_id" name="client_id" class="form-select ajax-select" 
+                            data-search-url="{{ route('search.all') }}" required>
+                        @php 
+                            $selectedId = old('client_id', $deal->client_id);
+                            $selectedClient = \App\Models\Client::find($selectedId);
+                        @endphp
+                        @if($selectedClient)
+                            <option value="{{ $selectedClient->id }}" selected>{{ $selectedClient->display_name }} ({{ $selectedClient->status->label() }})</option>
+                        @else
+                            <option value="">Buscar lead ou cliente ativo...</option>
+                        @endif
                     </select>
                 </div>
 
