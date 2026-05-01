@@ -29,7 +29,9 @@
                 let config = {
                     create: false,
                     allowEmptyOption: true,
-                    maxOptions: 15,
+                    maxOptions: 50,
+                    preload: 'focus',
+                    openOnFocus: true,
                     plugins: ['dropdown_input'],
                     copyClassesToDropdown: true,
                     onInitialize: function() {
@@ -56,8 +58,7 @@
                     config.labelField = 'text';
                     config.searchField = 'text';
                     config.load = function(query, callback) {
-                        if (!query.length) return callback();
-                        const url = `${el.dataset.searchUrl}${el.dataset.searchUrl.includes('?') ? '&' : '?'}q=${encodeURIComponent(query)}`;
+                        const url = `${el.dataset.searchUrl}${el.dataset.searchUrl.includes('?') ? '&' : '?'}q=${encodeURIComponent(query || '')}`;
                         fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                             .then(r => r.json())
                             .then(j => callback(j.results || j))

@@ -17,18 +17,18 @@ final class SearchController extends Controller
     public function clients(Request $request): JsonResponse
     {
         $query = $request->get('q');
-        \Illuminate\Support\Facades\Log::info('[SearchController] Buscando clientes', ['q' => $query]);
         
         $clients = Client::where('status', ClientStatus::Active)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('company_name', 'like', "%{$query}%")
-                  ->orWhere('document', 'like', "%{$query}%");
+            ->when($query, function($q) use ($query) {
+                $q->where(function($sub) use ($query) {
+                    $sub->where('name', 'like', "%{$query}%")
+                        ->orWhere('company_name', 'like', "%{$query}%")
+                        ->orWhere('document', 'like', "%{$query}%");
+                });
             })
-            ->limit(20)
+            ->orderBy('name')
+            ->limit(50)
             ->get();
-
-        \Illuminate\Support\Facades\Log::info('[SearchController] Clientes encontrados', ['count' => $clients->count()]);
 
         return response()->json($clients->map(function($client) {
             return [
@@ -44,18 +44,18 @@ final class SearchController extends Controller
     public function leads(Request $request): JsonResponse
     {
         $query = $request->get('q');
-        \Illuminate\Support\Facades\Log::info('[SearchController] Buscando leads', ['q' => $query]);
         
         $leads = Client::where('status', ClientStatus::Lead)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('company_name', 'like', "%{$query}%")
-                  ->orWhere('document', 'like', "%{$query}%");
+            ->when($query, function($q) use ($query) {
+                $q->where(function($sub) use ($query) {
+                    $sub->where('name', 'like', "%{$query}%")
+                        ->orWhere('company_name', 'like', "%{$query}%")
+                        ->orWhere('document', 'like', "%{$query}%");
+                });
             })
-            ->limit(20)
+            ->orderBy('name')
+            ->limit(50)
             ->get();
-
-        \Illuminate\Support\Facades\Log::info('[SearchController] Leads encontrados', ['count' => $leads->count()]);
 
         return response()->json($leads->map(function($lead) {
             return [
@@ -71,18 +71,18 @@ final class SearchController extends Controller
     public function all(Request $request): JsonResponse
     {
         $query = $request->get('q');
-        \Illuminate\Support\Facades\Log::info('[SearchController] Buscando todos (Leads/Ativos)', ['q' => $query]);
         
         $clients = Client::whereIn('status', [ClientStatus::Lead->value, ClientStatus::Active->value])
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('company_name', 'like', "%{$query}%")
-                  ->orWhere('document', 'like', "%{$query}%");
+            ->when($query, function($q) use ($query) {
+                $q->where(function($sub) use ($query) {
+                    $sub->where('name', 'like', "%{$query}%")
+                        ->orWhere('company_name', 'like', "%{$query}%")
+                        ->orWhere('document', 'like', "%{$query}%");
+                });
             })
-            ->limit(20)
+            ->orderBy('name')
+            ->limit(50)
             ->get();
-
-        \Illuminate\Support\Facades\Log::info('[SearchController] Total encontrado (all)', ['count' => $clients->count()]);
 
         return response()->json($clients->map(function($client) {
             return [
@@ -99,9 +99,12 @@ final class SearchController extends Controller
     {
         $query = $request->get('q');
         
-        $products = \App\Models\Product::where('name', 'like', "%{$query}%")
-            ->orWhere('sku', 'like', "%{$query}%")
-            ->limit(20)
+        $products = \App\Models\Product::when($query, function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('sku', 'like', "%{$query}%");
+            })
+            ->orderBy('name')
+            ->limit(50)
             ->get();
 
         return response()->json($products->map(function($p) {
@@ -121,8 +124,11 @@ final class SearchController extends Controller
     {
         $query = $request->get('q');
         
-        $services = \App\Models\Service::where('name', 'like', "%{$query}%")
-            ->limit(20)
+        $services = \App\Models\Service::when($query, function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->orderBy('name')
+            ->limit(50)
             ->get();
 
         return response()->json($services->map(function($s) {
