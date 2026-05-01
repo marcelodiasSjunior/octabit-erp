@@ -42,6 +42,7 @@
                             return `<div class="px-4 py-2 border-b border-slate-700/50 last:border-0 hover:bg-slate-700 transition-colors">
                                 <div class="font-medium text-slate-200">${escape(data.text)}</div>
                                 ${data.price ? `<div class="text-xs text-octa-400">R$ ${parseFloat(data.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>` : ''}
+                                ${data.description && !data.price ? `<div class="text-xs text-slate-500 truncate">${escape(data.description)}</div>` : ''}
                             </div>`;
                         },
                         item: function(data, escape) {
