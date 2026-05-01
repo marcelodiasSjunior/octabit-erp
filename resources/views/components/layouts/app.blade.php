@@ -5,6 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title . ' — ' : '' }}OctaBit ERP</title>
+
+    {{-- TomSelect --}}
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+    <script>
+        /**
+         * Inicializa o TomSelect em elementos select que não foram inicializados ainda.
+         */
+        window.initTomSelect = function(container = document) {
+            if (typeof TomSelect === 'undefined') {
+                console.warn('TomSelect não carregado. Tentando novamente em 100ms...');
+                setTimeout(() => window.initTomSelect(container), 100);
+                return;
+            }
+
+            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected)');
+
+            selectors.forEach(el => {
+                if (el.tomselect) return;
+
+                let config = {
+                    create: false,
+                    allowEmptyOption: true,
+                    maxOptions: 15,
+                    plugins: ['dropdown_input'],
+                    copyClassesToDropdown: true,
+                    onInitialize: function() {
+                        this.wrapper.classList.add('ts-erp-style');
+                    },
+                    render: {
+                        no_results: (data, escape) => `<div class="no-results px-4 py-2 text-sm text-slate-500 italic">Nenhum resultado para "${escape(data.input)}"</div>`,
+                        loading: () => `<div class="spinner px-4 py-2 text-sm text-slate-500">Buscando...</div>`,
+                        option: function(data, escape) {
+                            return `<div class="px-4 py-2 border-b border-slate-700/50 last:border-0 hover:bg-slate-700 transition-colors">
+                                <div class="font-medium text-slate-200">${escape(data.text)}</div>
+                                ${data.price ? `<div class="text-xs text-octa-400">R$ ${parseFloat(data.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>` : ''}
+                            </div>`;
+                        },
+                        item: function(data, escape) {
+                            return `<div class="text-slate-200">${escape(data.text)}</div>`;
+                        }
+                    }
+                };
+
+                if (el.dataset.searchUrl) {
+                    config.valueField = 'id';
+                    config.labelField = 'text';
+                    config.searchField = 'text';
+                    config.load = function(query, callback) {
+                        if (!query.length) return callback();
+                        const url = `${el.dataset.searchUrl}${el.dataset.searchUrl.includes('?') ? '&' : '?'}q=${encodeURIComponent(query)}`;
+                        fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                            .then(r => r.json())
+                            .then(j => callback(j.results || j))
+                            .catch(() => callback());
+                    };
+                }
+
+                try {
+                    new TomSelect(el, config);
+                    el.classList.add('tomselected');
+                } catch (e) {
+                    console.error('Erro TomSelect:', e, el);
+                }
+            });
+        };
+        document.addEventListener('DOMContentLoaded', () => window.initTomSelect());
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-bg-primary min-h-screen flex" 
