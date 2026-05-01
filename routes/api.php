@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('quotes', QuoteController::class);
+Route::apiResource('quotes', QuoteController::class)->names('api.quotes');
 Route::post('webhooks/leads', \App\Http\Controllers\Api\LeadWebhookController::class)->middleware('throttle:60,1');
 Route::patch('quotes/{id}/send', [QuoteController::class, 'markAsSent']);
 Route::patch('quotes/{id}/approve', [QuoteController::class, 'approve']);
