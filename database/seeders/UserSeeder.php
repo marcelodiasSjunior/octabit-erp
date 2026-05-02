@@ -13,30 +13,44 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // ── Create Main Company ──────────────────────────────────────
+        $octabit = \App\Models\Company::updateOrCreate(
+            ['cnpj' => '00.000.000/0001-00'],
+            [
+                'name'   => 'Octabit Tech',
+                'status' => 'active',
+                'plan'   => 'enterprise',
+            ]
+        );
+
+        // ── Master Global Admin ──────────────────────────────────────
         User::updateOrCreate(
             ['email' => 'admin@octabit.tech'],
             [
-                'name'     => 'Admin OctaBit',
-                'password' => Hash::make('password'),
-                'role'     => UserRole::MasterGlobal,
+                'company_id' => $octabit->id,
+                'name'       => 'Admin OctaBit',
+                'password'   => Hash::make('password'),
+                'role'       => UserRole::MasterGlobal,
             ]
         );
 
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'gerente@octabit.tech'],
             [
-                'name'     => 'Gerente OctaBit',
-                'password' => Hash::make('password'),
-                'role'     => UserRole::Manager,
+                'company_id' => $octabit->id,
+                'name'       => 'Gerente OctaBit',
+                'password'   => Hash::make('password'),
+                'role'       => UserRole::Manager,
             ]
         );
 
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'operador@octabit.tech'],
             [
-                'name'     => 'Operador OctaBit',
-                'password' => Hash::make('password'),
-                'role'     => UserRole::Operator,
+                'company_id' => $octabit->id,
+                'name'       => 'Operador OctaBit',
+                'password'   => Hash::make('password'),
+                'role'       => UserRole::Operator,
             ]
         );
     }
