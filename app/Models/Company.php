@@ -25,6 +25,17 @@ class Company extends Model
         'settings' => 'array',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($company) {
+            if (empty($company->uuid)) {
+                $company->uuid = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);
