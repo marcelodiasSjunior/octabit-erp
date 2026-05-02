@@ -14,6 +14,16 @@ function adminUser(): User
     return User::factory()->create(['role' => UserRole::Admin]);
 }
 
+function masterGlobalUser(): User
+{
+    return User::factory()->create(['role' => UserRole::MasterGlobal]);
+}
+
+function adminEmpresaUser(): User
+{
+    return User::factory()->create(['role' => UserRole::AdminEmpresa]);
+}
+
 function managerUser(): User
 {
     return User::factory()->create(['role' => UserRole::Manager]);

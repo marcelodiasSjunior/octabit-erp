@@ -1,7 +1,7 @@
 <x-layouts.app title="Nova Empresa" header="Empresas / Nova">
 
     <div id="create-company-container" class="max-w-4xl">
-        <form id="form-create-company" method="POST" action="#" x-data="{ loading: false }" @submit="loading = true">
+        <form id="form-create-company" method="POST" action="{{ route('admin.companies.store') }}" x-data="{ loading: false }" @submit="loading = true">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -18,18 +18,18 @@
                     <div class="space-y-4">
                         <div>
                             <label for="company_name" class="label">Nome da Empresa <span class="text-red-500">*</span></label>
-                            <input type="text" id="company_name" name="name" class="input" placeholder="Razão Social ou Nome Fantasia" required>
+                            <input type="text" id="company_name" name="name" class="input" placeholder="Razão Social ou Nome Fantasia" required value="{{ old('name') }}">
                         </div>
 
                         <div>
                             <label for="document" class="label">CNPJ <span class="text-red-500">*</span></label>
-                            <input type="text" id="document" name="document" class="input font-mono" placeholder="00.000.000/0000-00" required>
+                            <input type="text" id="document" name="cnpj" class="input font-mono" placeholder="00.000.000/0000-00" required value="{{ old('cnpj') }}">
                         </div>
 
                         <div>
                             <label for="subdomain" class="label">Subdomínio <span class="text-red-500">*</span></label>
                             <div class="flex items-center">
-                                <input type="text" id="subdomain" name="subdomain" class="input rounded-r-none" placeholder="minha-empresa" required>
+                                <input type="text" id="subdomain" name="subdomain" class="input rounded-r-none" placeholder="minha-empresa" required value="{{ old('subdomain') }}">
                                 <span class="inline-flex items-center px-3 py-2 rounded-r-lg border border-l-0 border-bg-border bg-bg-secondary text-slate-500 text-sm">
                                     .octabit.tech
                                 </span>
@@ -39,10 +39,10 @@
                         <div>
                             <label for="plan" class="label">Plano Inicial <span class="text-red-500">*</span></label>
                             <select id="plan" name="plan" class="ajax-select" required>
-                                <option value="trial">Trial (15 dias)</option>
-                                <option value="basic">Basic</option>
-                                <option value="premium" selected>Premium</option>
-                                <option value="enterprise">Enterprise</option>
+                                <option value="trial" {{ old('plan') === 'trial' ? 'selected' : '' }}>Trial (15 dias)</option>
+                                <option value="basic" {{ old('plan') === 'basic' ? 'selected' : '' }}>Basic</option>
+                                <option value="premium" {{ old('plan', 'premium') === 'premium' ? 'selected' : '' }}>Premium</option>
+                                <option value="enterprise" {{ old('plan') === 'enterprise' ? 'selected' : '' }}>Enterprise</option>
                             </select>
                         </div>
                     </div>
@@ -60,12 +60,12 @@
                     <div class="space-y-4">
                         <div>
                             <label for="admin_name" class="label">Nome do Admin <span class="text-red-500">*</span></label>
-                            <input type="text" id="admin_name" name="admin_name" class="input" placeholder="Nome completo" required>
+                            <input type="text" id="admin_name" name="admin_name" class="input" placeholder="Nome completo" required value="{{ old('admin_name') }}">
                         </div>
 
                         <div>
                             <label for="admin_email" class="label">E-mail do Admin <span class="text-red-500">*</span></label>
-                            <input type="email" id="admin_email" name="admin_email" class="input" placeholder="admin@empresa.com" required>
+                            <input type="email" id="admin_email" name="admin_email" class="input" placeholder="admin@empresa.com" required value="{{ old('admin_email') }}">
                         </div>
 
                         <div>
@@ -91,7 +91,7 @@
                     </svg>
                     <span x-text="loading ? 'Criando...' : 'Criar Empresa e Administrador'">Criar Empresa e Administrador</span>
                 </button>
-                <a id="btn-cancel-company" href="#" class="btn-secondary">Cancelar</a>
+                <a id="btn-cancel-company" href="{{ route('admin.companies.index') }}" class="btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
