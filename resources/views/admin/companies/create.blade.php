@@ -19,11 +19,13 @@
                         <div>
                             <label for="company_name" class="label">Nome da Empresa <span class="text-red-500">*</span></label>
                             <input type="text" id="company_name" name="name" class="input" placeholder="Razão Social ou Nome Fantasia" required value="{{ old('name') }}">
+                            @error('name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="document" class="label">CNPJ <span class="text-red-500">*</span></label>
                             <input type="text" id="document" name="cnpj" class="input font-mono" placeholder="00.000.000/0000-00" required value="{{ old('cnpj') }}">
+                            @error('cnpj') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
@@ -34,6 +36,7 @@
                                     .octabit.tech
                                 </span>
                             </div>
+                            @error('subdomain') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
