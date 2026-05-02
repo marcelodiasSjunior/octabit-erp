@@ -17,7 +17,7 @@ class CompanyController extends Controller
 
     public function index()
     {
-        $companies = Company::withCount('users')->paginate(10);
+        $companies = Company::with(['admin'])->withCount('users')->paginate(10);
         return view('admin.companies.index', compact('companies'));
     }
 
@@ -31,13 +31,18 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'cnpj'           => 'nullable|string|unique:companies,cnpj',
+            'plan'           => 'required|string|in:trial,basic,premium,enterprise',
             'admin_name'     => 'required|string|max:255',
-            'admin_email'    => 'required|email|unique:users,email',
+            'admin_email'    => 'required|email',
             'admin_password' => 'required|string|min:8|confirmed',
         ]);
 
         $this->companyService->createCompanyWithAdmin(
-            ['name' => $validated['name'], 'cnpj' => $validated['cnpj']],
+            [
+                'name' => $validated['name'], 
+                'cnpj' => $validated['cnpj'],
+                'plan' => $validated['plan'],
+            ],
             [
                 'name'     => $validated['admin_name'],
                 'email'    => $validated['admin_email'],

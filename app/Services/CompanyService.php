@@ -20,13 +20,15 @@ class CompanyService
         return DB::transaction(function () use ($companyData, $adminData) {
             $company = Company::create($companyData);
 
-            $user = User::create([
-                'company_id' => $company->id,
-                'name'       => $adminData['name'],
-                'email'      => $adminData['email'],
-                'password'   => Hash::make($adminData['password']),
-                'role'       => UserRole::AdminEmpresa,
-            ]);
+            User::updateOrCreate(
+                ['email' => $adminData['email']],
+                [
+                    'company_id' => $company->id,
+                    'name'       => $adminData['name'],
+                    'password'   => Hash::make($adminData['password']),
+                    'role'       => UserRole::AdminEmpresa,
+                ]
+            );
 
             return $company;
         });
