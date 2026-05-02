@@ -14,10 +14,15 @@ class UserService
     /**
      * List users for a specific company.
      */
-    public function listUsersByCompany(int $companyId, int $perPage = 10): LengthAwarePaginator
+    public function listUsersByCompany(?int $companyId, int $perPage = 10): LengthAwarePaginator
     {
-        return User::where('company_id', $companyId)
-            ->orderBy('name')
+        $query = User::query();
+
+        if ($companyId) {
+            $query->where('company_id', $companyId);
+        }
+
+        return $query->orderBy('name')
             ->paginate($perPage);
     }
 

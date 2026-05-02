@@ -162,17 +162,20 @@
                 </x-nav-item>
             </x-nav-group>
 
-            {{-- Admin --}}
-            @if(auth()->user()->role === \App\Enums\UserRole::Admin)
-                <x-nav-group icon="settings" label="Admin" :active="request()->routeIs('admin.*')">
-                    <x-nav-item href="#" :active="request()->routeIs('admin.users.*')" icon="users">
+            {{-- Admin Master --}}
+            @if(auth()->user()->isMasterGlobal())
+                <x-nav-group icon="shield" label="Admin Master" :active="request()->routeIs('admin.*')">
+                    <x-nav-item href="{{ route('admin.companies.index') }}" :active="request()->routeIs('admin.companies.*')" icon="layout">
+                        Empresas
+                    </x-nav-item>
+                </x-nav-group>
+            @endif
+
+            {{-- Configurações --}}
+            @if(auth()->user()->isAdminEmpresa() || auth()->user()->isMasterGlobal())
+                <x-nav-group icon="settings" label="Configurações" :active="request()->routeIs('settings.*')">
+                    <x-nav-item href="{{ route('settings.users.index') }}" :active="request()->routeIs('settings.users.*')" icon="users">
                         Usuários
-                    </x-nav-item>
-                    <x-nav-item href="#" :active="request()->routeIs('admin.settings.*')" icon="settings">
-                        Configurações
-                    </x-nav-item>
-                    <x-nav-item href="#" :active="request()->routeIs('admin.backups.*')" icon="layers">
-                        Backups
                     </x-nav-item>
                 </x-nav-group>
             @endif
