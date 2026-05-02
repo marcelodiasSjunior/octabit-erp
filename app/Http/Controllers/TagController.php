@@ -4,24 +4,30 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Tag;
+use App\Http\Controllers\Controller;
+use App\Services\TagService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class TagController extends Controller
 {
-    public function index()
+    public function __construct(
+        private readonly TagService $service
+    ) {}
+
+    public function index(): View
     {
-        $tags = Tag::orderBy('name')->get();
+        $tags = $this->service->list();
         return view('tags.index', compact('tags'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('tags.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name'        => 'required|string|max:50|unique:tags,name',
@@ -29,16 +35,14 @@ class TagController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
-
-        Tag::create($validated);
+        $this->service->create($validated);
 
         return redirect()->route('tags.index')->with('success', 'Tag criada com sucesso.');
     }
 
-    public function destroy(Tag $tag)
+    public function destroy(int $id): RedirectResponse
     {
-        $tag->delete();
+        $this->service->delete($id);
         return redirect()->route('tags.index')->with('success', 'Tag removida.');
     }
 }

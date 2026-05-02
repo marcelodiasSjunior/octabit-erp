@@ -21,7 +21,7 @@
                 return;
             }
 
-            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected)');
+            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected), select.select:not(.tomselected)');
 
             selectors.forEach(el => {
                 if (el.tomselect) return;
@@ -41,14 +41,14 @@
                         no_results: (data, escape) => `<div class="no-results px-4 py-2 text-sm text-slate-500 italic">Nenhum resultado para "${escape(data.input)}"</div>`,
                         loading: () => `<div class="spinner px-4 py-2 text-sm text-slate-500">Buscando...</div>`,
                         option: function(data, escape) {
-                            return `<div class="px-4 py-2 border-b border-slate-700/50 last:border-0 hover:bg-slate-700 transition-colors">
+                            return `<div class="option-item">
                                 <div class="font-medium text-slate-200">${escape(data.text)}</div>
                                 ${data.price ? `<div class="text-xs text-octa-400">R$ ${parseFloat(data.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>` : ''}
                                 ${data.description && !data.price ? `<div class="text-xs text-slate-500 truncate">${escape(data.description)}</div>` : ''}
                             </div>`;
                         },
                         item: function(data, escape) {
-                            return `<div class="text-slate-200">${escape(data.text)}</div>`;
+                            return `<div class="selected-item">${escape(data.text)}</div>`;
                         }
                     }
                 };
@@ -139,6 +139,16 @@
                 </x-nav-item>
             </x-nav-group>
 
+            {{-- Relatórios --}}
+            <x-nav-group icon="bar-chart-2" label="Relatórios" :active="request()->routeIs('reports.*')">
+                <x-nav-item href="{{ route('reports.financial') }}" :active="request()->is('reports/financial*')" icon="trending-up">
+                    Financeiro
+                </x-nav-item>
+                <x-nav-item href="{{ route('reports.quotes') }}" :active="request()->is('reports/quotes*')" icon="file-text">
+                    Orçamentos
+                </x-nav-item>
+            </x-nav-group>
+
             {{-- Operações --}}
             <x-nav-group icon="layers" label="Operações" :active="request()->routeIs('contracts.*', 'services.*', 'products.*')">
                 <x-nav-item href="{{ route('contracts.index') }}" :active="request()->routeIs('contracts.*')" icon="file-text">
@@ -225,32 +235,14 @@
             </div>
         </header>
 
-        {{-- Flash messages (Nielsen #1 — system status feedback) --}}
-        <div id="flash-messages" class="px-6 pt-4">
-            @if (session('success'))
-                <div id="flash-success" class="alert-success mb-4" x-data x-init="setTimeout(() => $el.remove(), 4000)">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div id="flash-error" class="alert-error mb-4">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ session('error') }}
-                </div>
-            @endif
-        </div>
-
         {{-- Page content --}}
         <main class="flex-1 px-6 py-4 pb-8">
             {{ $slot }}
         </main>
     </div>
+
+    <x-toast />
+    <x-dialog />
 
 </body>
 </html>

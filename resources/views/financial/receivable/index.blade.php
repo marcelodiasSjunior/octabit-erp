@@ -5,7 +5,7 @@
         <form method="GET" action="{{ route('receivable.index') }}"
               class="flex flex-1 flex-wrap gap-3" id="filter-form">
 
-            <select id="select-status" name="status" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+            <select id="select-status" name="status" class="ajax-select w-auto" onchange="document.getElementById('filter-form').submit()">
                 <option value="">Todos os status</option>
                 @foreach(\App\Enums\PaymentStatus::cases() as $status)
                     <option value="{{ $status->value }}"
@@ -90,9 +90,14 @@
                                     </form>
                                 @endif
 
-                                <form id="cancel-form-receivable-{{ $ar->id }}" method="POST" action="{{ route('receivable.destroy', $ar->id) }}"
-                                      x-data
-                                      @submit.prevent="if(confirm('Cancelar esta cobrança?')) $el.submit()">
+                                <form id="cancel-form-receivable-{{ $ar->id }}" method="POST" action="{{ route('receivable.destroy', $ar) }}"
+                                          x-data @submit.prevent="$dispatch('dialog', { 
+                                              title: 'Cancelar Cobrança', 
+                                              message: 'Deseja realmente cancelar esta cobrança?',
+                                              type: 'danger',
+                                              confirmText: 'Sim, cancelar',
+                                              onConfirm: () => $el.submit()
+                                          })">
                                     @csrf
                                     @method('DELETE')
                                     <button id="btn-cancel-receivable-{{ $ar->id }}" type="submit" class="btn-ghost btn-sm text-red-500 hover:text-red-400" title="Cancelar">

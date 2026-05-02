@@ -10,9 +10,10 @@ use App\Enums\ClientStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
-use App\Models\Product;
-use App\Models\Service;
 use App\Services\ClientService;
+use App\Services\ProductCatalogService;
+use App\Services\ServiceCatalogService;
+use App\Services\TagService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,7 +21,10 @@ use Illuminate\View\View;
 final class ClientController extends Controller
 {
     public function __construct(
-        private readonly ClientService $service
+        private readonly ClientService         $service,
+        private readonly TagService            $tagService,
+        private readonly ProductCatalogService $productService,
+        private readonly ServiceCatalogService $serviceCatalogService
     ) {}
 
     public function index(Request $request): View
@@ -33,19 +37,9 @@ final class ClientController extends Controller
         return $this->renderIndex($request, 'leads');
     }
 
-    private function renderIndex(Request $request, string $segment): View
-    {
-        $filters = $request->only(['status', 'search', 'tag_id']);
-        $filters['segment'] = $segment;
-        $clients = $this->service->list($filters);
-        $tags = \App\Models\Tag::orderBy('name')->get();
-
-        return view('clients.index', compact('clients', 'filters', 'segment', 'tags'));
-    }
-
     public function create(): View
     {
-        $tags = \App\Models\Tag::orderBy('name')->get();
+        $tags = $this->tagService->list();
         return view('clients.create', [
             'segment' => 'clients',
             'tags'    => $tags,
@@ -54,7 +48,7 @@ final class ClientController extends Controller
 
     public function createLead(): View
     {
-        $tags = \App\Models\Tag::orderBy('name')->get();
+        $tags = $this->tagService->list();
         return view('clients.create', [
             'segment' => 'leads',
             'tags'    => $tags,
@@ -97,8 +91,8 @@ final class ClientController extends Controller
             'contracts',
         ]);
 
-        $availableServices = Service::active()->orderBy('name')->get();
-        $availableProducts = Product::active()->orderBy('name')->get();
+        $availableServices = $this->serviceCatalogService->allActive();
+        $availableProducts = $this->productService->allActive();
 
         return view('clients.show', compact('client', 'availableServices', 'availableProducts'));
     }
@@ -106,7 +100,7 @@ final class ClientController extends Controller
     public function edit(Request $request, int $id): View
     {
         $client = $this->service->findOrFail($id);
-        $tags = \App\Models\Tag::orderBy('name')->get();
+        $tags = $this->tagService->list();
 
         $segment = $request->query('segment');
         if (!in_array($segment, ['leads', 'clients'], true)) {
@@ -148,5 +142,15 @@ final class ClientController extends Controller
         return redirect()
             ->route('clients.index')
             ->with('success', 'Cliente removido.');
+    }
+
+    private function renderIndex(Request $request, string $segment): View
+    {
+        $filters = $request->only(['status', 'search', 'tag_id']);
+        $filters['segment'] = $segment;
+        $clients = $this->service->list($filters);
+        $tags = $this->tagService->list();
+
+        return view('clients.index', compact('clients', 'filters', 'segment', 'tags'));
     }
 }

@@ -22,4 +22,9 @@ interface DealRepositoryInterface extends BaseRepositoryInterface
      * Get weighted pipeline sum.
      */
     public function weightedPipeline(): float;
+
+    /**
+     * Chunk open deals for processing.
+     */
+    public function chunkOpenDeals(callable $callback, int $chunkSize = 100): void;
 }

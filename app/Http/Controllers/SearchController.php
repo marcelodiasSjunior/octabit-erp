@@ -4,31 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Enums\ClientStatus;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Services\ClientService;
+use App\Services\ProductCatalogService;
+use App\Services\ServiceCatalogService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 final class SearchController extends Controller
 {
-    /**
-     * Search for active clients.
-     */
+    public function __construct(
+        private readonly ClientService         $clientService,
+        private readonly ProductCatalogService $productService,
+        private readonly ServiceCatalogService $serviceCatalogService
+    ) {}
+
     public function clients(Request $request): JsonResponse
     {
-        $query = $request->get('q');
-        
-        $clients = Client::where('status', ClientStatus::Active)
-            ->when($query, function($q) use ($query) {
-                $q->where(function($sub) use ($query) {
-                    $sub->where('name', 'like', "%{$query}%")
-                        ->orWhere('company_name', 'like', "%{$query}%")
-                        ->orWhere('document', 'like', "%{$query}%");
-                });
-            })
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
+        $clients = $this->clientService->searchClients($request->get('q'));
 
         return response()->json($clients->map(function($client) {
             return [
@@ -38,24 +31,9 @@ final class SearchController extends Controller
         }));
     }
 
-    /**
-     * Search for leads.
-     */
     public function leads(Request $request): JsonResponse
     {
-        $query = $request->get('q');
-        
-        $leads = Client::where('status', ClientStatus::Lead)
-            ->when($query, function($q) use ($query) {
-                $q->where(function($sub) use ($query) {
-                    $sub->where('name', 'like', "%{$query}%")
-                        ->orWhere('company_name', 'like', "%{$query}%")
-                        ->orWhere('document', 'like', "%{$query}%");
-                });
-            })
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
+        $leads = $this->clientService->searchLeads($request->get('q'));
 
         return response()->json($leads->map(function($lead) {
             return [
@@ -65,24 +43,9 @@ final class SearchController extends Controller
         }));
     }
 
-    /**
-     * Search for leads or active clients.
-     */
     public function all(Request $request): JsonResponse
     {
-        $query = $request->get('q');
-        
-        $clients = Client::whereIn('status', [ClientStatus::Lead->value, ClientStatus::Active->value])
-            ->when($query, function($q) use ($query) {
-                $q->where(function($sub) use ($query) {
-                    $sub->where('name', 'like', "%{$query}%")
-                        ->orWhere('company_name', 'like', "%{$query}%")
-                        ->orWhere('document', 'like', "%{$query}%");
-                });
-            })
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
+        $clients = $this->clientService->searchAllEligible($request->get('q'));
 
         return response()->json($clients->map(function($client) {
             return [
@@ -92,20 +55,9 @@ final class SearchController extends Controller
         }));
     }
 
-    /**
-     * Search for products.
-     */
     public function products(Request $request): JsonResponse
     {
-        $query = $request->get('q');
-        
-        $products = \App\Models\Product::when($query, function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('sku', 'like', "%{$query}%");
-            })
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
+        $products = $this->productService->searchProducts($request->get('q'));
 
         return response()->json($products->map(function($p) {
             return [
@@ -117,19 +69,9 @@ final class SearchController extends Controller
         }));
     }
 
-    /**
-     * Search for services.
-     */
     public function services(Request $request): JsonResponse
     {
-        $query = $request->get('q');
-        
-        $services = \App\Models\Service::when($query, function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%");
-            })
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
+        $services = $this->serviceCatalogService->searchServices($request->get('q'));
 
         return response()->json($services->map(function($s) {
             return [

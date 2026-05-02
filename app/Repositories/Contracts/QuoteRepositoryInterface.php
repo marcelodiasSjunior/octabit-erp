@@ -14,5 +14,7 @@ interface QuoteRepositoryInterface extends BaseRepositoryInterface
      */
     public function paginateFiltered(array $filters = [], int $perPage = 15): LengthAwarePaginator;
 
+    public function getQuotesInRange(string $startDate, string $endDate, ?int $clientId = null): \Illuminate\Database\Eloquent\Collection;
+
     public function findWithItemsOrFail(int $id): Quote;
 }

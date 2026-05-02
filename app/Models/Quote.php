@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use App\Enums\QuoteStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,9 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, BelongsToTenant;
 
     protected $fillable = [
+        'company_id',
+        'sequential_number',
         'client_id',
         'status',
         'valid_until',
@@ -24,6 +27,11 @@ class Quote extends Model
         'total',
         'converted_to_sale_at',
     ];
+
+    public function getFormattedNumberAttribute(): string
+    {
+        return '#' . str_pad((string) $this->sequential_number, 5, '0', STR_PAD_LEFT);
+    }
 
     protected function casts(): array
     {

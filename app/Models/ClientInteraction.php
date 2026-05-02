@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use App\Enums\InteractionType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClientInteraction extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'client_id',
         'user_id',

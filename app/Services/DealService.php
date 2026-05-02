@@ -9,6 +9,7 @@ use App\DTOs\Deal\UpdateDealDTO;
 use App\Enums\DealStatus;
 use App\Models\Deal;
 use App\Models\PipelineStage;
+use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Repositories\Contracts\DealRepositoryInterface;
 use App\Services\DealFollowupService;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,9 +17,19 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class DealService
 {
     public function __construct(
-        private readonly DealRepositoryInterface $repository,
-        private readonly DealFollowupService     $followupService
+        private readonly DealRepositoryInterface   $repository,
+        private readonly ClientRepositoryInterface $clientRepository,
+        private readonly DealFollowupService       $followupService
     ) {}
+
+    public function checkClientEligibility(int $clientId): void
+    {
+        $client = $this->clientRepository->findById($clientId);
+
+        if (!$client || !in_array($client->status->value, ['lead', 'active'], true)) {
+            abort(422, 'O cliente selecionado não é elegível para uma oportunidade.');
+        }
+    }
 
     public function list(): LengthAwarePaginator
     {
@@ -75,6 +86,37 @@ class DealService
             'status'    => $status,
             'closed_at' => $this->getClosedAt($status),
         ]);
+    }
+
+    /** Activity Management */
+
+    public function addActivity(int $dealId, array $data, int $userId): \App\Models\DealActivity
+    {
+        $deal = $this->findOrFail($dealId);
+        
+        return $deal->activities()->create([
+            ...$data,
+            'user_id' => $userId,
+        ]);
+    }
+
+    public function completeActivity(int $dealId, int $activityId): void
+    {
+        $deal = $this->findOrFail($dealId);
+        
+        $activity = $deal->activities()->findOrFail($activityId);
+        $activity->update([
+            'done'         => true,
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function deleteActivity(int $dealId, int $activityId): void
+    {
+        $deal = $this->findOrFail($dealId);
+        
+        $activity = $deal->activities()->findOrFail($activityId);
+        $activity->delete();
     }
 
     /** Dashboard metrics delegating to repository */

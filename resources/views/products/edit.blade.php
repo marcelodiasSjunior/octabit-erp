@@ -18,7 +18,7 @@
 
                     <div>
                         <label for="type" class="label">Tipo <span class="text-red-500">*</span></label>
-                        <select id="type" name="type" class="select @error('type') input-error @enderror" required>
+                        <select id="type" name="type" class="ajax-select @error('type') input-error @enderror" required>
                             @foreach(\App\Enums\ProductType::cases() as $type)
                                 <option value="{{ $type->value }}"
                                     {{ old('type', $product->type->value) === $type->value ? 'selected' : '' }}>

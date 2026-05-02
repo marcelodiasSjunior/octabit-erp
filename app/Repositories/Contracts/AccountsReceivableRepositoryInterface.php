@@ -33,4 +33,8 @@ interface AccountsReceivableRepositoryInterface extends BaseRepositoryInterface
      * @return array<string, int>
      */
     public function countByStatus(): array;
+
+    public function getFinancialData(string $startDate, string $endDate, ?string $status = null): \Illuminate\Database\Eloquent\Collection;
+
+    public function getMonthlyPaidTotal(string $startDate, string $endDate): array;
 }

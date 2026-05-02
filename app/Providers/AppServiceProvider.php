@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(\App\Services\TenantManager::class, function ($app) {
+            return new \App\Services\TenantManager();
+        });
+
         $this->app->bind(ClientRepositoryInterface::class, ClientRepository::class);
         $this->app->bind(AccountsReceivableRepositoryInterface::class, AccountsReceivableRepository::class);
         $this->app->bind(AccountsPayableRepositoryInterface::class, AccountsPayableRepository::class);

@@ -9,6 +9,7 @@ use App\Models\AccountsPayable;
 use App\Repositories\Contracts\AccountsPayableRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 final class PayableService
 {
@@ -28,23 +29,29 @@ final class PayableService
 
     public function create(array $data): AccountsPayable
     {
-        $data['status'] = PaymentStatus::Pending->value;
-        $record = $this->repository->create($data);
-        Cache::forget('dashboard.financial_metrics');
-        return $record;
+        return DB::transaction(function() use ($data) {
+            $data['status'] = PaymentStatus::Pending->value;
+            $record = $this->repository->create($data);
+            Cache::forget('dashboard.financial_metrics');
+            return $record;
+        });
     }
 
     public function markAsPaid(int $id, string $paymentDate): AccountsPayable
     {
-        $date   = new \DateTimeImmutable($paymentDate);
-        $record = $this->repository->markAsPaid($id, $date);
-        Cache::forget('dashboard.financial_metrics');
-        return $record;
+        return DB::transaction(function() use ($id, $paymentDate) {
+            $date   = new \DateTimeImmutable($paymentDate);
+            $record = $this->repository->markAsPaid($id, $date);
+            Cache::forget('dashboard.financial_metrics');
+            return $record;
+        });
     }
 
     public function delete(int $id): void
     {
-        $this->repository->delete($id);
-        Cache::forget('dashboard.financial_metrics');
+        DB::transaction(function() use ($id) {
+            $this->repository->delete($id);
+            Cache::forget('dashboard.financial_metrics');
+        });
     }
 }

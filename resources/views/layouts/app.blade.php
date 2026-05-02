@@ -23,7 +23,7 @@
             }
 
             // Seleciona todos os selects que não têm a classe de inicialização
-            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected)');
+            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected), select.select:not(.tomselected)');
             
             selectors.forEach(el => {
                 if (el.tomselect) return;
@@ -129,6 +129,18 @@
                 <x-nav-item href="{{ route('services.index') }}" :active="request()->routeIs('services.*')" icon="layers">Serviços</x-nav-item>
                 <x-nav-item href="{{ route('products.index') }}" :active="request()->routeIs('products.*')" icon="package">Produtos</x-nav-item>
             </x-nav-group>
+
+            @if(auth()->user()->isMasterGlobal())
+            <x-nav-group icon="shield" label="Admin Master" :active="request()->routeIs('admin.*')">
+                <x-nav-item href="{{ route('admin.companies.index') }}" :active="request()->routeIs('admin.companies.*')" icon="layout">Empresas</x-nav-item>
+            </x-nav-group>
+            @endif
+
+            @if(auth()->user()->isAdminEmpresa() || auth()->user()->isMasterGlobal())
+            <x-nav-group icon="settings" label="Configurações" :active="request()->routeIs('settings.*')">
+                <x-nav-item href="{{ route('settings.users.index') }}" :active="request()->routeIs('settings.users.*')" icon="users">Usuários</x-nav-item>
+            </x-nav-group>
+            @endif
         </nav>
 
         <div id="sidebar-user-footer" class="border-t border-bg-border px-4 py-3">

@@ -1,12 +1,12 @@
 <x-layouts.app title="Serviços" header="Serviços">
 
-    <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+    <div id="services-toolbar" class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
         <form method="GET" action="{{ route('services.index') }}"
               class="flex flex-1 flex-wrap gap-3" id="filter-form">
-            <input type="search" name="search" value="{{ $filters['search'] ?? '' }}"
+            <input id="input-search-services" type="search" name="search" value="{{ $filters['search'] ?? '' }}"
                    placeholder="Buscar por nome..." class="input flex-1 max-w-xs"/>
 
-            <select name="type" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+            <select id="select-type" name="type" class="ajax-select w-auto" onchange="document.getElementById('filter-form').submit()">
                 <option value="">Todos os tipos</option>
                 @foreach(\App\Enums\ServiceType::cases() as $type)
                     <option value="{{ $type->value }}"
@@ -17,11 +17,11 @@
             </select>
 
             @if(!empty($filters['search']) || !empty($filters['type']))
-                <a href="{{ route('services.index') }}" class="btn-ghost btn-sm self-center">Limpar</a>
+                <a id="btn-clear-filters" href="{{ route('services.index') }}" class="btn-ghost btn-sm self-center">Limpar</a>
             @endif
         </form>
 
-        <a href="{{ route('services.create') }}" class="btn-primary whitespace-nowrap self-start sm:self-auto">
+        <a id="btn-create-service" href="{{ route('services.create') }}" class="btn-primary whitespace-nowrap self-start sm:self-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -30,13 +30,13 @@
     </div>
 
     @if(session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 text-sm">
+        <div id="flash-success" class="mb-4 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 text-sm">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="table-wrapper">
-        <table class="table">
+    <div id="services-table-container" class="table-wrapper">
+        <table id="services-table" class="table">
             <thead>
                 <tr>
                     <th>Nome</th>
@@ -49,41 +49,46 @@
             </thead>
             <tbody>
                 @forelse($services as $service)
-                    <tr>
+                    <tr id="service-row-{{ $service->id }}">
                         <td>
-                            <div class="font-medium text-slate-200">{{ $service->name }}</div>
+                            <div id="service-name-{{ $service->id }}" class="font-medium text-slate-200">{{ $service->name }}</div>
                             @if($service->description)
-                                <div class="text-xs text-slate-500 truncate max-w-xs">{{ $service->description }}</div>
+                                <div id="service-desc-{{ $service->id }}" class="text-xs text-slate-500 truncate max-w-xs">{{ $service->description }}</div>
                             @endif
                         </td>
-                        <td><span class="badge">{{ $service->type->label() }}</span></td>
-                        <td class="font-semibold text-slate-200">R$ {{ number_format($service->base_price, 2, ',', '.') }}</td>
-                        <td class="text-slate-400">
+                        <td><span id="service-type-badge-{{ $service->id }}" class="badge">{{ $service->type->label() }}</span></td>
+                        <td id="service-price-{{ $service->id }}" class="font-semibold text-slate-200">R$ {{ number_format($service->base_price, 2, ',', '.') }}</td>
+                        <td id="service-setup-{{ $service->id }}" class="text-slate-400">
                             {{ $service->setup_price ? 'R$ ' . number_format($service->setup_price, 2, ',', '.') : '—' }}
                         </td>
                         <td>
                             @if($service->active)
-                                <span class="badge-success">Ativo</span>
+                                <span id="service-status-active-{{ $service->id }}" class="badge-success">Ativo</span>
                             @else
-                                <span class="badge-muted">Inativo</span>
+                                <span id="service-status-inactive-{{ $service->id }}" class="badge-muted">Inativo</span>
                             @endif
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('services.show', $service) }}" class="btn-ghost btn-sm" title="Ver">
+                                <a id="btn-view-service-{{ $service->id }}" href="{{ route('services.show', $service) }}" class="btn-ghost btn-sm" title="Ver">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
                                 </a>
-                                <a href="{{ route('services.edit', $service) }}" class="btn-ghost btn-sm" title="Editar">
+                                <a id="btn-edit-service-{{ $service->id }}" href="{{ route('services.edit', $service) }}" class="btn-ghost btn-sm" title="Editar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </a>
-                                <form method="POST" action="{{ route('services.destroy', $service) }}"
-                                      x-data @submit.prevent="if(confirm('Remover {{ addslashes($service->name) }}?')) $el.submit()">
+                                <form id="delete-form-service-{{ $service->id }}" method="POST" action="{{ route('services.destroy', $service) }}"
+                                      x-data @submit.prevent="$dispatch('dialog', { 
+                                          title: 'Remover Serviço', 
+                                          message: 'Deseja realmente excluir o serviço \'{{ addslashes($service->name) }}\'?',
+                                          type: 'danger',
+                                          onConfirm: () => $el.submit()
+                                      })">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-ghost btn-sm text-red-500 hover:text-red-400">
+                                    <button id="btn-delete-service-{{ $service->id }}" type="submit" class="btn-ghost btn-sm text-red-500 hover:text-red-400">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -93,15 +98,19 @@
                         </td>
                     </tr>
                 @empty
-                    <tr>
+                    <tr id="no-services-row">
                         <td colspan="6" class="text-center py-12 text-slate-500">
-                            Nenhum serviço encontrado. <a href="{{ route('services.create') }}" class="text-octa-400 hover:underline">Cadastre o primeiro.</a>
+                            Nenhum serviço encontrado. <a id="link-create-first-service" href="{{ route('services.create') }}" class="text-octa-400 hover:underline">Cadastre o primeiro.</a>
                         </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
+
+    @if($services->hasPages())
+        <div id="services-pagination" class="mt-4">{{ $services->links() }}</div>
+    @endif
 
     @if($services->hasPages())
         <div class="mt-4">{{ $services->links() }}</div>

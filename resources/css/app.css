@@ -170,11 +170,27 @@
     }
 
     /* ── TomSelect ERP Style ──────────────────────────────────────── */
+    .ts-wrapper.ts-erp-style {
+        @apply min-w-[160px];
+        width: auto !important;
+    }
+
     .ts-wrapper.ts-erp-style .ts-control {
-        @apply input flex items-center !bg-bg-elevated !border-bg-border !py-0 min-h-[42px] !shadow-none !rounded-lg !outline-none;
+        @apply input flex items-center !bg-bg-elevated !border-bg-border !py-1 min-h-[42px] !shadow-none !rounded-lg !outline-none;
         border-width: 1px !important;
+        overflow: visible !important;
+        width: 100% !important;
     }
     
+    .ts-wrapper.ts-erp-style .ts-control .selected-item {
+        @apply text-slate-200 text-sm py-1;
+        line-height: 1.5 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
     /* Remover bordas padrão do TomSelect que podem vazar */
     .ts-wrapper.ts-erp-style.single .ts-control,
     .ts-wrapper.ts-erp-style.multi .ts-control {
@@ -194,11 +210,16 @@
     }
 
     .ts-wrapper.ts-erp-style .ts-control input {
-        @apply text-slate-200 text-sm !placeholder-slate-500;
+        @apply text-slate-200 text-sm !placeholder-slate-500 py-0 !m-0;
+        height: auto !important;
+        display: inline-block !important;
+        width: 100% !important;
     }
 
     .ts-wrapper.ts-erp-style .ts-dropdown {
         @apply bg-bg-secondary border-bg-border rounded-lg shadow-xl mt-1 overflow-hidden;
+        width: 100% !important;
+        min-width: 100% !important;
     }
 
     .ts-wrapper.ts-erp-style .ts-dropdown .active {
@@ -206,7 +227,21 @@
     }
 
     .ts-wrapper.ts-erp-style .ts-dropdown .option {
-        @apply cursor-pointer;
+        @apply cursor-pointer transition-colors duration-150 p-0;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown .option .option-item {
+        @apply px-4 py-2.5 border-b border-bg-border/50;
+    }
+
+    .ts-wrapper.ts-erp-style .ts-dropdown .option:last-child .option-item {
+        @apply border-b-0;
+    }
+
+    /* Ajuste para layouts de formulário onde o select deve expandir */
+    .form-group .ts-wrapper.ts-erp-style,
+    .grid .ts-wrapper.ts-erp-style {
+        width: 100% !important;
     }
 
     .ts-wrapper.ts-erp-style .ts-dropdown-content {

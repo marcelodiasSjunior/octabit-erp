@@ -15,6 +15,7 @@ use App\Http\Controllers\Deal\DealController;
 use App\Http\Controllers\Deal\FollowupDashboardController;
 use App\Http\Controllers\Deal\FollowupSettingsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Quote\QuoteController as WebQuoteController;
 use App\Http\Controllers\Financial\AccountsPayableController;
@@ -88,6 +89,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('contracts', ContractController::class);
     Route::get('contracts/{id}/download', [ContractController::class, 'download'])->name('contracts.download');
 
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/financial', [ReportController::class, 'financial'])->name('financial');
+        Route::get('/quotes',    [ReportController::class, 'quotes'])->name('quotes');
+        Route::get('/export/{type}', [ReportController::class, 'export'])->name('export');
+    });
+
     // Financial — Accounts Receivable
     Route::prefix('financial')->group(function () {
         Route::name('receivable.')->prefix('receivable')->group(function () {
@@ -115,6 +123,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/all', [SearchController::class, 'all'])->name('all');
         Route::get('/products', [SearchController::class, 'products'])->name('products');
         Route::get('/services', [SearchController::class, 'services'])->name('services');
+    });
+
+    // ── Master Global Admin ──────────────────────────────────────
+    Route::middleware('role:master_global')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('companies', \App\Http\Controllers\Admin\CompanyController::class);
+    });
+
+    // ── Company Settings (Tenant level) ──────────────────────────
+    Route::middleware('role:admin_empresa,master_global')->prefix('settings')->name('settings.')->group(function () {
+        Route::resource('users', \App\Http\Controllers\Settings\UserController::class);
     });
 });
 

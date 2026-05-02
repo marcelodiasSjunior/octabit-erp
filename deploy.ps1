@@ -36,7 +36,7 @@ Write-Host "Zipping application..." -ForegroundColor Yellow
 if (Test-Path $zipFile) { Remove-Item $zipFile }
 
 # Use tar for zipping as it's usually available and handles symlinks/permissions better
-tar --exclude-vcs --exclude='node_modules' --exclude='storage/logs/*' --exclude='public_html' --exclude='.env' --exclude='deploy.ps1' --exclude='rollback.ps1' -acvf $zipFile .
+tar --exclude-vcs --exclude='node_modules' --exclude='storage/logs/*' --exclude='public_html' --exclude='.env' --exclude='deploy.ps1' --exclude='rollback.ps1' --exclude='release-*.zip' -acvf $zipFile .
 
 # 3. Upload to Server
 Write-Host "Uploading to server..." -ForegroundColor Yellow

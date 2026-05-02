@@ -34,13 +34,21 @@ final class QuoteService
         return DB::transaction(function () use ($dto) {
             $calculation = $this->calculate($dto->items);
 
+            $companyId = app(\App\Services\TenantManager::class)->getCompanyId();
+            $nextNumber = (DB::table('quotes')
+                ->where('company_id', $companyId)
+                ->lockForUpdate()
+                ->max('sequential_number') ?? 0) + 1;
+
             $quote = $this->repository->create([
-                'client_id'      => $dto->clientId,
-                'status'         => QuoteStatus::Draft->value,
-                'valid_until'    => $dto->validUntil,
-                'subtotal'       => $calculation['subtotal'],
-                'discount_total' => $calculation['discount_total'],
-                'total'          => $calculation['total'],
+                'company_id'        => $companyId,
+                'sequential_number' => $nextNumber,
+                'client_id'         => $dto->clientId,
+                'status'            => QuoteStatus::Draft->value,
+                'valid_until'       => $dto->validUntil,
+                'subtotal'          => $calculation['subtotal'],
+                'discount_total'    => $calculation['discount_total'],
+                'total'             => $calculation['total'],
             ]);
 
             $quote->items()->createMany($calculation['items']);

@@ -6,29 +6,24 @@ namespace App\Http\Controllers\Deal;
 
 use App\DTOs\Deal\CreateDealDTO;
 use App\DTOs\Deal\UpdateDealDTO;
-use App\Enums\ClientStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Deal\StoreDealRequest;
 use App\Http\Requests\Deal\UpdateDealRequest;
-use App\Models\Client;
 use App\Models\Pipeline;
-use App\Models\PipelineStage;
+use App\Services\ClientService;
 use App\Services\DealService;
+use App\Services\PipelineService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 final class DealController extends Controller
 {
-    private const ELIGIBLE_CLIENT_STATUSES = [
-        ClientStatus::Lead->value,
-        ClientStatus::Active->value,
-    ];
-
     public function __construct(
-        private readonly DealService $service
+        private readonly DealService     $service,
+        private readonly ClientService   $clientService,
+        private readonly PipelineService $pipelineService
     ) {}
 
     public function index(): View
@@ -37,10 +32,20 @@ final class DealController extends Controller
         return view('deals.index', compact('deals'));
     }
 
+    public function kanban(Pipeline $pipeline): View
+    {
+        $pipeline->load([
+            'stages' => fn ($q) => $q->where('active', true)->orderBy('position'),
+            'stages.deals' => fn ($q) => $q->with('client')->whereNull('closed_at'),
+        ]);
+
+        return view('deals.kanban', compact('pipeline'));
+    }
+
     public function create(): View
     {
-        $clients   = $this->getEligibleClients();
-        $pipelines = $this->getActivePipelines();
+        $clients   = $this->clientService->getEligibleForDeals();
+        $pipelines = $this->pipelineService->getActiveWithStages();
 
         return view('deals.create', compact('clients', 'pipelines'));
     }
@@ -49,8 +54,7 @@ final class DealController extends Controller
     {
         $dto = CreateDealDTO::fromArray($request->validated());
         
-        $this->ensureClientIsEligible($dto->clientId);
-
+        $this->service->checkClientEligibility($dto->clientId);
         $this->service->create($dto, $request->user()?->id);
 
         return redirect()->route('deals.index')
@@ -68,8 +72,8 @@ final class DealController extends Controller
     public function edit(int $id): View
     {
         $deal      = $this->service->findOrFail($id);
-        $clients   = $this->getEligibleClients();
-        $pipelines = $this->getActivePipelines();
+        $clients   = $this->clientService->getEligibleForDeals();
+        $pipelines = $this->pipelineService->getActiveWithStages();
 
         return view('deals.edit', compact('deal', 'clients', 'pipelines'));
     }
@@ -78,8 +82,7 @@ final class DealController extends Controller
     {
         $dto = UpdateDealDTO::fromArray($request->validated());
 
-        $this->ensureClientIsEligible($dto->clientId);
-
+        $this->service->checkClientEligibility($dto->clientId);
         $deal = $this->service->update($id, $dto);
 
         return redirect()->route('deals.show', $deal->id)
@@ -108,46 +111,5 @@ final class DealController extends Controller
 
         return redirect()->route('deals.show', $deal->id)
             ->with('success', 'Etapa atualizada com sucesso.');
-    }
-
-    public function kanban(Pipeline $pipeline): View
-    {
-        $pipeline->load([
-            'stages' => fn ($q) => $q->where('active', true)->orderBy('position'),
-            'stages.deals' => fn ($q) => $q->with('client')->whereNull('closed_at'),
-        ]);
-
-        return view('deals.kanban', compact('pipeline'));
-    }
-
-    /** Clean Code Helpers */
-
-    private function getEligibleClients()
-    {
-        return Client::query()
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->orderBy('name')
-            ->get();
-    }
-
-    private function getActivePipelines()
-    {
-        return Pipeline::query()
-            ->where('active', true)
-            ->with(['stages' => fn ($q) => $q->where('active', true)->orderBy('position')])
-            ->orderBy('name')
-            ->get();
-    }
-
-    private function ensureClientIsEligible(int $clientId): void
-    {
-        $eligible = Client::query()
-            ->whereKey($clientId)
-            ->whereIn('status', self::ELIGIBLE_CLIENT_STATUSES)
-            ->exists();
-
-        if (!$eligible) {
-            abort(422, 'O cliente selecionado não é elegível para uma oportunidade.');
-        }
     }
 }

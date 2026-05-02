@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Contract;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Services\ClientService;
 use App\Services\ContractService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 final class ContractController extends Controller
 {
     public function __construct(
-        private readonly ContractService $service
+        private readonly ContractService $service,
+        private readonly ClientService   $clientService
     ) {}
 
     public function index(Request $request): View
@@ -29,29 +31,15 @@ final class ContractController extends Controller
 
     public function create(): View
     {
-        $clients = Client::active()->orderBy('name')->get();
+        $clients = $this->clientService->getEligibleForDeals();
         return view('contracts.create', compact('clients'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'client_id'  => 'required|exists:clients,id',
-            'start_date' => 'required|date',
-            'end_date'   => 'nullable|date|after:start_date',
-            'value'      => 'required|numeric|min:0',
-            'status'     => 'required|in:draft,active,expired,canceled',
-            'notes'      => 'nullable|string|max:2000',
-            'file'       => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-        ]);
+        $validated = $this->validateContract($request);
 
-        if ($request->hasFile('file')) {
-            $validated['file_path'] = $request->file('file')
-                ->store('contracts', 'local');
-        }
-        unset($validated['file']);
-
-        $this->service->create($validated);
+        $this->service->create($validated, $request->file('file'));
 
         return redirect()->route('contracts.index')
             ->with('success', 'Contrato criado com sucesso.');
@@ -66,33 +54,15 @@ final class ContractController extends Controller
     public function edit(int $id): View
     {
         $contract = $this->service->findOrFail($id);
-        $clients  = Client::active()->orderBy('name')->get();
+        $clients  = $this->clientService->getEligibleForDeals();
         return view('contracts.edit', compact('contract', 'clients'));
     }
 
     public function update(Request $request, int $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'client_id'  => 'required|exists:clients,id',
-            'start_date' => 'required|date',
-            'end_date'   => 'nullable|date|after:start_date',
-            'value'      => 'required|numeric|min:0',
-            'status'     => 'required|in:draft,active,expired,canceled',
-            'notes'      => 'nullable|string|max:2000',
-            'file'       => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-        ]);
+        $validated = $this->validateContract($request);
 
-        if ($request->hasFile('file')) {
-            $contract = $this->service->findOrFail($id);
-            if ($contract->file_path && Storage::disk('local')->exists($contract->file_path)) {
-                Storage::disk('local')->delete($contract->file_path);
-            }
-            $validated['file_path'] = $request->file('file')
-                ->store('contracts', 'local');
-        }
-        unset($validated['file']);
-
-        $this->service->update($id, $validated);
+        $this->service->update($id, $validated, $request->file('file'));
 
         return redirect()->route('contracts.show', $id)
             ->with('success', 'Contrato atualizado.');
@@ -100,12 +70,6 @@ final class ContractController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
-        $contract = $this->service->findOrFail($id);
-
-        if ($contract->file_path && Storage::disk('local')->exists($contract->file_path)) {
-            Storage::disk('local')->delete($contract->file_path);
-        }
-
         $this->service->delete($id);
 
         return redirect()->route('contracts.index')
@@ -123,5 +87,20 @@ final class ContractController extends Controller
         $filename = 'contrato-' . $id . '.' . pathinfo($contract->file_path, PATHINFO_EXTENSION);
 
         return Storage::disk('local')->download($contract->file_path, $filename);
+    }
+
+    /** Clean Code Helpers */
+
+    private function validateContract(Request $request): array
+    {
+        return $request->validate([
+            'client_id'  => 'required|exists:clients,id',
+            'start_date' => 'required|date',
+            'end_date'   => 'nullable|date|after:start_date',
+            'value'      => 'required|numeric|min:0',
+            'status'     => 'required|in:draft,active,expired,canceled',
+            'notes'      => 'nullable|string|max:2000',
+            'file'       => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+        ]);
     }
 }

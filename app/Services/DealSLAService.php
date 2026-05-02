@@ -18,20 +18,78 @@ use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
+use App\Repositories\Contracts\DealActivityRepositoryInterface;
+use App\Repositories\Contracts\DealFollowupRuleRepositoryInterface;
+use App\Repositories\Contracts\DealFollowupWebhookRepositoryInterface;
+use App\Repositories\Contracts\DealRepositoryInterface;
+use App\Repositories\Contracts\DealSLARepositoryInterface;
+use App\Repositories\Contracts\DealSLAViolationRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+
 class DealSLAService
 {
+    public function __construct(
+        private readonly DealRepositoryInterface            $dealRepository,
+        private readonly DealSLARepositoryInterface          $slaRepository,
+        private readonly DealSLAViolationRepositoryInterface $violationRepository,
+        private readonly DealFollowupRuleRepositoryInterface $ruleRepository,
+        private readonly DealFollowupWebhookRepositoryInterface $webhookRepository,
+        private readonly DealActivityRepositoryInterface     $activityRepository,
+        private readonly UserRepositoryInterface             $userRepository
+    ) {}
+
+    public function getViolationsPaginated(array $filters = [], int $perPage = 20): LengthAwarePaginator
+    {
+        return $this->violationRepository->paginateFiltered($filters, $perPage);
+    }
+
+    public function getDashboardStats(): array
+    {
+        return $this->violationRepository->getDashboardStats();
+    }
+
+    /** Settings Management */
+
+    public function getAllSlas(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->slaRepository->allWithRelations();
+    }
+
+    public function getAllRules(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->ruleRepository->allWithRelations();
+    }
+
+    public function createSla(array $data): DealSLA
+    {
+        return DB::transaction(function() use ($data) {
+            $data['active'] = (bool) ($data['active'] ?? false);
+            return $this->slaRepository->create($data);
+        });
+    }
+
+    public function createRule(array $data): DealFollowupRule
+    {
+        return DB::transaction(function() use ($data) {
+            $data['active'] = (bool) ($data['active'] ?? false);
+            $data['only_if_no_recent_activity'] = (bool) ($data['only_if_no_recent_activity'] ?? false);
+            return $this->ruleRepository->create($data);
+        });
+    }
+
     public function processOpenDeals(): int
     {
         $processed = 0;
 
-        Deal::query()
-            ->where('status', DealStatus::Open->value)
-            ->chunkById(100, function ($deals) use (&$processed): void {
-                foreach ($deals as $deal) {
-                    $this->evaluateDeal($deal);
-                    $processed++;
-                }
-            });
+        $this->dealRepository->chunkOpenDeals(100, function ($deals) use (&$processed): void {
+            foreach ($deals as $deal) {
+                $this->evaluateDeal($deal);
+                $processed++;
+            }
+        });
 
         return $processed;
     }
@@ -42,20 +100,13 @@ class DealSLAService
             return;
         }
 
-        $deal->loadMissing('activities');
-
         $sla = $deal->applicableSLAs()->first();
 
         if ($sla && $sla->isViolated($deal)) {
             $this->createViolationIfNeeded($deal, $sla);
         }
 
-        $rules = DealFollowupRule::query()
-            ->active()
-            ->forPipeline($deal->pipeline_id)
-            ->forStage($deal->stage_id)
-            ->ordered()
-            ->get();
+        $rules = $this->ruleRepository->getActiveForDeal($deal);
 
         foreach ($rules as $rule) {
             if ($this->ruleMatches($deal, $rule)) {
@@ -66,43 +117,40 @@ class DealSLAService
 
     private function createViolationIfNeeded(Deal $deal, DealSLA $sla): void
     {
-        $alreadyExists = DealSLAViolation::query()
-            ->where('deal_id', $deal->id)
-            ->where('sla_rule_id', $sla->id)
-            ->where('violation_type', 'response_timeout')
-            ->where('resolved', false)
-            ->exists();
+        DB::transaction(function() use ($deal, $sla) {
+            $alreadyExists = $this->violationRepository->existsUnresolved($deal->id, $sla->id);
 
-        if ($alreadyExists) {
-            return;
-        }
+            if ($alreadyExists) {
+                return;
+            }
 
-        $violation = DealSLAViolation::create([
-            'deal_id' => $deal->id,
-            'sla_rule_id' => $sla->id,
-            'violation_type' => 'response_timeout',
-            'due_at' => now()->subHours(max(1, (int) $sla->response_sla_hours)),
-            'severity' => 'warning',
-            'acknowledged' => false,
-            'resolved' => false,
-            'days_late' => 0,
-        ]);
+            $violation = $this->violationRepository->create([
+                'deal_id' => $deal->id,
+                'sla_rule_id' => $sla->id,
+                'violation_type' => 'response_timeout',
+                'due_at' => now()->subHours(max(1, (int) $sla->response_sla_hours)),
+                'severity' => 'warning',
+                'acknowledged' => false,
+                'resolved' => false,
+                'days_late' => 0,
+            ]);
 
-        $this->notifyAdmins(
-            'Violação de SLA detectada',
-            sprintf('Deal #%d violou SLA %s.', $deal->id, $sla->name)
-        );
+            $this->notifyAdmins(
+                'Violação de SLA detectada',
+                sprintf('Deal #%d violou SLA %s.', $deal->id, $sla->name)
+            );
 
-        $this->sendWebhook('violation.created', [
-            'violation_id' => $violation->id,
-            'deal_id' => $deal->id,
-            'severity' => $violation->severity,
-        ]);
+            $this->sendWebhook('violation.created', [
+                'violation_id' => $violation->id,
+                'deal_id' => $deal->id,
+                'severity' => $violation->severity,
+            ]);
+        });
     }
 
     public function processEscalations(): int
     {
-        $manager = User::query()->where('role', UserRole::Manager->value)->orderBy('id')->first();
+        $manager = $this->userRepository->findFirstByRole(UserRole::Manager->value);
 
         if (!$manager) {
             return 0;
@@ -110,11 +158,8 @@ class DealSLAService
 
         $escalated = 0;
 
-        DealSLAViolation::query()
-            ->where('resolved', false)
-            ->whereNull('escalated_to')
-            ->where('due_at', '<=', now()->subDay())
-            ->chunkById(100, function ($violations) use (&$escalated, $manager): void {
+        $this->violationRepository->chunkUnresolvedEscalatable(100, function ($violations) use (&$escalated, $manager): void {
+            DB::transaction(function() use ($violations, &$escalated, $manager) {
                 foreach ($violations as $violation) {
                     $violation->escalateTo($manager, 'Escalação automática por atraso.');
                     $escalated++;
@@ -131,6 +176,7 @@ class DealSLAService
                     ]);
                 }
             });
+        });
 
         return $escalated;
     }
@@ -158,7 +204,7 @@ class DealSLAService
     private function executeRuleAction(Deal $deal, DealFollowupRule $rule): void
     {
         if ($rule->action_type === 'send_email') {
-            $admins = User::query()->where('role', UserRole::Admin->value)->get();
+            $admins = $this->userRepository->getAllByRole(UserRole::Admin->value);
 
             if ($admins->isNotEmpty()) {
                 $body = str_replace('{{deal_id}}', (string) $deal->id, (string) $rule->template_body);
@@ -179,18 +225,14 @@ class DealSLAService
         $title = sprintf('Follow-up automático: %s', $rule->name);
 
         if ($rule->cooldown_hours > 0) {
-            $inCooldown = DealActivity::query()
-                ->where('deal_id', $deal->id)
-                ->where('title', $title)
-                ->where('created_at', '>=', now()->subHours($rule->cooldown_hours))
-                ->exists();
+            $inCooldown = $this->activityRepository->existsRecentForDeal($deal->id, $title, (int)$rule->cooldown_hours);
 
             if ($inCooldown) {
                 return;
             }
         }
 
-        DealActivity::create([
+        $this->activityRepository->create([
             'deal_id' => $deal->id,
             'user_id' => null,
             'type' => $rule->activity_type ?: 'task',
@@ -203,7 +245,7 @@ class DealSLAService
 
     private function notifyAdmins(string $title, string $body): void
     {
-        $admins = User::query()->where('role', UserRole::Admin->value)->get();
+        $admins = $this->userRepository->getAllByRole(UserRole::Admin->value);
 
         if ($admins->isNotEmpty()) {
             Notification::send($admins, new DealFollowupAlertNotification($title, $body));
@@ -212,7 +254,7 @@ class DealSLAService
 
     private function sendWebhook(string $event, array $payload): void
     {
-        $webhooks = DealFollowupWebhook::query()->active()->where('event', $event)->get();
+        $webhooks = $this->webhookRepository->getActiveByEvent($event);
 
         foreach ($webhooks as $webhook) {
             Http::withHeaders([

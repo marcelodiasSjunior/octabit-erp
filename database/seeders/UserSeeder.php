@@ -13,12 +13,12 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@octabit.tech'],
             [
                 'name'     => 'Admin OctaBit',
                 'password' => Hash::make('password'),
-                'role'     => UserRole::Admin,
+                'role'     => UserRole::MasterGlobal,
             ]
         );
 

@@ -72,4 +72,11 @@ class EloquentDealRepository implements DealRepositoryInterface
             ->whereNull('deals.deleted_at')
             ->sum(DB::raw('deals.value * pipeline_stages.probability / 100'));
     }
+
+    public function chunkOpenDeals(callable $callback, int $chunkSize = 100): void
+    {
+        $this->model->query()
+            ->where('status', DealStatus::Open->value)
+            ->chunkById($chunkSize, $callback);
+    }
 }

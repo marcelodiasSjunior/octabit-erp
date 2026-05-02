@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClientProduct extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'client_id',
         'product_id',

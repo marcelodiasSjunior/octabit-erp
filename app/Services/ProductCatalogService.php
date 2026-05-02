@@ -47,4 +47,9 @@ final class ProductCatalogService
     {
         $this->repository->delete($id);
     }
+
+    public function searchProducts(?string $query, int $limit = 50): Collection
+    {
+        return $this->repository->search($query, $limit);
+    }
 }

@@ -13,10 +13,12 @@ use Illuminate\Http\Request;
 
 final class DealActivityController extends Controller
 {
+    public function __construct(
+        private readonly DealService $service
+    ) {}
+
     public function store(Request $request, int $dealId): RedirectResponse
     {
-        $deal = Deal::findOrFail($dealId);
-
         $validated = $request->validate([
             'type'         => ['required', 'in:' . implode(',', array_column(DealActivityType::cases(), 'value'))],
             'title'        => ['required', 'string', 'max:255'],
@@ -24,25 +26,15 @@ final class DealActivityController extends Controller
             'notes'        => ['nullable', 'string', 'max:2000'],
         ]);
 
-        $validated['deal_id'] = $deal->id;
-        $validated['user_id'] = $request->user()->id;
+        $this->service->addActivity($dealId, $validated, (int) $request->user()?->id);
 
-        DealActivity::create($validated);
-
-        return redirect()->route('deals.show', $deal->id)
+        return redirect()->route('deals.show', $dealId)
             ->with('success', 'Atividade registrada.');
     }
 
     public function complete(int $dealId, int $activityId): RedirectResponse
     {
-        Deal::findOrFail($dealId);
-
-        $activity = DealActivity::where('deal_id', $dealId)->findOrFail($activityId);
-
-        $activity->update([
-            'done'         => true,
-            'completed_at' => now(),
-        ]);
+        $this->service->completeActivity($dealId, $activityId);
 
         return redirect()->route('deals.show', $dealId)
             ->with('success', 'Atividade concluída.');
@@ -50,10 +42,7 @@ final class DealActivityController extends Controller
 
     public function destroy(int $dealId, int $activityId): RedirectResponse
     {
-        Deal::findOrFail($dealId);
-
-        $activity = DealActivity::where('deal_id', $dealId)->findOrFail($activityId);
-        $activity->delete();
+        $this->service->deleteActivity($dealId, $activityId);
 
         return redirect()->route('deals.show', $dealId)
             ->with('success', 'Atividade removida.');

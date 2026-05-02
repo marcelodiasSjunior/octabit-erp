@@ -1,14 +1,15 @@
 <x-layouts.app :title="'Kanban — ' . $pipeline->name" :header="'Kanban — ' . $pipeline->name">
 
     <div class="mb-4 flex items-center justify-between">
-        <a href="{{ route('deals.index') }}" class="text-sm text-slate-400 hover:text-slate-200">← Lista de Oportunidades</a>
-        <a href="{{ route('deals.create') }}" class="btn-primary">+ Nova Oportunidade</a>
+        <a id="btn-back-deals" href="{{ route('deals.index') }}" class="text-sm text-slate-400 hover:text-slate-200">← Lista de Oportunidades</a>
+        <a id="btn-create-deal" href="{{ route('deals.create') }}" class="btn-primary">+ Nova Oportunidade</a>
     </div>
 
     {{-- Kanban board --}}
-    <div class="flex gap-4 overflow-x-auto pb-4" x-data="kanban()">
+    <div id="kanban-board" class="flex gap-4 overflow-x-auto pb-4" x-data="kanban()">
         @foreach($pipeline->stages as $stage)
             <div
+                id="stage-column-{{ $stage->id }}"
                 class="flex-shrink-0 w-72 bg-bg-secondary rounded-xl border border-bg-border flex flex-col"
                 x-on:dragover.prevent
                 x-on:drop="onDrop($event, {{ $stage->id }})"
@@ -29,11 +30,12 @@
                 <div class="flex-1 p-3 space-y-2 min-h-[120px]">
                     @foreach($stage->deals as $deal)
                         <div
+                            id="deal-card-{{ $deal->id }}"
                             class="bg-bg-elevated border border-bg-border rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-octa-500/40 transition-colors"
                             draggable="true"
                             x-on:dragstart="onDragStart($event, {{ $deal->id }})"
                         >
-                            <a href="{{ route('deals.show', $deal) }}" class="block">
+                            <a id="link-deal-{{ $deal->id }}" href="{{ route('deals.show', $deal) }}" class="block">
                                 <p class="text-sm font-medium text-slate-200 leading-snug">{{ $deal->title }}</p>
                                 <p class="text-xs text-slate-500 mt-1">{{ $deal->client->display_name }}</p>
                                 <p class="text-xs text-octa-400 font-semibold mt-2">R$ {{ number_format((float) $deal->value, 2, ',', '.') }}</p>

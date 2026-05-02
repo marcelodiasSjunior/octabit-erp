@@ -78,4 +78,15 @@ class ServiceRepository implements ServiceRepositoryInterface
     {
         return (bool) $this->findOrFail($id)->delete();
     }
+
+    public function search(?string $query, int $limit = 50): Collection
+    {
+        return $this->model->newQuery()
+            ->when($query, function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
 }

@@ -34,7 +34,7 @@
                 class="input flex-1 max-w-sm"
             />
 
-            <select id="select-status" name="status" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+            <select id="select-status" name="status" class="ajax-select w-auto" onchange="document.getElementById('filter-form').submit()">
                 <option value="">{{ $isLeads ? 'Todos os leads' : 'Todos os clientes' }}</option>
                 @foreach(\App\Enums\ClientStatus::cases() as $status)
                     @continue($isLeads && $status !== \App\Enums\ClientStatus::Lead)
@@ -46,7 +46,7 @@
                 @endforeach
             </select>
 
-            <select id="select-tag" name="tag_id" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+            <select id="select-tag" name="tag_id" class="ajax-select w-auto" onchange="document.getElementById('filter-form').submit()">
                 <option value="">Filtrar por Tag</option>
                 @foreach($tags as $tag)
                     <option value="{{ $tag->id }}"
@@ -122,7 +122,12 @@
                                 @if(auth()->user()->isAdmin())
                                     <form id="delete-form-client-{{ $client->id }}" method="POST" action="{{ route('clients.destroy', $client) }}"
                                           x-data
-                                          @submit.prevent="if(confirm('Remover {{ addslashes($client->name) }}?')) $el.submit()">
+                                          @submit.prevent="$dispatch('dialog', { 
+                                              title: 'Remover {{ $isLeads ? 'Lead' : 'Cliente' }}', 
+                                              message: 'Deseja realmente excluir {{ addslashes($client->name) }}? Esta ação não pode ser desfeita.',
+                                              type: 'danger',
+                                              onConfirm: () => $el.submit()
+                                          })">
                                         @csrf
                                         @method('DELETE')
                                         <button id="btn-delete-client-{{ $client->id }}" type="submit" class="btn-ghost btn-sm text-red-500 hover:text-red-400" title="Remover">

@@ -15,4 +15,6 @@ interface AccountsPayableRepositoryInterface extends BaseRepositoryInterface
     public function totalPaidThisMonth(): float;
     public function totalDueThisMonth(): float;
     public function countByStatus(): array;
+    public function getFinancialData(string $startDate, string $endDate, ?string $status = null): \Illuminate\Database\Eloquent\Collection;
+    public function getMonthlyPaidTotal(string $startDate, string $endDate): array;
 }

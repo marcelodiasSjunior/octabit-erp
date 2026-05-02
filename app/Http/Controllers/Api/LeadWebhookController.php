@@ -7,9 +7,8 @@ namespace App\Http\Controllers\Api;
 use App\DTOs\Client\CreateClientDTO;
 use App\Enums\ClientStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use App\Models\Tag;
 use App\Services\ClientService;
+use App\Services\TagService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +18,8 @@ use Illuminate\Support\Str;
 final class LeadWebhookController extends Controller
 {
     public function __construct(
-        private readonly ClientService $clientService
+        private readonly ClientService $clientService,
+        private readonly TagService    $tagService
     ) {}
 
     public function __invoke(Request $request): JsonResponse
@@ -28,7 +28,7 @@ final class LeadWebhookController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nome'     => ['required', 'string', 'max:255'],
-            'email'    => ['nullable', 'string', 'max:255'], // Tornado opcional
+            'email'    => ['nullable', 'string', 'max:255'],
             'telefone' => ['nullable', 'string', 'max:20'],
             'mensagem' => ['nullable', 'string'],
             'origem'   => ['nullable', 'string', 'max:100'],
@@ -44,40 +44,30 @@ final class LeadWebhookController extends Controller
         try {
             $data = $validator->validated();
             
-            // Garantir que a tag 'Site Octa' existe
-            $siteTag = Tag::firstOrCreate(
-                ['name' => 'Site Octa'],
-                ['color' => 'blue', 'description' => 'Leads vindos do site octabit.tech']
-            );
+            // Garantir que a tag 'Site Octa' existe via Service
+            $siteTag = $this->tagService->firstOrCreate('Site Octa', [
+                'color' => 'blue', 
+                'description' => 'Leads vindos do site octabit.tech'
+            ]);
 
             // Lógica para tratar e-mail ausente
             $email = $data['email'];
             if (empty($email)) {
-                // Gerar um email baseado no telefone ou nome para satisfazer o banco
                 $cleanPhone = preg_replace('/\D/', '', $data['telefone'] ?? '000');
                 $email = ($cleanPhone ?: Str::slug($data['nome'])) . '@lead.octabit.tech';
             }
 
-            // Verificar se o lead já existe (pelo email ou telefone), incluindo registros excluídos (soft deleted)
-            $existing = Client::withTrashed()
-                ->where(function($q) use ($email, $data) {
-                    $q->where('email', $email);
-                    if (!empty($data['telefone'])) {
-                        $q->orWhere('phone', $data['telefone']);
-                    }
-                })->first();
+            // Verificar se o lead já existe via Service
+            $existing = $this->clientService->findExistingLead($email, $data['telefone'] ?? null);
 
             if ($existing) {
-                // Se o registro estava excluído, vamos restaurá-lo em vez de criar um novo
                 if ($existing->trashed()) {
-                    $existing->restore();
-                    // Atualizar o nome apenas se foi restaurado (solicitação do item 2 e 3)
+                    $this->clientService->restore($existing->id);
                     $existing->update(['name' => $data['nome']]);
                     Log::info("Lead restaurado e nome atualizado: ID {$existing->id}");
                 }
 
-                // Garantir que o lead existente tenha a tag do site
-                $existing->tags()->syncWithoutDetaching([$siteTag->id]);
+                $this->clientService->syncTags($existing->id, [$siteTag->id]);
 
                 return response()->json([
                     'success' => true,
@@ -86,15 +76,14 @@ final class LeadWebhookController extends Controller
                 ], 200);
             }
             
-            // Mapear campos para o DTO de criação de cliente/lead
             $dto = new CreateClientDTO(
                 name: $data['nome'],
                 email: $email,
-                document: null, // Mudado de '' para null para evitar erro de UNIQUE constraint
+                document: null,
                 status: ClientStatus::Lead,
                 phone: $data['telefone'] ?? '',
                 notes: isset($data['mensagem']) ? "Mensagem da Landing Page: " . $data['mensagem'] : "Lead vindo da Landing Page (" . ($data['origem'] ?? 'home') . ")",
-                tags: [$siteTag->id], // Adicionando a tag do site
+                tags: [$siteTag->id],
             );
 
             $client = $this->clientService->create($dto);

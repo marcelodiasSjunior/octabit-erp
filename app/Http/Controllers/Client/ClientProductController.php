@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use App\Models\ClientProduct;
+use App\Services\ClientService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 final class ClientProductController extends Controller
 {
+    public function __construct(
+        private readonly ClientService $service
+    ) {}
+
     public function store(Request $request, int $clientId): RedirectResponse
     {
-        $client = Client::findOrFail($clientId);
-
         $validated = $request->validate([
             'product_id'   => 'required|exists:products,id',
             'quantity'     => 'required|integer|min:1|max:9999',
@@ -24,7 +25,7 @@ final class ClientProductController extends Controller
             'notes'        => 'nullable|string|max:500',
         ]);
 
-        $client->clientProducts()->create($validated);
+        $this->service->addProduct($clientId, $validated);
 
         return redirect()->route('clients.show', $clientId)
             ->with('success', 'Produto registrado com sucesso.');
@@ -32,10 +33,7 @@ final class ClientProductController extends Controller
 
     public function destroy(int $clientId, int $clientProductId): RedirectResponse
     {
-        $clientProduct = ClientProduct::where('client_id', $clientId)
-            ->findOrFail($clientProductId);
-
-        $clientProduct->delete();
+        $this->service->removeProduct($clientId, $clientProductId);
 
         return redirect()->route('clients.show', $clientId)
             ->with('success', 'Produto removido.');

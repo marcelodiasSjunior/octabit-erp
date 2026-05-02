@@ -106,7 +106,52 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function findByDocument(string $document): ?Client
     {
-        return $this->model->where('document', $document)->first();
+        return $this->model->newQuery()->where('document', $document)->first();
+    }
+
+    public function findExistingLead(string $email, ?string $phone = null): ?Client
+    {
+        return $this->model->newQuery()->withTrashed()
+            ->where(function($q) use ($email, $phone) {
+                $q->where('email', $email);
+                if ($phone) {
+                    $q->orWhere('phone', $phone);
+                }
+            })->first();
+    }
+
+    public function restore(int $id): Client
+    {
+        $client = $this->model->newQuery()->withTrashed()->findOrFail($id);
+        $client->restore();
+        return $client;
+    }
+
+    public function searchByStatus(array $statuses, ?string $query, int $limit = 50): Collection
+    {
+        return $this->model->newQuery()
+            ->whereIn('status', $statuses)
+            ->when($query, function($q) use ($query) {
+                $q->where(function($sub) use ($query) {
+                    $sub->where('name', 'like', "%{$query}%")
+                        ->orWhere('company_name', 'like', "%{$query}%")
+                        ->orWhere('document', 'like', "%{$query}%");
+                });
+            })
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
+
+    public function getEligibleForDeals(): Collection
+    {
+        return $this->model->newQuery()
+            ->whereIn('status', [
+                \App\Enums\ClientStatus::Lead->value,
+                \App\Enums\ClientStatus::Active->value,
+            ])
+            ->orderBy('name')
+            ->get();
     }
 
     public function countByStatus(): array

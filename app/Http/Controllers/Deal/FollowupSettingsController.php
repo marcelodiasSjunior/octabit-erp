@@ -5,21 +5,25 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Deal;
 
 use App\Http\Controllers\Controller;
-use App\Models\DealFollowupRule;
-use App\Models\DealSLA;
-use App\Models\Pipeline;
+use App\Services\PipelineService;
+use App\Services\DealSLAService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FollowupSettingsController extends Controller
 {
+    public function __construct(
+        private readonly DealSLAService $service,
+        private readonly PipelineService $pipelineService
+    ) {}
+
     public function index(): View
     {
         return view('deals.followups.settings', [
-            'pipelines' => Pipeline::with('stages')->ordered()->get(),
-            'slas' => DealSLA::with(['pipeline', 'stage'])->orderByDesc('priority')->get(),
-            'rules' => DealFollowupRule::with(['pipeline', 'stage', 'sla'])->ordered()->get(),
+            'pipelines' => $this->pipelineService->getActiveWithStages(),
+            'slas' => $this->service->getAllSlas(),
+            'rules' => $this->service->getAllRules(),
         ]);
     }
 
@@ -37,9 +41,7 @@ class FollowupSettingsController extends Controller
             'active' => ['nullable', 'boolean'],
         ]);
 
-        $validated['active'] = (bool) ($validated['active'] ?? false);
-
-        DealSLA::create($validated);
+        $this->service->createSla($validated);
 
         return redirect()->route('followups.settings.index')->with('success', 'SLA criado com sucesso.');
     }
@@ -61,10 +63,7 @@ class FollowupSettingsController extends Controller
             'active' => ['nullable', 'boolean'],
         ]);
 
-        $validated['active'] = (bool) ($validated['active'] ?? false);
-        $validated['only_if_no_recent_activity'] = (bool) ($validated['only_if_no_recent_activity'] ?? false);
-
-        DealFollowupRule::create($validated);
+        $this->service->createRule($validated);
 
         return redirect()->route('followups.settings.index')->with('success', 'Regra criada com sucesso.');
     }

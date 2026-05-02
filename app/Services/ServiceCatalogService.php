@@ -47,4 +47,9 @@ final class ServiceCatalogService
     {
         $this->repository->delete($id);
     }
+
+    public function searchServices(?string $query, int $limit = 50): Collection
+    {
+        return $this->repository->search($query, $limit);
+    }
 }

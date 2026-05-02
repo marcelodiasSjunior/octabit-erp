@@ -109,4 +109,29 @@ class AccountsPayableRepository implements AccountsPayableRepositoryInterface
     {
         return (bool) $this->findOrFail($id)->delete();
     }
+
+    public function getFinancialData(string $startDate, string $endDate, ?string $status = null): Collection
+    {
+        $query = $this->model->newQuery()
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('due_date', [$startDate, $endDate])
+                    ->orWhereBetween('payment_date', [$startDate, $endDate]);
+            });
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query->get();
+    }
+
+    public function getMonthlyPaidTotal(string $startDate, string $endDate): array
+    {
+        return $this->model->where('status', PaymentStatus::Paid->value)
+            ->whereBetween('due_date', [$startDate, $endDate])
+            ->selectRaw("DATE_FORMAT(due_date, '%Y-%m') as month, SUM(amount) as total")
+            ->groupBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+    }
 }

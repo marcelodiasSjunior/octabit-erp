@@ -14,7 +14,7 @@
                 class="input flex-1 max-w-sm"
             />
 
-            <select id="select-status" name="status" class="select w-auto" onchange="document.getElementById('filter-form').submit()">
+            <select id="select-status" name="status" class="ajax-select w-auto" onchange="document.getElementById('filter-form').submit()">
                 <option value="">Todos os status</option>
                 @foreach(\App\Enums\QuoteStatus::cases() as $status)
                     <option value="{{ $status->value }}"
@@ -62,7 +62,7 @@
             <tbody>
                 @forelse($quotes as $quote)
                     <tr id="quote-row-{{ $quote->id }}">
-                        <td class="font-mono text-slate-400 text-xs">{{ $quote->id }}</td>
+                        <td class="font-mono text-slate-400 text-xs">{{ $quote->formatted_number }}</td>
                         <td class="font-medium text-slate-200">{{ $quote->client->name ?? '—' }}</td>
                         <td class="font-semibold text-octa-300">R$ {{ number_format($quote->total, 2, ',', '.') }}</td>
                         <td><x-status-badge :status="$quote->status"/></td>
@@ -77,6 +77,13 @@
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
+                                <a id="btn-pdf-quote-{{ $quote->id }}" href="{{ route('api.quotes.pdf', $quote->id) }}"
+                                   target="_blank" class="btn-ghost btn-sm" title="Baixar PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                </a>
+
                                 <a id="btn-view-quote-{{ $quote->id }}" href="{{ route('quotes.show', $quote) }}"
                                    class="btn-ghost btn-sm" title="Ver detalhes">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,9 +101,12 @@
                                 @endif
 
                                 <form id="delete-form-quote-{{ $quote->id }}" method="POST" action="{{ route('quotes.destroy', $quote) }}"
-                                      x-data
-                                      @submit.prevent="if(confirm('Remover orçamento #{{ $quote->id }}?')) $el.submit()">
-                                    @csrf
+                                          x-data @submit.prevent="$dispatch('dialog', { 
+                                              title: 'Remover Orçamento', 
+                                              message: 'Deseja realmente excluir o orçamento {{ $quote->formatted_number }}?',
+                                              type: 'danger',
+                                              onConfirm: () => $el.submit()
+                                          })">                                    @csrf
                                     @method('DELETE')
                                     <button id="btn-delete-quote-{{ $quote->id }}" type="submit" class="btn-ghost btn-sm text-red-500 hover:text-red-400" title="Remover">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

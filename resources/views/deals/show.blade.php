@@ -70,14 +70,20 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             @unless($activity->done)
-                                <form method="POST" action="{{ route('deals.activities.complete', [$deal, $activity]) }}">
+                                <form id="complete-activity-form-{{ $activity->id }}" method="POST" action="{{ route('deals.activities.complete', [$deal, $activity]) }}">
                                     @csrf @method('PATCH')
-                                    <button type="submit" class="text-xs text-emerald-400 hover:text-emerald-300">Concluir</button>
+                                    <button id="btn-complete-activity-{{ $activity->id }}" type="submit" class="text-xs text-emerald-400 hover:text-emerald-300">Concluir</button>
                                 </form>
                             @endunless
-                            <form method="POST" action="{{ route('deals.activities.destroy', [$deal, $activity]) }}">
+                            <form id="delete-activity-form-{{ $activity->id }}" method="POST" action="{{ route('deals.activities.destroy', [$deal, $activity]) }}"
+                                  x-data @submit.prevent="$dispatch('dialog', { 
+                                      title: 'Remover Atividade', 
+                                      message: 'Deseja realmente remover esta atividade?',
+                                      type: 'danger',
+                                      onConfirm: () => $el.submit()
+                                  })">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="text-xs text-slate-500 hover:text-red-400">Remover</button>
+                                <button id="btn-delete-activity-{{ $activity->id }}" type="submit" class="text-xs text-slate-500 hover:text-red-400">Remover</button>
                             </form>
                         </div>
                     </div>
@@ -86,14 +92,14 @@
                 @endforelse
 
                 {{-- Nova atividade --}}
-                <details class="mt-4">
-                    <summary class="cursor-pointer text-sm text-octa-400 hover:text-octa-300 font-medium">+ Nova atividade</summary>
-                    <form method="POST" action="{{ route('deals.activities.store', $deal) }}" class="mt-3 space-y-3">
+                <details id="details-new-activity" class="mt-4">
+                    <summary id="summary-new-activity" class="cursor-pointer text-sm text-octa-400 hover:text-octa-300 font-medium">+ Nova atividade</summary>
+                    <form id="form-add-activity" method="POST" action="{{ route('deals.activities.store', $deal) }}" class="mt-3 space-y-3">
                         @csrf
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="label">Tipo</label>
-                                <select name="type" class="input" required>
+                                <select id="select-activity-type" name="type" class="ajax-select" required>
                                     @foreach(\App\Enums\DealActivityType::cases() as $type)
                                         <option value="{{ $type->value }}">{{ $type->label() }}</option>
                                     @endforeach
@@ -101,18 +107,18 @@
                             </div>
                             <div>
                                 <label class="label">Data/Hora</label>
-                                <input name="scheduled_at" type="datetime-local" class="input" required />
+                                <input id="input-activity-scheduled" name="scheduled_at" type="datetime-local" class="input" required />
                             </div>
                         </div>
                         <div>
                             <label class="label">Título</label>
-                            <input name="title" class="input" required />
+                            <input id="input-activity-title" name="title" class="input" required />
                         </div>
                         <div>
                             <label class="label">Notas</label>
-                            <textarea name="notes" class="input" rows="2"></textarea>
+                            <textarea id="textarea-activity-notes" name="notes" class="input" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn-primary">Salvar Atividade</button>
+                        <button id="btn-save-activity" type="submit" class="btn-primary">Salvar Atividade</button>
                     </form>
                 </details>
             </div>
@@ -122,25 +128,31 @@
         <div class="space-y-4">
             <div class="card">
                 <h3 class="text-sm font-semibold text-slate-200 mb-3">Mover Etapa</h3>
-                <form method="POST" action="{{ route('deals.move-stage', $deal) }}" class="space-y-3">
+                <form id="form-move-stage" method="POST" action="{{ route('deals.move-stage', $deal) }}" class="space-y-3">
                     @csrf @method('PATCH')
-                    <select name="stage_id" class="input" required>
+                    <select id="select-move-stage" name="stage_id" class="ajax-select" required>
                         @foreach($deal->pipeline->stages as $stage)
                             <option value="{{ $stage->id }}" @selected($deal->stage_id === $stage->id)>
                                 {{ $stage->name }} ({{ $stage->probability }}%)
                             </option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn-primary w-full">Atualizar</button>
+                    <button id="btn-update-stage" type="submit" class="btn-primary w-full">Atualizar</button>
                 </form>
             </div>
 
-            <div class="card space-y-3">
-                <a href="{{ route('deals.edit', $deal) }}" class="btn-ghost w-full text-center">Editar</a>
-                <a href="{{ route('deals.kanban', $deal->pipeline_id) }}" class="btn-ghost w-full text-center">Ver Kanban</a>
-                <form method="POST" action="{{ route('deals.destroy', $deal) }}">
+            <div id="deal-actions-card" class="card space-y-3">
+                <a id="btn-edit-deal" href="{{ route('deals.edit', $deal) }}" class="btn-ghost w-full text-center">Editar</a>
+                <a id="btn-view-kanban" href="{{ route('deals.kanban', $deal->pipeline_id) }}" class="btn-ghost w-full text-center">Ver Kanban</a>
+                <form id="delete-form-deal" method="POST" action="{{ route('deals.destroy', $deal) }}"
+                      x-data @submit.prevent="$dispatch('dialog', { 
+                          title: 'Remover Oportunidade', 
+                          message: 'Deseja realmente excluir esta oportunidade?',
+                          type: 'danger',
+                          onConfirm: () => $el.submit()
+                      })">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn-danger w-full">Excluir</button>
+                    <button id="btn-delete-deal" type="submit" class="btn-danger w-full">Excluir</button>
                 </form>
             </div>
         </div>

@@ -64,7 +64,7 @@
                     <div>
                         <label for="client_id" class="label">Cliente <span class="text-red-500">*</span></label>
                         <select id="client_id" name="client_id"
-                                class="form-select ajax-select @error('client_id') input-error @enderror"
+                                class="ajax-select @error('client_id') input-error @enderror"
                                 data-search-url="{{ route('search.clients') }}"
                                 required>
                             <option value="">Buscar cliente...</option>

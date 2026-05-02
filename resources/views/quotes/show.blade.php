@@ -1,4 +1,4 @@
-<x-layouts.app title="Orçamento #{{ $quote->id }}" header="Orçamentos / #{{ $quote->id }}">
+<x-layouts.app title="Orçamento {{ $quote->formatted_number }}" header="Orçamentos / {{ $quote->formatted_number }}">
 
     {{-- Flash --}}
     @if(session('success'))
@@ -18,7 +18,7 @@
         <div class="card flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-2">
-                    <h1 class="text-xl font-bold text-slate-100">Orçamento #{{ $quote->id }}</h1>
+                    <h1 class="text-xl font-bold text-slate-100">Orçamento {{ $quote->formatted_number }}</h1>
                     <x-status-badge :status="$quote->status"/>
                 </div>
                 <p class="text-sm text-slate-400">
@@ -60,7 +60,13 @@
                         <button type="submit" class="btn-primary btn-sm bg-green-600 hover:bg-green-500">Aprovar</button>
                     </form>
                     <form method="POST" action="{{ route('quotes.reject', $quote->id) }}"
-                          x-data @submit.prevent="if(confirm('Rejeitar este orçamento?')) $el.submit()">
+                          x-data @submit.prevent="$dispatch('dialog', { 
+                              title: 'Rejeitar Orçamento', 
+                              message: 'Deseja realmente marcar o orçamento #{{ $quote->id }} como rejeitado?',
+                              type: 'danger',
+                              confirmText: 'Sim, rejeitar',
+                              onConfirm: () => $el.submit()
+                          })">
                         @csrf @method('PATCH')
                         <button type="submit" class="btn-ghost btn-sm text-red-400 hover:text-red-300">Rejeitar</button>
                     </form>

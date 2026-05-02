@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Client;
 
-use App\Enums\ClientServiceStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use App\Models\ClientService as ClientServiceModel;
+use App\Services\ClientService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 final class ClientServiceController extends Controller
 {
+    public function __construct(
+        private readonly ClientService $service
+    ) {}
+
     public function store(Request $request, int $clientId): RedirectResponse
     {
-        $client = Client::findOrFail($clientId);
-
         $validated = $request->validate([
             'service_id'   => 'required|exists:services,id',
             'custom_price' => 'nullable|numeric|min:0',
@@ -25,7 +25,7 @@ final class ClientServiceController extends Controller
             'status'       => 'required|in:active,suspended,canceled',
         ]);
 
-        $client->clientServices()->create($validated);
+        $this->service->addService($clientId, $validated);
 
         return redirect()->route('clients.show', $clientId)
             ->with('success', 'Serviço vinculado com sucesso.');
@@ -33,10 +33,7 @@ final class ClientServiceController extends Controller
 
     public function destroy(int $clientId, int $clientServiceId): RedirectResponse
     {
-        $clientService = ClientServiceModel::where('client_id', $clientId)
-            ->findOrFail($clientServiceId);
-
-        $clientService->delete();
+        $this->service->removeService($clientId, $clientServiceId);
 
         return redirect()->route('clients.show', $clientId)
             ->with('success', 'Vínculo de serviço removido.');

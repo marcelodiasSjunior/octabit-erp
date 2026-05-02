@@ -8,6 +8,7 @@ use App\Models\AccountsReceivable;
 use App\Repositories\Contracts\AccountsReceivableRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 final class FinancialService
 {
@@ -22,17 +23,21 @@ final class FinancialService
 
     public function createReceivable(array $data): AccountsReceivable
     {
-        $record = $this->receivableRepo->create($data);
-        Cache::forget('dashboard.financial_metrics');
-        return $record;
+        return DB::transaction(function() use ($data) {
+            $record = $this->receivableRepo->create($data);
+            Cache::forget('dashboard.financial_metrics');
+            return $record;
+        });
     }
 
     public function markReceivableAsPaid(int $id, string $paymentDate): AccountsReceivable
     {
-        $date   = new \DateTimeImmutable($paymentDate);
-        $record = $this->receivableRepo->markAsPaid($id, $date);
-        Cache::forget('dashboard.financial_metrics');
-        return $record;
+        return DB::transaction(function() use ($id, $paymentDate) {
+            $date   = new \DateTimeImmutable($paymentDate);
+            $record = $this->receivableRepo->markAsPaid($id, $date);
+            Cache::forget('dashboard.financial_metrics');
+            return $record;
+        });
     }
 
     public function findReceivableOrFail(int $id): AccountsReceivable
@@ -42,8 +47,10 @@ final class FinancialService
 
     public function deleteReceivable(int $id): void
     {
-        $this->receivableRepo->delete($id);
-        Cache::forget('dashboard.financial_metrics');
+        DB::transaction(function() use ($id) {
+            $this->receivableRepo->delete($id);
+            Cache::forget('dashboard.financial_metrics');
+        });
     }
 
     /**

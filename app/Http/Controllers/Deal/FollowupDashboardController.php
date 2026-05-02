@@ -5,35 +5,30 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Deal;
 
 use App\Http\Controllers\Controller;
-use App\Models\DealSLAViolation;
-use App\Models\Pipeline;
+use App\Services\PipelineService;
+use App\Services\DealSLAService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FollowupDashboardController extends Controller
 {
+    public function __construct(
+        private readonly DealSLAService $service,
+        private readonly PipelineService $pipelineService
+    ) {}
+
     public function index(Request $request): View
     {
-        $query = DealSLAViolation::query()->with(['deal.pipeline', 'deal.stage']);
+        $filters = $request->only(['pipeline_id', 'severity']);
+        
+        $violations = $this->service->getViolationsPaginated($filters);
+        $stats = $this->service->getDashboardStats();
 
-        if ($request->filled('pipeline_id')) {
-            $query->whereHas('deal', fn ($q) => $q->where('pipeline_id', (int) $request->integer('pipeline_id')));
-        }
-
-        if ($request->filled('severity')) {
-            $query->where('severity', $request->string('severity')->toString());
-        }
-
-        $violations = $query->latest('due_at')->paginate(20)->withQueryString();
-
-        return view('deals.followups.dashboard', [
-            'pipelines' => Pipeline::ordered()->get(),
+        return view('deals.followups.dashboard', array_merge($stats, [
+            'pipelines' => $this->pipelineService->getActiveWithStages(),
             'violations' => $violations,
             'severityFilter' => $request->string('severity')->toString(),
             'pipelineFilter' => $request->integer('pipeline_id'),
-            'totalUnresolved' => DealSLAViolation::where('resolved', false)->count(),
-            'totalCritical' => DealSLAViolation::where('resolved', false)->where('severity', 'critical')->count(),
-            'totalSevere' => DealSLAViolation::where('resolved', false)->where('severity', 'severe')->count(),
-        ]);
+        ]));
     }
 }

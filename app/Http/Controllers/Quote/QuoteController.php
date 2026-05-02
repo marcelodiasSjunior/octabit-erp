@@ -9,10 +9,10 @@ use App\DTOs\Quote\UpdateQuoteDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Quote\StoreQuoteRequest;
 use App\Http\Requests\Quote\UpdateQuoteRequest;
-use App\Models\Client;
-use App\Models\Product;
-use App\Models\Service;
+use App\Services\ClientService;
+use App\Services\ProductCatalogService;
 use App\Services\QuoteService;
+use App\Services\ServiceCatalogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -21,7 +21,10 @@ use Illuminate\View\View;
 final class QuoteController extends Controller
 {
     public function __construct(
-        private readonly QuoteService $service
+        private readonly QuoteService          $service,
+        private readonly ClientService         $clientService,
+        private readonly ProductCatalogService $productService,
+        private readonly ServiceCatalogService $serviceCatalogService
     ) {}
 
     public function index(Request $request): View
@@ -34,9 +37,9 @@ final class QuoteController extends Controller
 
     public function create(): View
     {
-        $clients  = Client::orderBy('name')->get(['id', 'name']);
-        $products = Product::active()->orderBy('name')->get(['id', 'name', 'price']);
-        $services = Service::active()->orderBy('name')->get(['id', 'name', 'base_price']);
+        $clients  = $this->clientService->getEligibleForDeals();
+        $products = $this->productService->allActive();
+        $services = $this->serviceCatalogService->allActive();
 
         return view('quotes.create', compact('clients', 'products', 'services'));
     }
@@ -60,9 +63,9 @@ final class QuoteController extends Controller
     public function edit(int $id): View
     {
         $quote    = $this->service->findOrFail($id);
-        $clients  = Client::orderBy('name')->get(['id', 'name']);
-        $products = Product::active()->orderBy('name')->get(['id', 'name', 'price']);
-        $services = Service::active()->orderBy('name')->get(['id', 'name', 'base_price']);
+        $clients  = $this->clientService->getEligibleForDeals();
+        $products = $this->productService->allActive();
+        $services = $this->serviceCatalogService->allActive();
 
         return view('quotes.edit', compact('quote', 'clients', 'products', 'services'));
     }

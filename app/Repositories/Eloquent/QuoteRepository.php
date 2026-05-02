@@ -85,4 +85,19 @@ class QuoteRepository implements QuoteRepositoryInterface
     {
         return (bool) $this->findOrFail($id)->delete();
     }
+
+    public function getQuotesInRange(string $startDate, string $endDate, ?int $clientId = null): Collection
+    {
+        $query = $this->model->with('client')
+            ->whereBetween('created_at', [
+                \Carbon\Carbon::parse($startDate)->startOfDay(),
+                \Carbon\Carbon::parse($endDate)->endOfDay()
+            ]);
+
+        if ($clientId) {
+            $query->where('client_id', $clientId);
+        }
+
+        return $query->get();
+    }
 }
