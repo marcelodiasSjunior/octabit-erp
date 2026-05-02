@@ -45,6 +45,11 @@ class PipelineRepository implements PipelineRepositoryInterface
         return (bool) $this->findOrFail($id)->delete();
     }
 
+    public function paginate(int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->model->newQuery()->paginate($perPage);
+    }
+
     public function getActiveWithStages(): Collection
     {
         return $this->model->newQuery()

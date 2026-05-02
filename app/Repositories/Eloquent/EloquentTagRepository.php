@@ -44,6 +44,11 @@ class EloquentTagRepository implements TagRepositoryInterface
         return (bool) $this->findOrFail($id)->delete();
     }
 
+    public function paginate(int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->model->newQuery()->paginate($perPage);
+    }
+
     public function allOrderedByName(): Collection
     {
         return $this->model->newQuery()->orderBy('name')->get();
