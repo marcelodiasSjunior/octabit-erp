@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             [
                 'company_id' => $octabit->id,
                 'name'       => 'Admin OctaBit',
-                'password'   => Hash::make('password'),
+                'password'   => Hash::make('OctaBit@2026'),
                 'role'       => UserRole::MasterGlobal,
             ]
         );
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             [
                 'company_id' => $octabit->id,
                 'name'       => 'Gerente OctaBit',
-                'password'   => Hash::make('password'),
+                'password'   => Hash::make('OctaBit@2026'),
                 'role'       => UserRole::Manager,
             ]
         );
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
             [
                 'company_id' => $octabit->id,
                 'name'       => 'Operador OctaBit',
-                'password'   => Hash::make('password'),
+                'password'   => Hash::make('OctaBit@2026'),
                 'role'       => UserRole::Operator,
             ]
         );
