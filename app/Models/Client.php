@@ -11,9 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Traits\HasMasks;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 class Client extends Model
 {
-    use HasFactory, SoftDeletes, BelongsToTenant;
+    use HasFactory, SoftDeletes, BelongsToTenant, HasMasks;
 
     protected $fillable = [
         'name',
@@ -34,6 +37,22 @@ class Client extends Model
         return [
             'status' => ClientStatus::class,
         ];
+    }
+
+    protected function document(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? $this->formatDocument($value) : null,
+            set: fn (?string $value) => $value ? $this->formatDocument($value) : null,
+        );
+    }
+
+    protected function phone(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? $this->formatPhone($value) : null,
+            set: fn (?string $value) => $value ? $this->formatPhone($value) : null,
+        );
     }
 
     // ── Relationships ──────────────────────────────────────────────
@@ -90,24 +109,5 @@ class Client extends Model
     public function getDisplayNameAttribute(): string
     {
         return empty($this->company_name) ? $this->name : $this->company_name;
-    }
-
-    public function getFormattedDocumentAttribute(): ?string
-    {
-        if (empty($this->document)) {
-            return null;
-        }
-
-        $doc = preg_replace('/\D/', '', $this->document);
-
-        if (strlen($doc) === 11) {
-            return preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $doc);
-        }
-
-        if (strlen($doc) === 14) {
-            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $doc);
-        }
-
-        return $this->document;
     }
 }

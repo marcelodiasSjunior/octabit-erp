@@ -100,7 +100,7 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="font-mono text-xs">{{ $client->formatted_document }}</td>
+                        <td class="font-mono text-xs">{{ $client->document ?? '—' }}</td>
                         <td class="text-slate-400">{{ $client->email }}</td>
                         <td class="text-slate-400 text-xs">{{ $client->phone ?? '—' }}</td>
                         <td><x-status-badge :status="$client->status"/></td>

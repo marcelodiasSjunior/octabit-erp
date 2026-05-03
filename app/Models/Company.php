@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+use App\Traits\HasMasks;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, HasMasks;
 
     protected $fillable = [
         'name',
@@ -25,6 +28,14 @@ class Company extends Model
     protected $casts = [
         'settings' => 'array',
     ];
+
+    protected function cnpj(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? $this->formatDocument($value) : null,
+            set: fn (?string $value) => $value ? $this->formatDocument($value) : null,
+        );
+    }
 
     protected static function boot()
     {

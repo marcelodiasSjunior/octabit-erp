@@ -12,69 +12,53 @@
 
     <script>
         /**
-         * Inicializa o TomSelect em elementos select que não foram inicializados ainda.
+         * Aplica máscaras básicas em inputs.
          */
-        window.initTomSelect = function(container = document) {
-            if (typeof TomSelect === 'undefined') {
-                console.warn('TomSelect não carregado. Tentando novamente em 100ms...');
-                setTimeout(() => window.initTomSelect(container), 100);
-                return;
-            }
+        window.applyMasks = function(container = document) {
+            const documentInputs = container.querySelectorAll('input[name*="cnpj"], input[name*="document"], .mask-document');
+            const phoneInputs = container.querySelectorAll('input[name*="phone"], .mask-phone');
 
-            const selectors = container.querySelectorAll('select.ajax-select:not(.tomselected), select.form-select:not(.tomselected), select.select:not(.tomselected)');
-
-            selectors.forEach(el => {
-                if (el.tomselect) return;
-
-                let config = {
-                    create: false,
-                    allowEmptyOption: true,
-                    maxOptions: 50,
-                    preload: 'focus',
-                    openOnFocus: true,
-                    plugins: ['dropdown_input'],
-                    copyClassesToDropdown: true,
-                    onInitialize: function() {
-                        this.wrapper.classList.add('ts-erp-style');
-                    },
-                    render: {
-                        no_results: (data, escape) => `<div class="no-results px-4 py-2 text-sm text-slate-500 italic">Nenhum resultado para "${escape(data.input)}"</div>`,
-                        loading: () => `<div class="spinner px-4 py-2 text-sm text-slate-500">Buscando...</div>`,
-                        option: function(data, escape) {
-                            return `<div class="option-item">
-                                <div class="font-medium text-slate-200">${escape(data.text)}</div>
-                                ${data.price ? `<div class="text-xs text-octa-400">R$ ${parseFloat(data.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>` : ''}
-                                ${data.description && !data.price ? `<div class="text-xs text-slate-500 truncate">${escape(data.description)}</div>` : ''}
-                            </div>`;
-                        },
-                        item: function(data, escape) {
-                            return `<div class="selected-item">${escape(data.text)}</div>`;
-                        }
+            documentInputs.forEach(input => {
+                const mask = (val) => {
+                    val = val.replace(/\D/g, '');
+                    if (val.length <= 11) {
+                        return val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, '$1.$2.$3-$4');
+                    } else {
+                        return val.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, '$1.$2.$3/$4-$5');
                     }
                 };
+                input.addEventListener('input', (e) => {
+                    const start = e.target.selectionStart;
+                    const end = e.target.selectionEnd;
+                    e.target.value = mask(e.target.value).substring(0, 18);
+                    e.target.setSelectionRange(start, end);
+                });
+                if (input.value) input.value = mask(input.value);
+            });
 
-                if (el.dataset.searchUrl) {
-                    config.valueField = 'id';
-                    config.labelField = 'text';
-                    config.searchField = 'text';
-                    config.load = function(query, callback) {
-                        const url = `${el.dataset.searchUrl}${el.dataset.searchUrl.includes('?') ? '&' : '?'}q=${encodeURIComponent(query || '')}`;
-                        fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                            .then(r => r.json())
-                            .then(j => callback(j.results || j))
-                            .catch(() => callback());
-                    };
-                }
-
-                try {
-                    new TomSelect(el, config);
-                    el.classList.add('tomselected');
-                } catch (e) {
-                    console.error('Erro TomSelect:', e, el);
-                }
+            phoneInputs.forEach(input => {
+                const mask = (val) => {
+                    val = val.replace(/\D/g, '');
+                    if (val.length <= 10) {
+                        return val.replace(/(\d{2})(\d{4})(\d{4})/g, '($1) $2-$3');
+                    } else {
+                        return val.replace(/(\d{2})(\d{5})(\d{4})/g, '($1) $2-$3');
+                    }
+                };
+                input.addEventListener('input', (e) => {
+                    const start = e.target.selectionStart;
+                    const end = e.target.selectionEnd;
+                    e.target.value = mask(e.target.value).substring(0, 15);
+                    e.target.setSelectionRange(start, end);
+                });
+                if (input.value) input.value = mask(input.value);
             });
         };
-        document.addEventListener('DOMContentLoaded', () => window.initTomSelect());
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initTomSelect();
+            window.applyMasks();
+        });
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
