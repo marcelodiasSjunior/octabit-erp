@@ -31,6 +31,7 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'cnpj'           => 'nullable|string|unique:companies,cnpj',
+            'subdomain'      => 'required|string|alpha_dash|unique:companies,subdomain',
             'plan'           => 'required|string|in:trial,basic,premium,enterprise',
             'admin_name'     => 'required|string|max:255',
             'admin_email'    => 'required|email',
@@ -39,9 +40,10 @@ class CompanyController extends Controller
 
         $this->companyService->createCompanyWithAdmin(
             [
-                'name' => $validated['name'], 
-                'cnpj' => $validated['cnpj'],
-                'plan' => $validated['plan'],
+                'name'      => $validated['name'], 
+                'cnpj'      => $validated['cnpj'],
+                'subdomain' => $validated['subdomain'],
+                'plan'      => $validated['plan'],
             ],
             [
                 'name'     => $validated['admin_name'],

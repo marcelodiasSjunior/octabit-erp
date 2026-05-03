@@ -17,9 +17,10 @@ class UserSeeder extends Seeder
         $octabit = \App\Models\Company::updateOrCreate(
             ['cnpj' => '00.000.000/0001-00'],
             [
-                'name'   => 'Octabit Tech',
-                'status' => 'active',
-                'plan'   => 'enterprise',
+                'name'      => 'Octabit Tech',
+                'subdomain' => 'octabit',
+                'status'    => 'active',
+                'plan'      => 'enterprise',
             ]
         );
 

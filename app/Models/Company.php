@@ -15,6 +15,7 @@ class Company extends Model
     protected $fillable = [
         'name',
         'cnpj',
+        'subdomain',
         'status',
         'plan',
         'settings',
