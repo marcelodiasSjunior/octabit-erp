@@ -6,13 +6,14 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Traits\BelongsToTenant;
+use App\Traits\HasPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, BelongsToTenant;
+    use HasFactory, Notifiable, BelongsToTenant, HasPermissions;
 
     protected $fillable = [
         'name',
